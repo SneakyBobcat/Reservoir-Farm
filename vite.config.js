@@ -13,7 +13,7 @@ export default defineConfig({
         short_name: 'GH Calc',
         description: 'General Hydroponics nutrient calculator — Flora Series, FloraNova, BioThrive, MaxiSeries, and FloraPro systems.',
         theme_color: '#78BE20',
-        background_color: '#ffffff',
+        background_color: '#F2F2F7',
         display: 'standalone',
         orientation: 'portrait',
         scope: '/',
@@ -25,25 +25,7 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-cache',
-              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 }
-            }
-          },
-          {
-            urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'gstatic-fonts-cache',
-              expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 }
-            }
-          }
-        ]
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}']
       }
     })
   ]

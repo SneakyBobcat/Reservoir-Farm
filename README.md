@@ -1,6 +1,6 @@
 # GH Nutrient Calculator
 
-Mobile-first Progressive Web App for General Hydroponics nutrient systems.
+Mobile-first Progressive Web App for General Hydroponics nutrient systems, styled with native iOS design language.
 
 ## Supported Brands & Systems
 
@@ -16,13 +16,14 @@ Mobile-first Progressive Web App for General Hydroponics nutrient systems.
 
 - 8-step wizard: Medium → Brand → System → Plant → Stage → Settings → Supplements → Results
 - 7 growth stages including Peak Flower for fruiting crops
-- Legal disclaimer accessible from the first page
+- iOS design language — SF Pro system fonts, grouped backgrounds, frosted nav, native button physics
 - Substrate-aware dosing — Hydroponics / Inert / Potting Soil / Ground Soil
-- Plant modifier toggle on Classic — enable/disable crop-specific dose adjustments
+- Substrate-specific cal-mag scaling — full dose in coco (binds Ca), reduced in lime-amended potting mixes and Ca-rich soil
+- Plant modifier toggle on Classic — crop-specific dose adjustments with agronomic reasoning
+- Legal disclaimer accessible from the first page
 - Water source calibration — Tap, Soft, RO/DI
 - Light / Medium / Aggressive feed strength tiers
 - EC budget with per-plant ceiling alerts
-- Optional supplement recommendations (8 categories, all stages)
 - Always-visible mixing order with numbered product rows
 - FloraKleen included in 10-Part and FloraNova 8-Part flush stage
 - Direct gram totals for dry concentrate systems
