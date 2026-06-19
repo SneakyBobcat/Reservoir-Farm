@@ -1144,11 +1144,11 @@ export default function FloraApp() {
     if(step===5) return (
       <div>
         <div style={sectionLabel()}>RESERVOIR VOLUME</div>
-        <div style={{display:"flex",alignItems:"center",background:GH.card,borderRadius:14,border:`1px solid ${GH.border}`,overflow:"hidden",marginBottom:8}}>
-          <button onClick={()=>setVolume(v=>Math.max(0.5,+(v-(unit==="gallons"?0.5:1)).toFixed(1)))} style={{background:"none",border:"none",borderRight:`1px solid ${GH.border}`,color:GH.green,padding:"18px 26px",fontSize:24,cursor:"pointer",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontWeight:700}}>−</button>
-          <input type="number" min="0.1" step={unit==="gallons"?"0.5":"1"} value={volume} onChange={e=>setVolume(Math.max(0.1,+e.target.value))}
-            style={{flex:1,textAlign:"center",fontSize:28,color:GH.text,background:"none",border:"none",outline:"none",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontWeight:700,padding:"16px 0"}}/>
-          <button onClick={()=>setVolume(v=>+(v+(unit==="gallons"?0.5:1)).toFixed(1))} style={{background:"none",border:"none",borderLeft:`1px solid ${GH.border}`,color:GH.green,padding:"18px 26px",fontSize:24,cursor:"pointer",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontWeight:700}}>+</button>
+        <div style={{display:"flex",alignItems:"stretch",background:GH.card,borderRadius:14,border:`1px solid ${GH.border}`,overflow:"hidden",marginBottom:8}}>
+          <button onClick={()=>setVolume(v=>Math.max(0.5,+(v-(unit==="gallons"?0.5:1)).toFixed(1)))} style={{flexShrink:0,width:64,background:"none",border:"none",borderRight:`1px solid ${GH.border}`,color:GH.green,fontSize:26,cursor:"pointer",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center"}}>−</button>
+          <input type="number" inputMode="decimal" min="0.1" step={unit==="gallons"?"0.5":"1"} value={volume} onChange={e=>setVolume(Math.max(0.1,+e.target.value))}
+            style={{flex:1,minWidth:0,width:"100%",textAlign:"center",fontSize:28,color:GH.text,background:"none",border:"none",outline:"none",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontWeight:700,padding:"16px 0"}}/>
+          <button onClick={()=>setVolume(v=>+(v+(unit==="gallons"?0.5:1)).toFixed(1))} style={{flexShrink:0,width:64,background:"none",border:"none",borderLeft:`1px solid ${GH.border}`,color:GH.green,fontSize:26,cursor:"pointer",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontWeight:700,display:"flex",alignItems:"center",justifyContent:"center"}}>+</button>
         </div>
         <div style={{display:"flex",gap:0,marginBottom:24}}>
           {[["gallons","GALLONS"],["liters","LITERS"]].map(([v,l],i)=>(
@@ -1544,7 +1544,7 @@ export default function FloraApp() {
       <style>{`
         *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
         body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;background:#F2F2F7;}
-        input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+        input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;appearance:none;margin:0}
         input[type=number]{-moz-appearance:textfield;border-radius:10px}
         input{border-radius:10px}
         ::-webkit-scrollbar{display:none}
