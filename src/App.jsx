@@ -1495,9 +1495,12 @@ export default function FloraApp() {
         <div style={{maxWidth:480,margin:"0 auto",display:"flex",overflowX:"auto"}}>
           {steps.map((label,i)=>{
             const active=step===i,done=i<step;
+            const color=active?"#0A84FF":done?"#C7C7CC":"#78BE20";
+            const dotColor=active?"#0A84FF":done?"transparent":"#78BE20";
             return (
-              <button key={i} onClick={()=>goTo(i)} style={{flex:"1 0 0",minWidth:0,padding:"12px 2px",background:"none",border:"none",borderBottom:`2px solid ${active?"#78BE20":"transparent"}`,color:active?"#78BE20":done?"#555":"#bbb",cursor:"pointer",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:10,fontWeight:700,letterSpacing:"0.06em",textTransform:"uppercase",transition:"all 0.2s",whiteSpace:"nowrap"}}>
-                {done?"✓ ":""}{label}
+              <button key={i} onClick={()=>goTo(i)} style={{flex:"1 0 0",minWidth:0,padding:"15px 3px 13px",background:"none",border:"none",cursor:"pointer",position:"relative",display:"flex",flexDirection:"column",alignItems:"center",gap:6,transition:"all 0.2s"}}>
+                <span style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",fontSize:10,fontWeight:active?700:600,letterSpacing:"0.02em",color,whiteSpace:"nowrap",transition:"all 0.2s"}}>{label}</span>
+                <span style={{width:active?16:5,height:5,borderRadius:3,background:dotColor,transition:"all 0.25s cubic-bezier(.4,0,.2,1)"}}/>
               </button>
             );
           })}
