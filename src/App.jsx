@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 
 // ─── STAGE METADATA ──────────────────────────────────────────────────────────
 const STAGE_META = {
@@ -745,6 +745,43 @@ const SUPPLEMENTS = [
 const CALMAG_SUBSTRATE_MULT={hydro:1.0,inert:1.0,potting:0.5,soil:0.35};
 const CALMAG_INCL_KEYS=new Set(["calimagic","mx_calmag","bt_camg"]);
 
+// Per-base calcium/magnesium adequacy, from each brand's published formulation.
+//   "full" = base supplies adequate Ca/Mg → don't add cal-mag
+//   "lean" = base runs light on Ca/Mg → add cal-mag in coco/RO; optional on tap+soil
+//   "none" = base supplies little/no Ca/Mg → add cal-mag in most setups
+// Reason: this is the one nutrient where complete bases genuinely differ. A line
+// that already carries Ca/Mg (or is pH-buffered for coco) makes added cal-mag
+// redundant; a lean liquid trio leaves a real gap heavy feeders will hit.
+const BASE_CALMAG_ADEQUACY = {
+  // General Hydroponics
+  "3part":"lean",            // Flora trio: FloraMicro has some Ca, widely supplemented
+  "6part":"full",            // includes CALiMAGiC
+  "10part":"full",           // includes CALiMAGiC
+  "florapro_std":"full",     // FloraPro Core supplies Ca + micros
+  "florapro_highec":"full",
+  "biothrive_basic":"lean",  // Grow/Bloom only — no dedicated Ca/Mg
+  "biothrive_custom":"full", // includes CaMg+
+  "maxi_indoor":"full",      // MaxiGro/MaxiBloom carry Ca/Mg
+  "maxi_outdoor":"full",
+  "floranvoa_1part":"lean",  // FloraNova 1-part carries some Ca/Mg but lean for heavy feeders
+  "floranvoa_4part":"full",  // includes CALiMAGiC
+  "floranvoa_8part":"full",  // includes CALiMAGiC
+  // Athena
+  "athena_pro":"full",       // Pro Core supplies calcium
+  "athena_blended":"full",
+  // Jack's
+  "jacks_321":"full",        // Part B is calcium nitrate; Epsom supplies Mg
+  // Advanced Nutrients
+  "an_phperfect":"full",     // pH Perfect base includes cal-mag technology
+  // Fox Farm
+  "ff_trio":"none",          // liquid trio is well known to need Cal-Mag, esp. coco/RO
+  // CANNA
+  "canna_coco":"full",       // formulated + pH-buffered for coco, Ca/Mg included
+  "canna_terra":"full",      // complete soil base
+  // Humboldts Secret
+  "hs_starter":"lean",       // Base A+B run lean — kit ships a CalMag & Iron for this
+};
+
 function resolveSupplementDose(supp,stageId,gallons,waterType,feedStrength,substrate){
   const rule=supp.stageRules[stageId];if(!rule)return null;
   const base=typeof rule.dose==="object"&&"light" in rule.dose?(rule.dose[feedStrength]??rule.dose.medium):rule.dose;
@@ -871,18 +908,24 @@ const BLOOM_STAGES = new Set(["early_flower","peak_flower","late_flower"]);
 const VEG_STAGES   = new Set(["seedling","early_growth","late_growth"]);
 const ROOT_STAGES  = new Set(["seedling","early_growth","late_growth","early_flower"]);
 
-// Per-plant supplement affinities
+// Per-plant supplement affinities.
+// PRINCIPLE: a complete base nutrient line already supplies full nutrition.
+// A supplement is only "recommended" when it fills a genuine gap the base does
+// not cover. Cal-Mag is handled separately (conditional on water/substrate/base);
+// the value here is its ceiling before those conditions apply. Everything else
+// defaults to "optional" (use if you want) or "skip" (pointless for this crop).
 const PLANT_SUPP_PROFILE = {
-  tomatoes:     { calMag:"recommended", silica:"recommended",  pk:"recommended",  root:"recommended", enzyme:"recommended", fulvic:"recommended", sulfur:"optional",      bud:"optional"     },
-  cannabis:     { calMag:"recommended", silica:"recommended",  pk:"recommended",  root:"recommended", enzyme:"recommended", fulvic:"recommended", sulfur:"recommended",   bud:"recommended"  },
-  peppers:      { calMag:"recommended", silica:"recommended",  pk:"recommended",  root:"recommended", enzyme:"recommended", fulvic:"recommended", sulfur:"optional",      bud:"skip"         },
-  cucumbers:    { calMag:"recommended", silica:"optional",     pk:"optional",     root:"recommended", enzyme:"recommended", fulvic:"optional",    sulfur:"skip",          bud:"skip"         },
-  lettuce:      { calMag:"optional",    silica:"skip",         pk:"skip",         root:"recommended", enzyme:"recommended", fulvic:"optional",    sulfur:"skip",          bud:"skip"         },
-  herbs:        { calMag:"optional",    silica:"skip",         pk:"skip",         root:"recommended", enzyme:"optional",    fulvic:"optional",    sulfur:"skip",          bud:"skip"         },
-  strawberries: { calMag:"recommended", silica:"optional",     pk:"recommended",  root:"recommended", enzyme:"recommended", fulvic:"recommended", sulfur:"skip",          bud:"optional"     },
-  roses:        { calMag:"recommended", silica:"recommended",  pk:"recommended",  root:"recommended", enzyme:"optional",    fulvic:"optional",    sulfur:"skip",          bud:"skip"         },
-  orchids:      { calMag:"skip",        silica:"skip",         pk:"optional",     root:"optional",    enzyme:"optional",    fulvic:"skip",        sulfur:"skip",          bud:"skip"         },
-  houseplants:  { calMag:"skip",        silica:"skip",         pk:"skip",         root:"optional",    enzyme:"optional",    fulvic:"skip",        sulfur:"skip",          bud:"skip"         },
+  //              calMag         silica        pk            root          enzyme        fulvic        sulfur        bud
+  tomatoes:     { calMag:"cond", silica:"optional", pk:"optional", root:"optional", enzyme:"optional", fulvic:"optional", sulfur:"skip",     bud:"optional" },
+  cannabis:     { calMag:"cond", silica:"optional", pk:"optional", root:"optional", enzyme:"optional", fulvic:"optional", sulfur:"optional", bud:"optional" },
+  peppers:      { calMag:"cond", silica:"optional", pk:"optional", root:"optional", enzyme:"optional", fulvic:"optional", sulfur:"skip",     bud:"skip"     },
+  cucumbers:    { calMag:"cond", silica:"optional", pk:"optional", root:"optional", enzyme:"optional", fulvic:"optional", sulfur:"skip",     bud:"skip"     },
+  lettuce:      { calMag:"cond", silica:"skip",     pk:"skip",     root:"optional", enzyme:"optional", fulvic:"skip",     sulfur:"skip",     bud:"skip"     },
+  herbs:        { calMag:"cond", silica:"skip",     pk:"skip",     root:"optional", enzyme:"optional", fulvic:"skip",     sulfur:"skip",     bud:"skip"     },
+  strawberries: { calMag:"cond", silica:"optional", pk:"optional", root:"optional", enzyme:"optional", fulvic:"optional", sulfur:"skip",     bud:"optional" },
+  roses:        { calMag:"cond", silica:"optional", pk:"optional", root:"optional", enzyme:"optional", fulvic:"optional", sulfur:"skip",     bud:"skip"     },
+  orchids:      { calMag:"cond", silica:"skip",     pk:"optional", root:"optional", enzyme:"optional", fulvic:"skip",     sulfur:"skip",     bud:"skip"     },
+  houseplants:  { calMag:"cond", silica:"skip",     pk:"skip",     root:"optional", enzyme:"skip",     fulvic:"skip",     sulfur:"skip",     bud:"skip"     },
 };
 
 const SUPP_CATEGORY_KEY = {
@@ -1036,25 +1079,59 @@ const STAGE_OVERRIDES = {
     late_flower:   { level:"optional", reason:"Minor benefit in late flower; use at reduced dose" },
     flush:         { level:"skip",     reason:"Flush only" },
   },
-  // Sulfur bloom-focus — peak is prime window
+  // Sulfur: base nutrients already contain sulfur, so this is optional at most
   sulfur: {
     seedling:      { level:"skip",     reason:"Too sensitive at seedling — skip" },
-    peak_flower:   { level:"recommended", reason:"Peak flower is prime window for sulfur — key terpene precursor" },
+    peak_flower:   { level:"optional", reason:"Some growers add for terpene support; base already supplies sulfur" },
     flush:         { level:"skip",     reason:"Flush only" },
   },
 };
 
-function getSuppRec(supp, plantId, stageId) {
+function getSuppRec(supp, plantId, stageId, systemId, water, substrate) {
   if(!plantId||!stageId) return null;
   const profile = PLANT_SUPP_PROFILE[plantId];
   if(!profile) return null;
   const catKey  = SUPP_CATEGORY_KEY[supp.category];
   if(!catKey)   return null;
 
+  if(stageId==="flush") return { level:"skip", reason:"Flush only — run plain water, no supplements" };
+
+  // ── Cal-Mag: recommended only when THIS base leaves a Ca/Mg gap ──────────
+  if(catKey==="calMag"){
+    const cfg = systemId?SYSTEM_CONFIGS[systemId]:null;
+    const baseHasCalMag = cfg?.includedKeys?.some(k=>CALMAG_INCL_KEYS.has(k))
+      || cfg?.includedKeys?.some(k=>/calmag|cal_mag|camg|calimagic|calcium|jacks_b|ath_core/i.test(k));
+    const adequacy = BASE_CALMAG_ADEQUACY[systemId] || (baseHasCalMag?"full":"lean");
+    const baseName = cfg?.name || "Your base";
+    if(adequacy==="full") return { level:"skip", reason:`${baseName} already supplies enough calcium and magnesium — adding more risks excess` };
+    const roWater = water==="ro"||water==="soft";
+    const cocoOrInert = substrate==="inert";
+    if(stageId==="late_flower") return { level:"optional", reason:"Taper Ca/Mg in late flower" };
+    if(stageId==="seedling") return { level:"optional", reason:"Seedlings need little — add only a light dose if at all" };
+    // "none" bases (e.g. Fox Farm trio) leave a gap in almost any setup
+    if(adequacy==="none"){
+      if(roWater||cocoOrInert) return { level:"recommended", reason:`${baseName} carries little Ca/Mg, and ${roWater?"RO/soft water":"coco"} makes the gap worse — add Cal-Mag` };
+      return { level:"recommended", reason:`${baseName} runs short on calcium and magnesium for this stage — Cal-Mag fills the gap` };
+    }
+    // "lean" bases: gap appears under RO/coco, optional otherwise
+    if(roWater&&cocoOrInert) return { level:"recommended", reason:`${baseName} is light on Ca/Mg, and RO water plus coco both strip or bind calcium — add Cal-Mag` };
+    if(roWater) return { level:"recommended", reason:`${baseName} is light on Ca/Mg and RO/soft water adds none — Cal-Mag recommended` };
+    if(cocoOrInert) return { level:"recommended", reason:`${baseName} is light on Ca/Mg and coco binds calcium — Cal-Mag recommended` };
+    return { level:"optional", reason:`${baseName} is slightly lean on Ca/Mg; on tap water in soil it's usually fine — add only if you see deficiency` };
+  }
+
+  // ── Silica: base nutrients contain none; genuinely helps tall/heavy crops ──
+  // during the stretch (structural strength, stress tolerance). Low-risk extra.
+  if(catKey==="silica"){
+    const structural = plantId==="cannabis"||plantId==="tomatoes"||plantId==="peppers"||plantId==="roses";
+    const stretch = stageId==="late_growth"||stageId==="early_flower";
+    if(structural&&stretch) return { level:"recommended", reason:"Base nutrients contain no silica — recommended for tall/heavy crops during the stretch to strengthen stems and reduce stress" };
+  }
+
   const plantLevel  = profile[catKey] || "optional";
   const plantReason = REC_REASONS[plantId]?.[catKey] || "";
 
-  // Check stage override
+  // Stage override (e.g. PK skipped in veg, root tapers in late flower)
   const stageOv = STAGE_OVERRIDES[catKey]?.[stageId];
   if(stageOv) return { level: stageOv.level, reason: stageOv.reason };
 
@@ -1088,39 +1165,53 @@ export default function FloraApp() {
   const [storageReady,  setStorageReady]   = useState(false);
   const [showCompare,   setShowCompare]    = useState(false);
 
-  // Persistent storage layer. Uses localStorage on the deployed PWA (works on
-  // iPhone Safari); falls back to the in-preview window.storage API when present.
+  // Storage layer. A supplement run is ALWAYS saved to an in-memory mirror so
+  // the tent works within the session no matter what; localStorage is layered
+  // on for persistence across reloads. If localStorage is blocked (iOS Private
+  // Browsing) saving still works, it just won't survive a full restart.
+  const memMirror = useRef({});
+  const lsOK = useRef(null);
+  const checkLS = ()=>{
+    if(lsOK.current!==null) return lsOK.current;
+    try{ const t="__tent_test__"; window.localStorage.setItem(t,"1"); window.localStorage.removeItem(t); lsOK.current=true; }
+    catch{ lsOK.current=false; }
+    return lsOK.current;
+  };
   const tentStore = {
-    list:(prefix)=>{
-      try{
-        if(typeof window!=="undefined"&&window.localStorage){
-          const keys=[];
-          for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(prefix))keys.push(k);}
-          return keys;
-        }
-      }catch{}
-      return null; // signal: try async fallback
+    readAll:(prefix)=>{
+      const out={};
+      if(checkLS()){
+        try{ for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(prefix))out[k]=localStorage.getItem(k);} }catch{}
+      }
+      // memory mirror wins for anything written this session
+      Object.keys(memMirror.current).forEach(k=>{ if(k.startsWith(prefix)) out[k]=memMirror.current[k]; });
+      return out;
     },
-    get:(key)=>{ try{ return localStorage.getItem(key); }catch{ return null; } },
-    set:(key,val)=>{ try{ localStorage.setItem(key,val); return true; }catch{ return false; } },
-    del:(key)=>{ try{ localStorage.removeItem(key); return true; }catch{ return false; } },
+    set:(key,val)=>{
+      memMirror.current[key]=val;
+      let persisted=false;
+      if(checkLS()){ try{ localStorage.setItem(key,val); persisted=true; }catch{} }
+      return { ok:true, persisted };
+    },
+    del:(key)=>{
+      delete memMirror.current[key];
+      if(checkLS()){ try{ localStorage.removeItem(key); }catch{} }
+    },
   };
 
   const loadRuns = async () => {
     try {
-      // Preferred path: localStorage (deployed site)
-      const localKeys=tentStore.list("run:");
-      if(localKeys!==null){
-        const runs=[];
-        for(const key of localKeys){try{const v=tentStore.get(key);if(v)runs.push(JSON.parse(v));}catch{}}
-        runs.sort((a,b)=>b.savedAt-a.savedAt);setSavedRuns(runs);setStorageReady(true);return;
+      const all=tentStore.readAll("run:");
+      const runs=[];
+      for(const k of Object.keys(all)){try{const v=all[k];if(v)runs.push(JSON.parse(v));}catch{}}
+      // Fold in any runs from the in-preview async API (first load only)
+      if(runs.length===0&&typeof window!=="undefined"&&window.storage){
+        try{
+          const res=await window.storage.list("run:");
+          for(const key of (res?.keys||[])){try{const item=await window.storage.get(key);if(item?.value){runs.push(JSON.parse(item.value));memMirror.current[key]=item.value;}}catch{}}
+        }catch{}
       }
-      // Fallback: in-preview async storage API
-      if(typeof window!=="undefined"&&window.storage){
-        const res=await window.storage.list("run:");const runs=[];
-        for(const key of (res?.keys||[])){try{const item=await window.storage.get(key);if(item?.value)runs.push(JSON.parse(item.value));}catch{}}
-        runs.sort((a,b)=>b.savedAt-a.savedAt);setSavedRuns(runs);
-      }
+      runs.sort((a,b)=>b.savedAt-a.savedAt);setSavedRuns(runs);
     } catch{setSavedRuns([]);}
     setStorageReady(true);
   };
@@ -1132,16 +1223,18 @@ export default function FloraApp() {
     const id=`run:${Date.now()}`;
     const run={id,name,system,plant,stage,strength,volume,unit,water,supps:[...supps],savedAt:Date.now()};
     try{
-      let ok=tentStore.set(id,JSON.stringify(run));
-      if(!ok&&typeof window!=="undefined"&&window.storage){await window.storage.set(id,JSON.stringify(run));ok=true;}
-      if(ok){setSaveStatus("saved");setSavePrompt(false);setSaveName("");setTimeout(()=>setSaveStatus(null),2500);loadRuns();}
-      else{setSaveStatus("error");setTimeout(()=>setSaveStatus(null),3500);}
+      const res=tentStore.set(id,JSON.stringify(run));
+      if(typeof window!=="undefined"&&window.storage){try{await window.storage.set(id,JSON.stringify(run));}catch{}}
+      setSaveStatus(res.persisted?"saved":"session");
+      setSavePrompt(false);setSaveName("");
+      setTimeout(()=>setSaveStatus(null),res.persisted?2500:4500);
+      loadRuns();
     }catch{setSaveStatus("error");setTimeout(()=>setSaveStatus(null),3500);}
   };
   const handleDelete = async(id)=>{
     try{
-      const ok=tentStore.del(id);
-      if(!ok&&typeof window!=="undefined"&&window.storage){await window.storage.delete(id);}
+      tentStore.del(id);
+      if(typeof window!=="undefined"&&window.storage){try{await window.storage.delete(id);}catch{}}
       setConfirmDel(null);loadRuns();
     }catch{}
   };
@@ -1552,7 +1645,7 @@ export default function FloraApp() {
         const items = suppData.filter(s=>s.category===catId);
         if(!items.length) return null;
         const meta = CAT_META[catId];
-        const recCount = items.filter(s=>getSuppRec(s,plant,stage)?.level==="recommended").length;
+        const recCount = items.filter(s=>getSuppRec(s,plant,stage,system,water,substrate)?.level==="recommended").length;
         const selCount = items.filter(s=>supps.has(s.id)).length;
         const isOpen = openCats.has(catId);
         return { catId, meta, items, recCount, selCount, isOpen };
@@ -1576,6 +1669,12 @@ export default function FloraApp() {
               {sysCfg.includedKeys.map(k=>INCL_META[k]?.name).filter(Boolean).join(", ")}. Pre-calculated from chart — shown on Results page.
             </div>
           )}
+          <div style={{background:"rgba(120,190,32,0.07)",borderRadius:12,border:"1px solid rgba(120,190,32,0.3)",padding:"12px 14px",marginBottom:14,display:"flex",gap:10,alignItems:"flex-start"}}>
+            <span style={{fontSize:17,flexShrink:0,lineHeight:1.2}}>🌱</span>
+            <div style={{fontSize:12,color:"#3a5a0a",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",lineHeight:1.5}}>
+              <span style={{fontWeight:700}}>Your base nutrients do the heavy lifting.</span> A complete line grows the plant start to finish, so these are optional extras. A supplement only shows <span style={{fontWeight:700,color:"#5a9a10"}}>Recommended</span> when your chosen fertilizer leaves a real gap for this stage and setup. Everything else is yours to add or skip.
+            </div>
+          </div>
           <div style={sectionLabel()}>OPTIONAL SUPPLEMENTS</div>
           {grouped.map(({ catId, meta, items, recCount, selCount, isOpen })=>(
             <div key={catId} style={{marginBottom:8}}>
@@ -1604,14 +1703,14 @@ export default function FloraApp() {
                   {/* Supplement rows sorted recommended first */}
                   {[...items].sort((a,b)=>{
                     const order={recommended:0,optional:1,skip:2};
-                    const ra=getSuppRec(a,plant,stage)?.level||"optional";
-                    const rb=getSuppRec(b,plant,stage)?.level||"optional";
+                    const ra=getSuppRec(a,plant,stage,system,water,substrate)?.level||"optional";
+                    const rb=getSuppRec(b,plant,stage,system,water,substrate)?.level||"optional";
                     return (order[ra]??1)-(order[rb]??1);
                   }).map(s=>{
                     const on=supps.has(s.id), applicable=!!s.dose, tapR=on&&water==="tap"&&s.tapWaterWarning;
                     const conflict=conflictIds.has(s.id)&&on;
                     const rowColor=conflict?"#e05050":meta.color;
-                    const rec=getSuppRec(s,plant,stage);
+                    const rec=getSuppRec(s,plant,stage,system,water,substrate);
                     const recBadge = rec?.level==="recommended"
                       ? {label:"RECOMMENDED", color:GH.green, bg:"rgba(120,190,32,0.1)", border:"rgba(120,190,32,0.35)"}
                       : rec?.level==="skip"
@@ -1819,7 +1918,7 @@ export default function FloraApp() {
             </div>
           ):(
             <div style={{display:"flex",gap:8}}>
-              <button onClick={()=>setSavePrompt(true)} style={{flex:1,padding:"14px 0",background:saveStatus==="saved"?`${GH.green}18`:saveStatus==="error"?"rgba(224,80,80,0.1)":GH.card,border:`1px solid ${saveStatus==="saved"?GH.green:saveStatus==="error"?"#e05050":GH.border}`,borderRadius:14,color:saveStatus==="saved"?GH.green:saveStatus==="error"?"#c03030":GH.text,fontWeight:700,letterSpacing:"0.05em",cursor:"pointer",fontSize:13,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif"}}>{saveStatus==="saved"?"✓ SAVED":saveStatus==="error"?"⚠ COULDN'T SAVE":"＋ SAVE TO TENT"}</button>
+              <button onClick={()=>setSavePrompt(true)} style={{flex:1,padding:"14px 0",background:saveStatus==="saved"?`${GH.green}18`:saveStatus==="session"?"rgba(255,159,10,0.1)":saveStatus==="error"?"rgba(224,80,80,0.1)":GH.card,border:`1px solid ${saveStatus==="saved"?GH.green:saveStatus==="session"?"#FF9F0A":saveStatus==="error"?"#e05050":GH.border}`,borderRadius:14,color:saveStatus==="saved"?GH.green:saveStatus==="session"?"#b5710a":saveStatus==="error"?"#c03030":GH.text,fontWeight:700,letterSpacing:"0.05em",cursor:"pointer",fontSize:13,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif"}}>{saveStatus==="saved"?"✓ SAVED":saveStatus==="session"?"✓ SAVED (THIS SESSION)":saveStatus==="error"?"⚠ COULDN'T SAVE":"＋ SAVE TO TENT"}</button>
               <button onClick={()=>setShowCompare(true)} style={{flex:1,padding:"14px 0",background:GH.card,border:`1px solid ${GH.border}`,borderRadius:14,color:GH.text,fontWeight:700,letterSpacing:"0.05em",cursor:"pointer",fontSize:13,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif"}}>🌿 MY TENT{storageReady&&savedRuns.length>0?` (${savedRuns.length})`:""}</button>
             </div>
           )}
