@@ -51,7 +51,11 @@ const BRAND_LINES = {
     { id:"floranvoa", name:"FloraNova",   color:"#00838F", tagline:"1 · 4 · 8-Part", systems:["floranvoa_1part","floranvoa_4part","floranvoa_8part"] },
   ],
   advanced: [
-    { id:"an_phperfect", name:"pH Perfect Trio", color:"#0072CE", tagline:"Grow · Micro · Bloom", systems:["an_phperfect"] },
+    { id:"an_phperfect",   name:"pH Perfect Trio",        color:"#0072CE", tagline:"Grow · Micro · Bloom (3-part)", systems:["an_phperfect"] },
+    { id:"an_sensi",       name:"pH Perfect Sensi",       color:"#0089D6", tagline:"Grow A+B · Bloom A+B (2-part)", systems:["an_sensi"] },
+    { id:"an_connoisseur", name:"pH Perfect Connoisseur", color:"#1A5FA8", tagline:"Premium Grow & Bloom A+B", systems:["an_connoisseur"] },
+    { id:"an_jungle",      name:"Jungle Juice",           color:"#3DA935", tagline:"Value Grow · Micro · Bloom", systems:["an_jungle"] },
+    { id:"an_iguana",      name:"Iguana Juice",           color:"#7B9A2E", tagline:"Organic Grow & Bloom (2-part)", systems:["an_iguana"] },
   ],
   foxfarm: [
     { id:"ff_trio", name:"Liquid Trio", color:"#E8531B", tagline:"Grow Big · Tiger Bloom · Big Bloom", systems:["ff_trio"] },
@@ -191,6 +195,38 @@ const SYSTEM_CONFIGS = {
     stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
     includedKeys:["an_grow","an_micro","an_bloom"],
   },
+  "an_sensi": {
+    id:"an_sensi", mfr:"advanced", brand:"an_sensi", name:"pH Perfect Sensi", parts:"4", color:"#0089D6",
+    baseLabel:"pH PERFECT SENSI — GROW A+B · BLOOM A+B",
+    tagline:"Sensi Grow A+B · Sensi Bloom A+B",
+    desc:"Two-part pH Perfect base. Sensi Grow A&B in veg, Sensi Bloom A&B in flower — equal parts, added separately.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["an_sensi_grow_a","an_sensi_grow_b","an_sensi_bloom_a","an_sensi_bloom_b"],
+  },
+  "an_connoisseur": {
+    id:"an_connoisseur", mfr:"advanced", brand:"an_connoisseur", name:"pH Perfect Connoisseur", parts:"4", color:"#1A5FA8",
+    baseLabel:"pH PERFECT CONNOISSEUR — GROW A+B · BLOOM A+B",
+    tagline:"Connoisseur Grow A+B · Bloom A+B",
+    desc:"Premium two-part pH Perfect base for experienced growers. Same A&B structure as Sensi, higher-purity inputs.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["an_conn_grow_a","an_conn_grow_b","an_conn_bloom_a","an_conn_bloom_b"],
+  },
+  "an_jungle": {
+    id:"an_jungle", mfr:"advanced", brand:"an_jungle", name:"Jungle Juice", parts:"3", color:"#3DA935",
+    baseLabel:"JUNGLE JUICE — GROW · MICRO · BLOOM",
+    tagline:"Grow · Micro · Bloom",
+    desc:"Value three-part base, built on classic Flora-style ratios (not pH Perfect). Micro stays constant; Grow leads in veg, Bloom in flower.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["an_jj_grow","an_jj_micro","an_jj_bloom"],
+  },
+  "an_iguana": {
+    id:"an_iguana", mfr:"advanced", brand:"an_iguana", name:"Iguana Juice", parts:"2", color:"#7B9A2E",
+    baseLabel:"IGUANA JUICE — ORGANIC GROW & BLOOM",
+    tagline:"Iguana Juice Grow · Bloom",
+    desc:"All-organic OIM base in single bottles. Iguana Juice Grow for veg, Bloom for flower. Not pH Perfect — check pH.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["an_iguana_grow","an_iguana_bloom"],
+  },
   // ── FOX FARM ────────────────────────────────────────────────────────────
   "ff_trio": {
     id:"ff_trio", mfr:"foxfarm", brand:"ff_trio", name:"Liquid Trio", parts:"3", color:"#E8531B",
@@ -245,6 +281,10 @@ const SYSTEM_EXCLUDED_SUPPS = {
   "athena_blended": [],
   "jacks_321": [],
   "an_phperfect": [],
+  "an_sensi": [],
+  "an_connoisseur": [],
+  "an_jungle": [],
+  "an_iguana": [],
   "ff_trio": [],
   "canna_coco": [],
   "canna_terra": [],
@@ -386,7 +426,46 @@ const SCHEDULES = {
     late_flower:  { light:{micro:0,gro:0,bloom:0,an_micro:9.5,an_grow:9.5,an_bloom:9.5}, medium:{micro:0,gro:0,bloom:0,an_micro:11.4,an_grow:11.4,an_bloom:11.4}, aggressive:{micro:0,gro:0,bloom:0,an_micro:15.1,an_grow:15.1,an_bloom:15.1} },
     flush:        { light:{micro:0,gro:0,bloom:0,an_micro:0,an_grow:0,an_bloom:0}, medium:{micro:0,gro:0,bloom:0,an_micro:0,an_grow:0,an_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,an_micro:0,an_grow:0,an_bloom:0}, isFlush:true },
   },
-  // ── Fox Farm Trio (ml/gal — Big Bloom all cycle, Grow Big veg, Tiger Bloom flower) ──
+  // ── AN pH Perfect Sensi (ml/gal — Grow A+B veg, Bloom A+B flower, equal parts) ──
+  "an_sensi": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,an_sensi_grow_a:3.0,an_sensi_grow_b:3.0,an_sensi_bloom_a:0,an_sensi_bloom_b:0}, medium:{micro:0,gro:0,bloom:0,an_sensi_grow_a:3.8,an_sensi_grow_b:3.8,an_sensi_bloom_a:0,an_sensi_bloom_b:0}, aggressive:{micro:0,gro:0,bloom:0,an_sensi_grow_a:5.7,an_sensi_grow_b:5.7,an_sensi_bloom_a:0,an_sensi_bloom_b:0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,an_sensi_grow_a:5.7,an_sensi_grow_b:5.7,an_sensi_bloom_a:0,an_sensi_bloom_b:0}, medium:{micro:0,gro:0,bloom:0,an_sensi_grow_a:7.6,an_sensi_grow_b:7.6,an_sensi_bloom_a:0,an_sensi_bloom_b:0}, aggressive:{micro:0,gro:0,bloom:0,an_sensi_grow_a:9.5,an_sensi_grow_b:9.5,an_sensi_bloom_a:0,an_sensi_bloom_b:0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,an_sensi_grow_a:9.5,an_sensi_grow_b:9.5,an_sensi_bloom_a:0,an_sensi_bloom_b:0}, medium:{micro:0,gro:0,bloom:0,an_sensi_grow_a:11.4,an_sensi_grow_b:11.4,an_sensi_bloom_a:0,an_sensi_bloom_b:0}, aggressive:{micro:0,gro:0,bloom:0,an_sensi_grow_a:15.1,an_sensi_grow_b:15.1,an_sensi_bloom_a:0,an_sensi_bloom_b:0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,an_sensi_grow_a:0,an_sensi_grow_b:0,an_sensi_bloom_a:9.5,an_sensi_bloom_b:9.5}, medium:{micro:0,gro:0,bloom:0,an_sensi_grow_a:0,an_sensi_grow_b:0,an_sensi_bloom_a:11.4,an_sensi_bloom_b:11.4}, aggressive:{micro:0,gro:0,bloom:0,an_sensi_grow_a:0,an_sensi_grow_b:0,an_sensi_bloom_a:15.1,an_sensi_bloom_b:15.1} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,an_sensi_grow_a:0,an_sensi_grow_b:0,an_sensi_bloom_a:11.4,an_sensi_bloom_b:11.4}, medium:{micro:0,gro:0,bloom:0,an_sensi_grow_a:0,an_sensi_grow_b:0,an_sensi_bloom_a:15.1,an_sensi_bloom_b:15.1}, aggressive:{micro:0,gro:0,bloom:0,an_sensi_grow_a:0,an_sensi_grow_b:0,an_sensi_bloom_a:15.1,an_sensi_bloom_b:15.1} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,an_sensi_grow_a:0,an_sensi_grow_b:0,an_sensi_bloom_a:9.5,an_sensi_bloom_b:9.5}, medium:{micro:0,gro:0,bloom:0,an_sensi_grow_a:0,an_sensi_grow_b:0,an_sensi_bloom_a:11.4,an_sensi_bloom_b:11.4}, aggressive:{micro:0,gro:0,bloom:0,an_sensi_grow_a:0,an_sensi_grow_b:0,an_sensi_bloom_a:15.1,an_sensi_bloom_b:15.1} },
+    flush:        { light:{micro:0,gro:0,bloom:0,an_sensi_grow_a:0,an_sensi_grow_b:0,an_sensi_bloom_a:0,an_sensi_bloom_b:0}, medium:{micro:0,gro:0,bloom:0,an_sensi_grow_a:0,an_sensi_grow_b:0,an_sensi_bloom_a:0,an_sensi_bloom_b:0}, aggressive:{micro:0,gro:0,bloom:0,an_sensi_grow_a:0,an_sensi_grow_b:0,an_sensi_bloom_a:0,an_sensi_bloom_b:0}, isFlush:true },
+  },
+  // ── AN pH Perfect Connoisseur (ml/gal — Grow A+B veg, Bloom A+B flower) ──
+  "an_connoisseur": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,an_conn_grow_a:3.0,an_conn_grow_b:3.0,an_conn_bloom_a:0,an_conn_bloom_b:0}, medium:{micro:0,gro:0,bloom:0,an_conn_grow_a:3.8,an_conn_grow_b:3.8,an_conn_bloom_a:0,an_conn_bloom_b:0}, aggressive:{micro:0,gro:0,bloom:0,an_conn_grow_a:5.7,an_conn_grow_b:5.7,an_conn_bloom_a:0,an_conn_bloom_b:0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,an_conn_grow_a:5.7,an_conn_grow_b:5.7,an_conn_bloom_a:0,an_conn_bloom_b:0}, medium:{micro:0,gro:0,bloom:0,an_conn_grow_a:7.6,an_conn_grow_b:7.6,an_conn_bloom_a:0,an_conn_bloom_b:0}, aggressive:{micro:0,gro:0,bloom:0,an_conn_grow_a:9.5,an_conn_grow_b:9.5,an_conn_bloom_a:0,an_conn_bloom_b:0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,an_conn_grow_a:9.5,an_conn_grow_b:9.5,an_conn_bloom_a:0,an_conn_bloom_b:0}, medium:{micro:0,gro:0,bloom:0,an_conn_grow_a:11.4,an_conn_grow_b:11.4,an_conn_bloom_a:0,an_conn_bloom_b:0}, aggressive:{micro:0,gro:0,bloom:0,an_conn_grow_a:15.1,an_conn_grow_b:15.1,an_conn_bloom_a:0,an_conn_bloom_b:0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,an_conn_grow_a:0,an_conn_grow_b:0,an_conn_bloom_a:9.5,an_conn_bloom_b:9.5}, medium:{micro:0,gro:0,bloom:0,an_conn_grow_a:0,an_conn_grow_b:0,an_conn_bloom_a:11.4,an_conn_bloom_b:11.4}, aggressive:{micro:0,gro:0,bloom:0,an_conn_grow_a:0,an_conn_grow_b:0,an_conn_bloom_a:15.1,an_conn_bloom_b:15.1} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,an_conn_grow_a:0,an_conn_grow_b:0,an_conn_bloom_a:11.4,an_conn_bloom_b:11.4}, medium:{micro:0,gro:0,bloom:0,an_conn_grow_a:0,an_conn_grow_b:0,an_conn_bloom_a:15.1,an_conn_bloom_b:15.1}, aggressive:{micro:0,gro:0,bloom:0,an_conn_grow_a:0,an_conn_grow_b:0,an_conn_bloom_a:15.1,an_conn_bloom_b:15.1} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,an_conn_grow_a:0,an_conn_grow_b:0,an_conn_bloom_a:9.5,an_conn_bloom_b:9.5}, medium:{micro:0,gro:0,bloom:0,an_conn_grow_a:0,an_conn_grow_b:0,an_conn_bloom_a:11.4,an_conn_bloom_b:11.4}, aggressive:{micro:0,gro:0,bloom:0,an_conn_grow_a:0,an_conn_grow_b:0,an_conn_bloom_a:15.1,an_conn_bloom_b:15.1} },
+    flush:        { light:{micro:0,gro:0,bloom:0,an_conn_grow_a:0,an_conn_grow_b:0,an_conn_bloom_a:0,an_conn_bloom_b:0}, medium:{micro:0,gro:0,bloom:0,an_conn_grow_a:0,an_conn_grow_b:0,an_conn_bloom_a:0,an_conn_bloom_b:0}, aggressive:{micro:0,gro:0,bloom:0,an_conn_grow_a:0,an_conn_grow_b:0,an_conn_bloom_a:0,an_conn_bloom_b:0}, isFlush:true },
+  },
+  // ── AN Jungle Juice (ml/gal — Flora-style 3-part; Micro constant, Grow veg, Bloom flower) ──
+  "an_jungle": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,an_jj_micro:3.8,an_jj_grow:1.9,an_jj_bloom:1.9}, medium:{micro:0,gro:0,bloom:0,an_jj_micro:4.9,an_jj_grow:2.5,an_jj_bloom:2.5}, aggressive:{micro:0,gro:0,bloom:0,an_jj_micro:5.7,an_jj_grow:3.8,an_jj_bloom:3.8} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,an_jj_micro:7.6,an_jj_grow:9.5,an_jj_bloom:3.8}, medium:{micro:0,gro:0,bloom:0,an_jj_micro:9.5,an_jj_grow:11.4,an_jj_bloom:3.8}, aggressive:{micro:0,gro:0,bloom:0,an_jj_micro:11.4,an_jj_grow:15.1,an_jj_bloom:5.7} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,an_jj_micro:9.5,an_jj_grow:11.4,an_jj_bloom:3.8}, medium:{micro:0,gro:0,bloom:0,an_jj_micro:11.4,an_jj_grow:15.1,an_jj_bloom:3.8}, aggressive:{micro:0,gro:0,bloom:0,an_jj_micro:11.4,an_jj_grow:18.9,an_jj_bloom:5.7} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,an_jj_micro:9.5,an_jj_grow:7.6,an_jj_bloom:9.5}, medium:{micro:0,gro:0,bloom:0,an_jj_micro:11.4,an_jj_grow:7.6,an_jj_bloom:11.4}, aggressive:{micro:0,gro:0,bloom:0,an_jj_micro:11.4,an_jj_grow:9.5,an_jj_bloom:15.1} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,an_jj_micro:9.5,an_jj_grow:3.8,an_jj_bloom:11.4}, medium:{micro:0,gro:0,bloom:0,an_jj_micro:11.4,an_jj_grow:3.8,an_jj_bloom:15.1}, aggressive:{micro:0,gro:0,bloom:0,an_jj_micro:11.4,an_jj_grow:5.7,an_jj_bloom:18.9} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,an_jj_micro:7.6,an_jj_grow:0,an_jj_bloom:9.5}, medium:{micro:0,gro:0,bloom:0,an_jj_micro:9.5,an_jj_grow:0,an_jj_bloom:11.4}, aggressive:{micro:0,gro:0,bloom:0,an_jj_micro:9.5,an_jj_grow:0,an_jj_bloom:15.1} },
+    flush:        { light:{micro:0,gro:0,bloom:0,an_jj_micro:0,an_jj_grow:0,an_jj_bloom:0}, medium:{micro:0,gro:0,bloom:0,an_jj_micro:0,an_jj_grow:0,an_jj_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,an_jj_micro:0,an_jj_grow:0,an_jj_bloom:0}, isFlush:true },
+  },
+  // ── AN Iguana Juice (ml/gal — organic, Grow veg, Bloom flower, single bottles) ──
+  "an_iguana": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,an_iguana_grow:3.8,an_iguana_bloom:0}, medium:{micro:0,gro:0,bloom:0,an_iguana_grow:5.7,an_iguana_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,an_iguana_grow:7.6,an_iguana_bloom:0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,an_iguana_grow:7.6,an_iguana_bloom:0}, medium:{micro:0,gro:0,bloom:0,an_iguana_grow:11.4,an_iguana_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,an_iguana_grow:15.1,an_iguana_bloom:0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,an_iguana_grow:11.4,an_iguana_bloom:0}, medium:{micro:0,gro:0,bloom:0,an_iguana_grow:15.1,an_iguana_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,an_iguana_grow:15.1,an_iguana_bloom:0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,an_iguana_grow:0,an_iguana_bloom:11.4}, medium:{micro:0,gro:0,bloom:0,an_iguana_grow:0,an_iguana_bloom:15.1}, aggressive:{micro:0,gro:0,bloom:0,an_iguana_grow:0,an_iguana_bloom:15.1} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,an_iguana_grow:0,an_iguana_bloom:11.4}, medium:{micro:0,gro:0,bloom:0,an_iguana_grow:0,an_iguana_bloom:15.1}, aggressive:{micro:0,gro:0,bloom:0,an_iguana_grow:0,an_iguana_bloom:15.1} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,an_iguana_grow:0,an_iguana_bloom:11.4}, medium:{micro:0,gro:0,bloom:0,an_iguana_grow:0,an_iguana_bloom:15.1}, aggressive:{micro:0,gro:0,bloom:0,an_iguana_grow:0,an_iguana_bloom:15.1} },
+    flush:        { light:{micro:0,gro:0,bloom:0,an_iguana_grow:0,an_iguana_bloom:0}, medium:{micro:0,gro:0,bloom:0,an_iguana_grow:0,an_iguana_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,an_iguana_grow:0,an_iguana_bloom:0}, isFlush:true },
+  },
   // Chart tsp→ml ×4.929. Big Bloom ~2 Tbsp(30ml), Grow Big 2-3tsp(10-15ml), Tiger Bloom 2tsp(10ml).
   "ff_trio": {
     seedling:     { light:{micro:0,gro:0,bloom:0,ff_grow_big:0,ff_tiger_bloom:0,ff_big_bloom:15}, medium:{micro:0,gro:0,bloom:0,ff_grow_big:0,ff_tiger_bloom:0,ff_big_bloom:30}, aggressive:{micro:0,gro:0,bloom:0,ff_grow_big:5,ff_tiger_bloom:0,ff_big_bloom:30} },
@@ -559,6 +638,42 @@ const EC_RANGES = {
     late_flower:  { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
     flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
   },
+  "an_sensi": {
+    seedling:     { light:[0.6,0.9],  medium:[0.8,1.1],  aggressive:[1.0,1.3]  },
+    early_growth: { light:[1.0,1.4],  medium:[1.3,1.7],  aggressive:[1.6,2.0]  },
+    late_growth:  { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    early_flower: { light:[1.8,2.2],  medium:[2.1,2.5],  aggressive:[2.4,2.8]  },
+    peak_flower:  { light:[2.0,2.4],  medium:[2.3,2.7],  aggressive:[2.6,3.0]  },
+    late_flower:  { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "an_connoisseur": {
+    seedling:     { light:[0.6,0.9],  medium:[0.8,1.1],  aggressive:[1.0,1.3]  },
+    early_growth: { light:[1.0,1.4],  medium:[1.3,1.7],  aggressive:[1.6,2.0]  },
+    late_growth:  { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.3,2.7]  },
+    early_flower: { light:[1.9,2.3],  medium:[2.2,2.6],  aggressive:[2.5,2.9]  },
+    peak_flower:  { light:[2.1,2.5],  medium:[2.4,2.8],  aggressive:[2.7,3.1]  },
+    late_flower:  { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "an_jungle": {
+    seedling:     { light:[0.5,0.8],  medium:[0.7,1.0],  aggressive:[0.9,1.2]  },
+    early_growth: { light:[1.0,1.3],  medium:[1.2,1.6],  aggressive:[1.5,1.9]  },
+    late_growth:  { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    early_flower: { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    peak_flower:  { light:[1.8,2.2],  medium:[2.1,2.5],  aggressive:[2.4,2.8]  },
+    late_flower:  { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    flush:        { light:[0.0,0.3],  medium:[0.0,0.3],  aggressive:[0.0,0.3]  },
+  },
+  "an_iguana": {
+    seedling:     { light:[0.5,0.8],  medium:[0.7,1.0],  aggressive:[0.9,1.2]  },
+    early_growth: { light:[0.9,1.3],  medium:[1.2,1.6],  aggressive:[1.5,1.9]  },
+    late_growth:  { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    early_flower: { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    peak_flower:  { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    late_flower:  { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
   "ff_trio": {
     seedling:     { light:[0.6,0.9],  medium:[0.8,1.1],  aggressive:[1.0,1.3]  },
     early_growth: { light:[1.0,1.4],  medium:[1.3,1.7],  aggressive:[1.6,2.0]  },
@@ -643,6 +758,23 @@ const INCL_META = {
   an_micro:     { name:"pH Perfect Micro", brand:"Advanced Nutrients", color:"#0072CE", icon:"🔵", mixOrder:2, powderNote:"Add FIRST — mix well before Grow" },
   an_grow:      { name:"pH Perfect Grow",  brand:"Advanced Nutrients", color:"#2E7D32", icon:"🌿", mixOrder:3, powderNote:"Add after Micro, mix well" },
   an_bloom:     { name:"pH Perfect Bloom", brand:"Advanced Nutrients", color:"#C2185B", icon:"🌸", mixOrder:4, powderNote:"Add LAST, after Grow" },
+  // Sensi (2-part A+B)
+  an_sensi_grow_a:  { name:"Sensi Grow A",  brand:"Advanced Nutrients", color:"#2E7D32", icon:"🌿", mixOrder:2, powderNote:"Add Grow A first, mix, then Grow B" },
+  an_sensi_grow_b:  { name:"Sensi Grow B",  brand:"Advanced Nutrients", color:"#388E3C", icon:"🌿", mixOrder:3, powderNote:"Add after Grow A — never combine concentrates" },
+  an_sensi_bloom_a: { name:"Sensi Bloom A", brand:"Advanced Nutrients", color:"#C2185B", icon:"🌸", mixOrder:2, powderNote:"Add Bloom A first, mix, then Bloom B" },
+  an_sensi_bloom_b: { name:"Sensi Bloom B", brand:"Advanced Nutrients", color:"#AD1457", icon:"🌸", mixOrder:3, powderNote:"Add after Bloom A — never combine concentrates" },
+  // Connoisseur (2-part A+B premium)
+  an_conn_grow_a:   { name:"Connoisseur Grow A",  brand:"Advanced Nutrients", color:"#2E7D32", icon:"🌿", mixOrder:2, powderNote:"Add Grow A first, mix, then Grow B" },
+  an_conn_grow_b:   { name:"Connoisseur Grow B",  brand:"Advanced Nutrients", color:"#388E3C", icon:"🌿", mixOrder:3, powderNote:"Add after Grow A — never combine concentrates" },
+  an_conn_bloom_a:  { name:"Connoisseur Bloom A", brand:"Advanced Nutrients", color:"#C2185B", icon:"🌸", mixOrder:2, powderNote:"Add Bloom A first, mix, then Bloom B" },
+  an_conn_bloom_b:  { name:"Connoisseur Bloom B", brand:"Advanced Nutrients", color:"#AD1457", icon:"🌸", mixOrder:3, powderNote:"Add after Bloom A — never combine concentrates" },
+  // Jungle Juice (3-part value)
+  an_jj_grow:   { name:"Jungle Juice Grow",  brand:"Advanced Nutrients", color:"#3DA935", icon:"🌿", mixOrder:3, powderNote:"Veg driver" },
+  an_jj_micro:  { name:"Jungle Juice Micro", brand:"Advanced Nutrients", color:"#1565C0", icon:"💧", mixOrder:2, powderNote:"Add Micro first, all cycle" },
+  an_jj_bloom:  { name:"Jungle Juice Bloom", brand:"Advanced Nutrients", color:"#C2185B", icon:"🌸", mixOrder:4, powderNote:"Flower driver" },
+  // Iguana Juice (organic 2-part)
+  an_iguana_grow:  { name:"Iguana Juice Grow",  brand:"Advanced Nutrients", color:"#7B9A2E", icon:"🦎", mixOrder:2, powderNote:"Organic veg base — shake well" },
+  an_iguana_bloom: { name:"Iguana Juice Bloom", brand:"Advanced Nutrients", color:"#9A7B2E", icon:"🦎", mixOrder:2, powderNote:"Organic flower base — shake well" },
   // Fox Farm trio (liquid, ml)
   ff_big_bloom:  { name:"Big Bloom",   brand:"Fox Farm", color:"#6B3F1D", icon:"🌍", mixOrder:2, powderNote:"Organic — runs every feeding, all cycle. Add first" },
   ff_grow_big:   { name:"Grow Big",    brand:"Fox Farm", color:"#2E7D32", icon:"🌿", mixOrder:3, powderNote:"Veg growth driver" },
@@ -657,7 +789,7 @@ const INCL_META = {
   hs_base_b:      { name:"Base B",      brand:"Humboldts Secret", color:"#1B5E20", icon:"🅱️", mixOrder:3, powderNote:"Equal amount to Base A — add after A is mixed in" },
   hs_golden_tree: { name:"Golden Tree", brand:"Humboldts Secret", color:"#C9A227", icon:"🌳", mixOrder:1, powderNote:"All-cycle catalyst — add first to the reservoir" },
 };
-const INCL_EC = { calimagic:0.07, floralicious:0.03, koolbloom:0.08, rapidstart:0.02, ripen_p:0.05, armorsi:0.04, fp_ca_micros:0.0, fp_grow:0.0, fp_bloom:0.0, fp_late_bloom:0.0, bt_grow:0.0, bt_bloom_p:0.0, bt_camg:0.07, bt_bioroot:0.01, bt_bioweed:0.01, bt_biobud:0.02, bt_biomarine:0.02, bt_diamond:0.01, mx_gro:0.0, mx_bloom_p:0.0, mx_calmag:0.07, fn_grow:0.04, fn_bloom:0.04, florakleen:0.0, ath_core:0.0, ath_grow:0.0, ath_bloom:0.0, ath_grow_a:0.0, ath_grow_b:0.0, ath_bloom_a:0.0, ath_bloom_b:0.0, jacks_a:0.0, jacks_epsom:0.0, jacks_b:0.0, an_micro:0.0, an_grow:0.0, an_bloom:0.0, ff_big_bloom:0.0, ff_grow_big:0.0, ff_tiger_bloom:0.0, canna_coco_a:0.0, canna_coco_b:0.0, canna_vega:0.0, canna_flores:0.0, hs_base_a:0.0, hs_base_b:0.0, hs_golden_tree:0.0 };
+const INCL_EC = { calimagic:0.07, floralicious:0.03, koolbloom:0.08, rapidstart:0.02, ripen_p:0.05, armorsi:0.04, fp_ca_micros:0.0, fp_grow:0.0, fp_bloom:0.0, fp_late_bloom:0.0, bt_grow:0.0, bt_bloom_p:0.0, bt_camg:0.07, bt_bioroot:0.01, bt_bioweed:0.01, bt_biobud:0.02, bt_biomarine:0.02, bt_diamond:0.01, mx_gro:0.0, mx_bloom_p:0.0, mx_calmag:0.07, fn_grow:0.04, fn_bloom:0.04, florakleen:0.0, ath_core:0.0, ath_grow:0.0, ath_bloom:0.0, ath_grow_a:0.0, ath_grow_b:0.0, ath_bloom_a:0.0, ath_bloom_b:0.0, jacks_a:0.0, jacks_epsom:0.0, jacks_b:0.0, an_micro:0.0, an_grow:0.0, an_bloom:0.0, an_sensi_grow_a:0.0, an_sensi_grow_b:0.0, an_sensi_bloom_a:0.0, an_sensi_bloom_b:0.0, an_conn_grow_a:0.0, an_conn_grow_b:0.0, an_conn_bloom_a:0.0, an_conn_bloom_b:0.0, an_jj_grow:0.0, an_jj_micro:0.0, an_jj_bloom:0.0, an_iguana_grow:0.0, an_iguana_bloom:0.0, ff_big_bloom:0.0, ff_grow_big:0.0, ff_tiger_bloom:0.0, canna_coco_a:0.0, canna_coco_b:0.0, canna_vega:0.0, canna_flores:0.0, hs_base_a:0.0, hs_base_b:0.0, hs_golden_tree:0.0 };
 const WATER_BOOST_INCL = { calimagic:{ ro:1.25, soft:1.0, tap:0.5 } };
 
 const DWC_EC_CEILING = 2.5;
@@ -773,6 +905,10 @@ const BASE_CALMAG_ADEQUACY = {
   "jacks_321":"full",        // Part B is calcium nitrate; Epsom supplies Mg
   // Advanced Nutrients
   "an_phperfect":"full",     // pH Perfect base includes cal-mag technology
+  "an_sensi":"full",         // pH Perfect — cal-mag built in
+  "an_connoisseur":"full",   // pH Perfect — cal-mag built in
+  "an_jungle":"lean",        // Flora-style clone, not pH Perfect, no cal-mag
+  "an_iguana":"lean",        // organic single bottle, no dedicated Ca/Mg
   // Fox Farm
   "ff_trio":"none",          // liquid trio is well known to need Cal-Mag, esp. coco/RO
   // CANNA
@@ -1219,7 +1355,7 @@ export default function FloraApp() {
 
   const handleSave = async () => {
     const p=PLANTS.find(x=>x.id===plant),s=STAGE_META[stage];
-    const name=saveName.trim()||`${p?.name} · ${s?.label} · ${volume} ${unit}`;
+    const name=saveName.trim()||`${p?.name} · ${s?.label}`;
     const id=`run:${Date.now()}`;
     const run={id,name,system,plant,stage,strength,volume,unit,water,supps:[...supps],savedAt:Date.now()};
     try{
