@@ -1219,7 +1219,7 @@ export default function FloraApp() {
 
   const handleSave = async () => {
     const p=PLANTS.find(x=>x.id===plant),s=STAGE_META[stage];
-    const name=saveName.trim()||`${p?.icon} ${p?.name} · ${s?.label} · ${volume} ${unit}`;
+    const name=saveName.trim()||`${p?.name} · ${s?.label} · ${volume} ${unit}`;
     const id=`run:${Date.now()}`;
     const run={id,name,system,plant,stage,strength,volume,unit,water,supps:[...supps],savedAt:Date.now()};
     try{
@@ -1422,47 +1422,6 @@ export default function FloraApp() {
       const mfrObj = MANUFACTURERS.find(m=>m.id===manufacturer);
       return (
         <div>
-          {storageReady&&savedRuns.length>0&&(
-            <div style={{marginBottom:32}}>
-              <div style={sectionLabel()}>SAVED RUNS</div>
-              {savedRuns.map(run=>{
-                const p=PLANTS.find(x=>x.id===run.plant),st=STAGE_META[run.stage],sys=SYSTEM_CONFIGS[run.system||"3part"];
-                const isConf=confirmDel===run.id;
-                return (
-                  <div key={run.id} style={{background:GH.card,borderRadius:14,border:`1px solid ${GH.border}`,marginBottom:8,overflow:"hidden"}}>
-                    <div style={{display:"flex",alignItems:"center",gap:12,padding:"14px 16px"}}>
-                      <span style={{fontSize:26,flexShrink:0}}>{p?.icon||"🌱"}</span>
-                      <div style={{flex:1,minWidth:0}}>
-                        <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:16,fontWeight:700,color:GH.text,letterSpacing:"0.01em",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{run.name}</div>
-                        <div style={{display:"flex",gap:8,marginTop:3,flexWrap:"wrap"}}>
-                          {sys&&<span style={{fontSize:10,color:sys.color,fontWeight:700,letterSpacing:"0.06em"}}>{sys.name}</span>}
-                          <span style={{fontSize:10,color:GH.dim}}>·</span>
-                          <span style={{fontSize:10,color:st?.color||GH.green}}>{st?.label}</span>
-                          <span style={{fontSize:10,color:GH.dim}}>·</span>
-                          <span style={{fontSize:10,color:GH.muted}}>{run.volume} {run.unit}</span>
-                        </div>
-                      </div>
-                    </div>
-                    {!isConf?(
-                      <div style={{display:"flex",borderTop:`1px solid ${GH.border}`}}>
-                        <button onClick={()=>loadRun(run,8)} style={runBtn(GH.green)}>▶ LOAD</button>
-                        <button onClick={()=>loadRun(run,6)} style={{...runBtn(GH.blue),borderLeft:`1px solid ${GH.border}`}}>✎ MODIFY</button>
-                        <button onClick={()=>setConfirmDel(run.id)} style={{...runBtn("#e05050"),borderLeft:`1px solid ${GH.border}`}}>✕ DELETE</button>
-                      </div>
-                    ):(
-                      <div style={{display:"flex",borderTop:`1px solid #f0d0d0`,background:"rgba(200,50,50,0.06)"}}>
-                        <div style={{flex:1,padding:"11px 14px",fontSize:12,color:"#b05050",display:"flex",alignItems:"center"}}>Delete this run?</div>
-                        <button onClick={()=>handleDelete(run.id)} style={{padding:"11px 20px",background:"rgba(200,50,50,0.15)",border:"none",borderLeft:`1px solid ${GH.border}`,color:"#c03030",cursor:"pointer",fontWeight:700,letterSpacing:"0.08em"}}>YES</button>
-                        <button onClick={()=>setConfirmDel(null)} style={{padding:"11px 20px",background:"none",border:"none",borderLeft:`1px solid ${GH.border}`,color:GH.muted,cursor:"pointer",fontWeight:700,letterSpacing:"0.08em"}}>NO</button>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-              <div style={{height:1,background:`linear-gradient(90deg,transparent,${GH.border},transparent)`,margin:"24px 0"}}/>
-            </div>
-          )}
-
           <button onClick={()=>setStep(1)} style={{display:"flex",alignItems:"center",gap:6,background:"none",border:"none",color:GH.dim,cursor:"pointer",fontSize:12,fontWeight:700,letterSpacing:"0.06em",paddingLeft:0,marginBottom:8}}>← MEDIUM</button>
           <div style={sectionLabel()}>{mfrObj?.name?.toUpperCase()} — SELECT LINE</div>
 
@@ -1909,7 +1868,7 @@ export default function FloraApp() {
           {savePrompt?(
             <div style={{background:GH.card,borderRadius:14,border:`1px solid ${GH.green}55`,padding:14,marginBottom:10}}>
               <div style={{fontSize:12,fontWeight:700,color:GH.green,letterSpacing:"0.06em",marginBottom:8,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif"}}>NAME THIS RUN</div>
-              <input value={saveName} onChange={e=>setSaveName(e.target.value)} placeholder={`${plantObj?.icon||"🌱"} ${plantObj?.name||""} · ${stageObj?.label||""}`}
+              <input value={saveName} onChange={e=>setSaveName(e.target.value)} placeholder={`${plantObj?.name||""} · ${stageObj?.label||""}`}
                 style={{width:"100%",padding:"12px 14px",fontSize:15,borderRadius:10,border:`1px solid ${GH.border}`,outline:"none",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",marginBottom:10}}/>
               <div style={{display:"flex",gap:8}}>
                 <button onClick={handleSave} style={{flex:1,padding:"12px 0",background:GH.green,border:"none",borderRadius:12,color:"#fff",fontWeight:700,letterSpacing:"0.06em",cursor:"pointer",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif"}}>SAVE</button>
