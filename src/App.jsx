@@ -1088,11 +1088,39 @@ export default function FloraApp() {
   const [storageReady,  setStorageReady]   = useState(false);
   const [showCompare,   setShowCompare]    = useState(false);
 
+  // Persistent storage layer. Uses localStorage on the deployed PWA (works on
+  // iPhone Safari); falls back to the in-preview window.storage API when present.
+  const tentStore = {
+    list:(prefix)=>{
+      try{
+        if(typeof window!=="undefined"&&window.localStorage){
+          const keys=[];
+          for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(prefix))keys.push(k);}
+          return keys;
+        }
+      }catch{}
+      return null; // signal: try async fallback
+    },
+    get:(key)=>{ try{ return localStorage.getItem(key); }catch{ return null; } },
+    set:(key,val)=>{ try{ localStorage.setItem(key,val); return true; }catch{ return false; } },
+    del:(key)=>{ try{ localStorage.removeItem(key); return true; }catch{ return false; } },
+  };
+
   const loadRuns = async () => {
     try {
-      const res=await window.storage.list("run:");const runs=[];
-      for(const key of (res?.keys||[])){try{const item=await window.storage.get(key);if(item?.value)runs.push(JSON.parse(item.value));}catch{}}
-      runs.sort((a,b)=>b.savedAt-a.savedAt);setSavedRuns(runs);
+      // Preferred path: localStorage (deployed site)
+      const localKeys=tentStore.list("run:");
+      if(localKeys!==null){
+        const runs=[];
+        for(const key of localKeys){try{const v=tentStore.get(key);if(v)runs.push(JSON.parse(v));}catch{}}
+        runs.sort((a,b)=>b.savedAt-a.savedAt);setSavedRuns(runs);setStorageReady(true);return;
+      }
+      // Fallback: in-preview async storage API
+      if(typeof window!=="undefined"&&window.storage){
+        const res=await window.storage.list("run:");const runs=[];
+        for(const key of (res?.keys||[])){try{const item=await window.storage.get(key);if(item?.value)runs.push(JSON.parse(item.value));}catch{}}
+        runs.sort((a,b)=>b.savedAt-a.savedAt);setSavedRuns(runs);
+      }
     } catch{setSavedRuns([]);}
     setStorageReady(true);
   };
@@ -1103,9 +1131,20 @@ export default function FloraApp() {
     const name=saveName.trim()||`${p?.icon} ${p?.name} · ${s?.label} · ${volume} ${unit}`;
     const id=`run:${Date.now()}`;
     const run={id,name,system,plant,stage,strength,volume,unit,water,supps:[...supps],savedAt:Date.now()};
-    try{await window.storage.set(id,JSON.stringify(run));setSaveStatus("saved");setSavePrompt(false);setSaveName("");setTimeout(()=>setSaveStatus(null),2500);loadRuns();}catch{setSaveStatus("error");}
+    try{
+      let ok=tentStore.set(id,JSON.stringify(run));
+      if(!ok&&typeof window!=="undefined"&&window.storage){await window.storage.set(id,JSON.stringify(run));ok=true;}
+      if(ok){setSaveStatus("saved");setSavePrompt(false);setSaveName("");setTimeout(()=>setSaveStatus(null),2500);loadRuns();}
+      else{setSaveStatus("error");setTimeout(()=>setSaveStatus(null),3500);}
+    }catch{setSaveStatus("error");setTimeout(()=>setSaveStatus(null),3500);}
   };
-  const handleDelete = async(id)=>{try{await window.storage.delete(id);setConfirmDel(null);loadRuns();}catch{}};
+  const handleDelete = async(id)=>{
+    try{
+      const ok=tentStore.del(id);
+      if(!ok&&typeof window!=="undefined"&&window.storage){await window.storage.delete(id);}
+      setConfirmDel(null);loadRuns();
+    }catch{}
+  };
 
   // Compact computed summary for the comparison view (EC + stage grouping)
   const FLOWER_STAGES = new Set(["early_flower","peak_flower","late_flower"]);
@@ -1780,7 +1819,7 @@ export default function FloraApp() {
             </div>
           ):(
             <div style={{display:"flex",gap:8}}>
-              <button onClick={()=>setSavePrompt(true)} style={{flex:1,padding:"14px 0",background:saveStatus==="saved"?`${GH.green}18`:GH.card,border:`1px solid ${saveStatus==="saved"?GH.green:GH.border}`,borderRadius:14,color:saveStatus==="saved"?GH.green:GH.text,fontWeight:700,letterSpacing:"0.05em",cursor:"pointer",fontSize:13,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif"}}>{saveStatus==="saved"?"✓ SAVED":"＋ SAVE TO TENT"}</button>
+              <button onClick={()=>setSavePrompt(true)} style={{flex:1,padding:"14px 0",background:saveStatus==="saved"?`${GH.green}18`:saveStatus==="error"?"rgba(224,80,80,0.1)":GH.card,border:`1px solid ${saveStatus==="saved"?GH.green:saveStatus==="error"?"#e05050":GH.border}`,borderRadius:14,color:saveStatus==="saved"?GH.green:saveStatus==="error"?"#c03030":GH.text,fontWeight:700,letterSpacing:"0.05em",cursor:"pointer",fontSize:13,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif"}}>{saveStatus==="saved"?"✓ SAVED":saveStatus==="error"?"⚠ COULDN'T SAVE":"＋ SAVE TO TENT"}</button>
               <button onClick={()=>setShowCompare(true)} style={{flex:1,padding:"14px 0",background:GH.card,border:`1px solid ${GH.border}`,borderRadius:14,color:GH.text,fontWeight:700,letterSpacing:"0.05em",cursor:"pointer",fontSize:13,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif"}}>🌿 MY TENT{storageReady&&savedRuns.length>0?` (${savedRuns.length})`:""}</button>
             </div>
           )}
