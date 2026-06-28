@@ -1,0 +1,50 @@
+# robots.txt for floraseriescalc.com
+# Allow normal search engines; discourage AI training crawlers.
+# Note: robots.txt is advisory. Well-behaved crawlers honor it; others ignore
+# it, which is why Cloudflare's edge rules (Block AI bots / AI Labyrinth) are
+# the real enforcement layer.
+
+User-agent: *
+Allow: /
+
+# AI training / scraping crawlers
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: Omgilibot
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: Diffbot
+Disallow: /
+
+User-agent: ImagesiftBot
+Disallow: /
+
+Sitemap: https://floraseriescalc.com/sitemap.xml

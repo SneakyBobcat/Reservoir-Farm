@@ -670,9 +670,9 @@ const SUPP_EC_PER_ML_GAL = {
 };
 
 const STRENGTH_META = {
-  light:      { label:"Light",      color:"#00AEEF", desc:"Hot/dry weather · Young plants" },
-  medium:     { label:"Medium",     color:"#78BE20", desc:"Normal conditions · Established plants" },
-  aggressive: { label:"Aggressive", color:"#F7941D", desc:"Cool/humid weather · Heavy feeders" },
+  light:      { label:"Light",      color:"#00AEEF", desc:"Hot/dry weather · Young plants", light:"Low light — windowsill, low-watt LED, far from canopy", dli:"DLI ≈ 10–20" },
+  medium:     { label:"Medium",     color:"#78BE20", desc:"Normal conditions · Established plants", light:"Moderate light — mid-range LED at proper height", dli:"DLI ≈ 20–35" },
+  aggressive: { label:"Aggressive", color:"#F7941D", desc:"Cool/humid weather · Heavy feeders", light:"High-intensity light — strong LED/HID, CO₂ enrichment", dli:"DLI ≈ 35–50+" },
 };
 
 const CAT_META = {
@@ -1086,6 +1086,7 @@ export default function FloraApp() {
   const [confirmDel,   setConfirmDel]   = useState(null);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [storageReady,  setStorageReady]   = useState(false);
+  const [showCompare,   setShowCompare]    = useState(false);
 
   const loadRuns = async () => {
     try {
@@ -1105,6 +1106,24 @@ export default function FloraApp() {
     try{await window.storage.set(id,JSON.stringify(run));setSaveStatus("saved");setSavePrompt(false);setSaveName("");setTimeout(()=>setSaveStatus(null),2500);loadRuns();}catch{setSaveStatus("error");}
   };
   const handleDelete = async(id)=>{try{await window.storage.delete(id);setConfirmDel(null);loadRuns();}catch{}};
+
+  // Compact computed summary for the comparison view (EC + stage grouping)
+  const FLOWER_STAGES = new Set(["early_flower","peak_flower","late_flower"]);
+  const runSummary = (run)=>{
+    const sys=run.system||"3part";
+    const cfg=SYSTEM_CONFIGS[sys];
+    const gal = run.unit==="gallons" ? run.volume : run.volume/3.78541;
+    let ec=null;
+    try{
+      const c=computeCore(sys,run.stage,run.strength,gal,run.plant,run.water,"hydro",true);
+      const ceil=PLANT_MODIFIERS[run.plant]?.ecCeiling??DWC_EC_CEILING;
+      const ecObj=calcEC(sys,run.stage,run.strength,gal,run.water,[],c?.included||{},ceil,"hydro");
+      ec=ecObj?.estimated??null;
+    }catch{}
+    const st=STAGE_META[run.stage];
+    const phase = run.stage==="flush"?"flush":FLOWER_STAGES.has(run.stage)?"flower":"veg";
+    return { sys, cfg, ec, st, phase };
+  };
   const loadRun = (run,targetStep)=>{
     const sys=run.system||"3part";
     const cfg=SYSTEM_CONFIGS[sys];
@@ -1194,6 +1213,17 @@ export default function FloraApp() {
         <div style={{fontSize:12,color:"#444",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",marginBottom:20,lineHeight:1.6}}>
           Choose the nutrient manufacturer you're feeding with. Each brand has its own product lines and dosing chart.
         </div>
+        {storageReady&&savedRuns.length>0&&(
+          <button onClick={()=>setShowCompare(true)}
+            style={{display:"flex",alignItems:"center",gap:12,width:"100%",marginBottom:20,padding:"14px 18px",background:"rgba(120,190,32,0.08)",border:"1px solid rgba(120,190,32,0.4)",borderRadius:14,cursor:"pointer",textAlign:"left"}}>
+            <span style={{fontSize:24,flexShrink:0}}>🌿</span>
+            <div style={{flex:1}}>
+              <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:16,fontWeight:700,color:"#5a9a10"}}>My Tent</div>
+              <div style={{fontSize:11,color:"#777",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",marginTop:1}}>{savedRuns.length} saved {savedRuns.length===1?"plant":"plants"} — view side by side</div>
+            </div>
+            <span style={{color:"#78BE20",fontSize:20,fontWeight:700}}>→</span>
+          </button>
+        )}
         {MANUFACTURERS.map(m=>{
           const sel=manufacturer===m.id;
           return (
@@ -1441,6 +1471,14 @@ export default function FloraApp() {
         {water==="ro"   &&<div style={ghAlert(GH.green)}>RO/DI: 0.0 EC baseline. CALiMAGiC boosted 1.25× — pure water has no buffering capacity.</div>}
 
         <div style={{...sectionLabel(),marginTop:24}}>FEED STRENGTH</div>
+        {!sysCfg?.isPowder&&(
+          <div style={{background:"rgba(10,132,255,0.07)",borderRadius:12,border:"1px solid rgba(10,132,255,0.28)",padding:"11px 14px",marginBottom:12,display:"flex",gap:9,alignItems:"flex-start"}}>
+            <span style={{fontSize:16,flexShrink:0,lineHeight:1.3}}>💡</span>
+            <div style={{fontSize:12,color:"#1a4a7a",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",lineHeight:1.5}}>
+              <span style={{fontWeight:700}}>Match strength to your light.</span> Brighter light lets plants use more nutrients, so high-intensity setups feed harder and low-light setups feed lighter. Use your grow light as the guide below.
+            </div>
+          </div>
+        )}
         {sysCfg?.isPowder?(
           <div style={ghAlert(sysCfg.color)}>
             <strong style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",letterSpacing:"0.06em"}}>{sysCfg.name}</strong> uses fixed doses from the official GH Powder Feed Program chart — no strength tiers. Doses shown are ml/gal of <strong>1 lb/gal concentrated stock solution</strong>, not direct additions. Standard and High EC are separate programs.
@@ -1449,13 +1487,17 @@ export default function FloraApp() {
           const sel=strength===key;
           return (
             <button key={key} onClick={()=>setStrength(key)}
-              style={{display:"flex",alignItems:"center",gap:14,width:"100%",marginBottom:8,padding:"16px 18px",background:sel?`${meta.color}18`:GH.card,border:`1px solid ${sel?meta.color:GH.border}`,cursor:"pointer",textAlign:"left",transition:"all 0.15s"}}>
+              style={{display:"flex",alignItems:"center",gap:14,width:"100%",marginBottom:8,padding:"16px 18px",background:sel?`${meta.color}18`:GH.card,borderRadius:14,border:`1px solid ${sel?meta.color:GH.border}`,cursor:"pointer",textAlign:"left",transition:"all 0.15s"}}>
               <div style={{width:14,height:14,borderRadius:"50%",background:meta.color,flexShrink:0}}/>
               <div style={{flex:1}}>
-                <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:17,fontWeight:700,color:sel?meta.color:GH.text,textTransform:"uppercase",letterSpacing:"0.04em"}}>{meta.label}</div>
-                <div style={{fontSize:11,color:GH.dim,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",marginTop:2}}>{meta.desc}</div>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <span style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:17,fontWeight:700,color:sel?meta.color:GH.text,textTransform:"uppercase",letterSpacing:"0.04em"}}>{meta.label}</span>
+                  <span style={{fontSize:9,fontWeight:700,color:meta.color,background:`${meta.color}1a`,borderRadius:6,padding:"2px 7px",letterSpacing:"0.04em",whiteSpace:"nowrap"}}>{meta.dli}</span>
+                </div>
+                <div style={{fontSize:11,color:GH.text,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",marginTop:3,fontWeight:500}}>{meta.light}</div>
+                <div style={{fontSize:10,color:GH.dim,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",marginTop:2}}>{meta.desc}</div>
               </div>
-              {sel&&<div style={{width:3,height:36,background:meta.color,borderRadius:2}}/>}
+              {sel&&<div style={{width:3,height:48,background:meta.color,borderRadius:2}}/>}
             </button>
           );
         })}
@@ -1724,6 +1766,26 @@ export default function FloraApp() {
           </div>
         </div>
 
+        {/* Save + Compare actions */}
+        <div style={{marginTop:20,paddingTop:18,borderTop:`1px solid ${GH.border}`}}>
+          {savePrompt?(
+            <div style={{background:GH.card,borderRadius:14,border:`1px solid ${GH.green}55`,padding:14,marginBottom:10}}>
+              <div style={{fontSize:12,fontWeight:700,color:GH.green,letterSpacing:"0.06em",marginBottom:8,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif"}}>NAME THIS RUN</div>
+              <input value={saveName} onChange={e=>setSaveName(e.target.value)} placeholder={`${plantObj?.icon||"🌱"} ${plantObj?.name||""} · ${stageObj?.label||""}`}
+                style={{width:"100%",padding:"12px 14px",fontSize:15,borderRadius:10,border:`1px solid ${GH.border}`,outline:"none",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",marginBottom:10}}/>
+              <div style={{display:"flex",gap:8}}>
+                <button onClick={handleSave} style={{flex:1,padding:"12px 0",background:GH.green,border:"none",borderRadius:12,color:"#fff",fontWeight:700,letterSpacing:"0.06em",cursor:"pointer",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif"}}>SAVE</button>
+                <button onClick={()=>{setSavePrompt(false);setSaveName("");}} style={{flex:1,padding:"12px 0",background:"none",border:`1px solid ${GH.border}`,borderRadius:12,color:GH.muted,fontWeight:700,letterSpacing:"0.06em",cursor:"pointer",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif"}}>CANCEL</button>
+              </div>
+            </div>
+          ):(
+            <div style={{display:"flex",gap:8}}>
+              <button onClick={()=>setSavePrompt(true)} style={{flex:1,padding:"14px 0",background:saveStatus==="saved"?`${GH.green}18`:GH.card,border:`1px solid ${saveStatus==="saved"?GH.green:GH.border}`,borderRadius:14,color:saveStatus==="saved"?GH.green:GH.text,fontWeight:700,letterSpacing:"0.05em",cursor:"pointer",fontSize:13,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif"}}>{saveStatus==="saved"?"✓ SAVED":"＋ SAVE TO TENT"}</button>
+              <button onClick={()=>setShowCompare(true)} style={{flex:1,padding:"14px 0",background:GH.card,border:`1px solid ${GH.border}`,borderRadius:14,color:GH.text,fontWeight:700,letterSpacing:"0.05em",cursor:"pointer",fontSize:13,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif"}}>🌿 MY TENT{storageReady&&savedRuns.length>0?` (${savedRuns.length})`:""}</button>
+            </div>
+          )}
+        </div>
+
       </div>
     );
     return null;
@@ -1757,7 +1819,7 @@ export default function FloraApp() {
               {(step>0&&MANUFACTURERS.find(m=>m.id===manufacturer)?.name)||"Nutrient Calculator"} <span style={{color:(step>0&&MANUFACTURERS.find(m=>m.id===manufacturer)?.color)||"#78BE20"}}>™</span>
             </div>
           </div>
-          {sysCfg&&(
+          {step>0&&sysCfg&&(
             <div style={{textAlign:"right"}}>
               <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:11,fontWeight:700,color:sysCfg.color,letterSpacing:"0.1em",textTransform:"uppercase"}}>{sysCfg.isPowder?(sysCfg.id.startsWith("bt")?"BIO":sysCfg.parts+"-PT"):sysCfg.parts+"-PART"}</div>
               <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:13,fontWeight:700,color:"#777",letterSpacing:"0.06em",textTransform:"uppercase"}}>{sysCfg.name.replace(/\d+-Part |FloraPro |BioThrive /,"")}</div>
@@ -1792,6 +1854,81 @@ export default function FloraApp() {
       </div>
 
       {/* Disclaimer Modal — rendered at top level so it's not affected by step changes */}
+      {showCompare&&(
+        <div style={{position:"fixed",top:0,left:0,right:0,bottom:0,background:"rgba(0,0,0,0.6)",zIndex:1000,display:"flex",alignItems:"flex-end",justifyContent:"center"}}
+          onClick={()=>setShowCompare(false)}>
+          <div style={{background:"#F2F2F7",width:"100%",maxWidth:600,maxHeight:"88vh",overflowY:"auto",padding:"24px 18px 40px",borderRadius:"20px 20px 0 0"}}
+            onClick={e=>e.stopPropagation()}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:6}}>
+              <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:22,fontWeight:900,color:"#111",letterSpacing:"0.02em"}}>My Tent</div>
+              <button onClick={()=>setShowCompare(false)} style={{background:"none",border:"none",fontSize:22,color:"#777",cursor:"pointer",lineHeight:1}}>✕</button>
+            </div>
+            <div style={{fontSize:12,color:"#666",marginBottom:18,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",lineHeight:1.5}}>
+              Every plant you've saved, side by side. Useful when different crops or stages share a tent.
+            </div>
+            {(()=>{
+              if(!storageReady||savedRuns.length===0){
+                return <div style={{textAlign:"center",padding:"40px 20px",color:"#999",fontSize:14,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif"}}>No saved plants yet. Tap <strong>＋ Save to Tent</strong> on any result to add one here.</div>;
+              }
+              const summaries=savedRuns.map(r=>({run:r,...runSummary(r)}));
+              const phases=new Set(summaries.map(s=>s.phase).filter(p=>p!=="flush"));
+              const ecVals=summaries.map(s=>s.ec).filter(v=>typeof v==="number");
+              const ecSpread = ecVals.length>1 ? Math.max(...ecVals)-Math.min(...ecVals) : 0;
+              const mixedStages = phases.size>1;
+              const wideEc = ecSpread>=0.6;
+              return (
+                <div>
+                  {(mixedStages||wideEc)&&(
+                    <div style={{background:"rgba(255,159,10,0.1)",borderRadius:12,border:"1px solid rgba(255,159,10,0.4)",padding:"12px 14px",marginBottom:14,display:"flex",gap:10,alignItems:"flex-start"}}>
+                      <span style={{fontSize:17,flexShrink:0,lineHeight:1.2}}>⚠️</span>
+                      <div style={{fontSize:12,color:"#7a4a00",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",lineHeight:1.5}}>
+                        {mixedStages
+                          ? <span><strong>These plants are in different phases</strong> (veg and flower together). They want different EC and nutrient ratios, so a single shared reservoir is a compromise. For best results, give veg and flower plants separate reservoirs.</span>
+                          : <span><strong>Wide EC spread ({ecVals.length>1?`${Math.min(...ecVals)}–${Math.max(...ecVals)}`:""}).</strong> These plants want noticeably different strengths. Feed to the lower number if sharing a reservoir, and watch the heavier feeders for hunger.</span>}
+                      </div>
+                    </div>
+                  )}
+                  {summaries.map(({run,cfg,ec,st,phase})=>{
+                    const isConf=confirmDel===run.id;
+                    return (
+                      <div key={run.id} style={{background:"#fff",borderRadius:14,border:`1px solid ${phase==="flower"?"#e07a3a44":phase==="flush"?"#88888844":"#78BE2044"}`,borderLeft:`4px solid ${st?.color||"#78BE20"}`,marginBottom:8,overflow:"hidden"}}>
+                        <div style={{padding:"13px 15px"}}>
+                          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:8}}>
+                            <span style={{fontSize:22,flexShrink:0}}>{PLANTS.find(p=>p.id===run.plant)?.icon||"🌱"}</span>
+                            <div style={{flex:1,minWidth:0}}>
+                              <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:15,fontWeight:700,color:"#111",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{run.name}</div>
+                              <div style={{fontSize:11,color:"#888",marginTop:1,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif"}}>{cfg?.name}</div>
+                            </div>
+                            <span style={{fontSize:10,fontWeight:700,color:st?.color,background:`${st?.color}1a`,borderRadius:7,padding:"3px 9px",whiteSpace:"nowrap",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif"}}>{st?.label}</span>
+                          </div>
+                          <div style={{display:"flex",gap:16,flexWrap:"wrap"}}>
+                            <div><span style={{fontSize:10,color:"#999",letterSpacing:"0.05em"}}>EST. EC </span><span style={{fontSize:14,fontWeight:800,color:st?.color||"#78BE20",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif"}}>{ec??"—"}</span></div>
+                            <div><span style={{fontSize:10,color:"#999",letterSpacing:"0.05em"}}>VOLUME </span><span style={{fontSize:14,fontWeight:800,color:"#444",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif"}}>{run.volume} {run.unit==="gallons"?"gal":"L"}</span></div>
+                            <div><span style={{fontSize:10,color:"#999",letterSpacing:"0.05em"}}>FEED </span><span style={{fontSize:14,fontWeight:800,color:"#444",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif"}}>{STRENGTH_META[run.strength]?.label||run.strength}</span></div>
+                          </div>
+                        </div>
+                        {!isConf?(
+                          <div style={{display:"flex",borderTop:"1px solid #eee"}}>
+                            <button onClick={()=>{setShowCompare(false);loadRun(run,8);}} style={{flex:1,padding:"10px 0",background:"none",border:"none",color:"#78BE20",cursor:"pointer",fontWeight:700,fontSize:12,letterSpacing:"0.05em"}}>▶ OPEN</button>
+                            <button onClick={()=>setConfirmDel(run.id)} style={{flex:1,padding:"10px 0",background:"none",border:"none",borderLeft:"1px solid #eee",color:"#e05050",cursor:"pointer",fontWeight:700,fontSize:12,letterSpacing:"0.05em"}}>✕ REMOVE</button>
+                          </div>
+                        ):(
+                          <div style={{display:"flex",borderTop:"1px solid #f0d0d0",background:"rgba(200,50,50,0.06)"}}>
+                            <div style={{flex:1,padding:"10px 14px",fontSize:12,color:"#b05050",display:"flex",alignItems:"center"}}>Remove from tent?</div>
+                            <button onClick={()=>handleDelete(run.id)} style={{padding:"10px 18px",background:"rgba(200,50,50,0.15)",border:"none",color:"#c03030",cursor:"pointer",fontWeight:700,fontSize:12}}>YES</button>
+                            <button onClick={()=>setConfirmDel(null)} style={{padding:"10px 18px",background:"none",border:"none",color:"#888",cursor:"pointer",fontWeight:700,fontSize:12}}>NO</button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
+          </div>
+        </div>
+      )}
+
       {showDisclaimer&&(
         <div style={{position:"fixed",top:0,left:0,right:0,bottom:0,background:"rgba(0,0,0,0.6)",zIndex:1000,display:"flex",alignItems:"flex-end",justifyContent:"center"}}
           onClick={()=>setShowDisclaimer(false)}>
