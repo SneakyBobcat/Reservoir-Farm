@@ -31,44 +31,85 @@ const PLANTS = [
   { id:"houseplants",  name:"Houseplants",     icon:"🪴", maxStages:[...VEG_ONLY] },
 ];
 
+const MANUFACTURERS = [
+  { id:"gh",     name:"General Hydroponics", short:"GH",     icon:"🌊", color:"#78BE20", desc:"Flora Series, FloraNova, MaxiSeries, BioThrive, FloraPro" },
+  { id:"advanced", name:"Advanced Nutrients", short:"AN",  icon:"🧬", color:"#0072CE", desc:"pH Perfect Grow · Micro · Bloom" },
+  { id:"foxfarm", name:"Fox Farm",           short:"FF",    icon:"🦊", color:"#E8531B", desc:"Grow Big · Tiger Bloom · Big Bloom trio" },
+  { id:"canna",   name:"CANNA",              short:"CANNA", icon:"🅒", color:"#E2001A", desc:"Coco A+B · Terra Vega & Flores" },
+  { id:"humboldts", name:"Humboldts Secret", short:"HS",   icon:"🌳", color:"#C9A227", desc:"Base A+B · Golden Tree · PPM-targeted" },
+  { id:"athena", name:"Athena",              short:"Athena", icon:"⚫", color:"#1A1A1A", desc:"Pro Line powder · Blended Line liquid" },
+  { id:"jacks",  name:"Jack's Nutrients",    short:"Jack's", icon:"🅰️", color:"#C8102E", desc:"The 3-2-1 dry program" },
+];
+
+// Brand lines within each manufacturer. {id, name, color, systems:[systemId...]}
+const BRAND_LINES = {
+  gh: [
+    { id:"classic",   name:"Classic",     color:"#78BE20", tagline:"3 · 6 · 10-Part", systems:["3part","6part","10part"] },
+    { id:"florapro",  name:"FloraPro",    color:"#1B9E78", tagline:"Standard · High EC", systems:["florapro_std","florapro_highec"] },
+    { id:"biothrive", name:"BioThrive",   color:"#E8910A", tagline:"Basic · Custom", systems:["biothrive_basic","biothrive_custom"] },
+    { id:"maxi",      name:"MaxiSeries",  color:"#1565C0", tagline:"Indoor · Outdoor", systems:["maxi_indoor","maxi_outdoor"] },
+    { id:"floranvoa", name:"FloraNova",   color:"#00838F", tagline:"1 · 4 · 8-Part", systems:["floranvoa_1part","floranvoa_4part","floranvoa_8part"] },
+  ],
+  advanced: [
+    { id:"an_phperfect", name:"pH Perfect Trio", color:"#0072CE", tagline:"Grow · Micro · Bloom", systems:["an_phperfect"] },
+  ],
+  foxfarm: [
+    { id:"ff_trio", name:"Liquid Trio", color:"#E8531B", tagline:"Grow Big · Tiger Bloom · Big Bloom", systems:["ff_trio"] },
+  ],
+  canna: [
+    { id:"canna_coco",  name:"Coco A+B",  color:"#E2001A", tagline:"Coco A · Coco B", systems:["canna_coco"] },
+    { id:"canna_terra", name:"Terra",     color:"#B8001A", tagline:"Terra Vega · Terra Flores", systems:["canna_terra"] },
+  ],
+  humboldts: [
+    { id:"hs_starter", name:"Starter Kit", color:"#C9A227", tagline:"Base A+B · Golden Tree", systems:["hs_starter"] },
+  ],
+  athena: [
+    { id:"athena_proline", name:"Pro Line",     color:"#1A1A1A", tagline:"Dry soluble · commercial", systems:["athena_pro"] },
+    { id:"athena_blended", name:"Blended Line", color:"#3A3A3A", tagline:"Liquid A+B", systems:["athena_blended"] },
+  ],
+  jacks: [
+    { id:"jacks_321", name:"Jack's 321", color:"#C8102E", tagline:"Part A · Epsom · Part B", systems:["jacks_321"] },
+  ],
+};
+
 const SYSTEM_CONFIGS = {
   "3part": {
-    id:"3part", name:"3-Part Classic", parts:3, color:"#78BE20",
+    id:"3part", mfr:"gh", brand:"classic", name:"3-Part Classic", parts:3, color:"#78BE20",
     tagline:"FloraMicro · FloraGro · FloraBloom",
     desc:"Clean, versatile foundation for all grow styles.",
     stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
     includedKeys:[],
   },
   "6part": {
-    id:"6part", name:"6-Part Advanced", parts:6, color:"#00AEEF",
+    id:"6part", mfr:"gh", brand:"classic", name:"6-Part Advanced", parts:6, color:"#00AEEF",
     tagline:"3-Part + CALiMAGiC · Floralicious Plus · Liquid KoolBloom",
     desc:"Enhanced Ca/Mg support and organic bloom performance.",
     stages:["early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
     includedKeys:["calimagic","floralicious","koolbloom"],
   },
   "10part": {
-    id:"10part", name:"10-Part Professional", parts:10, color:"#F7941D",
+    id:"10part", mfr:"gh", brand:"classic", name:"10-Part Professional", parts:10, color:"#F7941D",
     tagline:"6-Part + RapidStart · Ripen · Armor Si · FloraKleen",
     desc:"Maximum yield system with root stimulation and ripening.",
     stages:["early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
     includedKeys:["calimagic","floralicious","koolbloom","rapidstart","ripen_p","armorsi","florakleen"],
   },
   "florapro_std": {
-    id:"florapro_std", name:"FloraPro Standard", parts:"PWD", color:"#1B9E78", isPowder:true,
+    id:"florapro_std", mfr:"gh", brand:"florapro", name:"FloraPro Standard", parts:"PWD", color:"#1B9E78", isPowder:true,
     tagline:"Ca+Micros · Grow · Bloom · Late Bloom",
     desc:"Powder concentrate program for commercial & high-performance grows. Standard EC.",
     stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
     includedKeys:["fp_ca_micros","fp_grow","fp_bloom","fp_late_bloom"],
   },
   "florapro_highec": {
-    id:"florapro_highec", name:"FloraPro High EC", parts:"PWD", color:"#7B4FA8", isPowder:true,
+    id:"florapro_highec", mfr:"gh", brand:"florapro", name:"FloraPro High EC", parts:"PWD", color:"#7B4FA8", isPowder:true,
     tagline:"Ca+Micros · Grow · Bloom · Late Bloom",
     desc:"Powder concentrate program optimized for high EC environments and maximum production.",
     stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
     includedKeys:["fp_ca_micros","fp_grow","fp_bloom","fp_late_bloom"],
   },
   "biothrive_basic": {
-    id:"biothrive_basic", name:"BioThrive Basic", parts:"2", color:"#E8910A", isPowder:true,
+    id:"biothrive_basic", mfr:"gh", brand:"biothrive", name:"BioThrive Basic", parts:"2", color:"#E8910A", isPowder:true,
     baseLabel:"BIOTHRIVE 2-PART NUTRIENT PROGRAM",
     tagline:"BioThrive Grow · BioThrive Bloom · CaMg+",
     desc:"Professional 2-part organic-based system. Grow for veg, Bloom for flower — CaMg+ throughout.",
@@ -76,7 +117,7 @@ const SYSTEM_CONFIGS = {
     includedKeys:["bt_grow","bt_bloom_p","bt_camg"],
   },
   "biothrive_custom": {
-    id:"biothrive_custom", name:"BioThrive Custom", parts:"7", color:"#2E7D32", isPowder:true,
+    id:"biothrive_custom", mfr:"gh", brand:"biothrive", name:"BioThrive Custom", parts:"7", color:"#2E7D32", isPowder:true,
     baseLabel:"BIOTHRIVE 7-PART NUTRIENT PROGRAM",
     tagline:"2-Part Base + BioRoot · BioWeed · BioBud · BioMarine · Diamond Black",
     desc:"Professional 7-part system with targeted supplements for maximum yield and quality.",
@@ -84,7 +125,7 @@ const SYSTEM_CONFIGS = {
     includedKeys:["bt_grow","bt_bloom_p","bt_camg","bt_bioroot","bt_bioweed","bt_biobud","bt_biomarine","bt_diamond"],
   },
   "maxi_indoor": {
-    id:"maxi_indoor", name:"MaxiSeries Indoor", parts:"2", color:"#1565C0", isPowder:true,
+    id:"maxi_indoor", mfr:"gh", brand:"maxi", name:"MaxiSeries Indoor", parts:"2", color:"#1565C0", isPowder:true,
     baseLabel:"MAXI SERIES 2-PART INDOOR SYSTEM",
     tagline:"MaxiGro · MaxiBloom · CALiMAGic",
     desc:"Professional 2-part dry concentrate system with full strength tiers for indoor grows.",
@@ -92,7 +133,7 @@ const SYSTEM_CONFIGS = {
     includedKeys:["mx_gro","mx_bloom_p","mx_calmag"],
   },
   "maxi_outdoor": {
-    id:"maxi_outdoor", name:"MaxiSeries Outdoor", parts:"1", color:"#558B2F", isPowder:true,
+    id:"maxi_outdoor", mfr:"gh", brand:"maxi", name:"MaxiSeries Outdoor", parts:"1", color:"#558B2F", isPowder:true,
     baseLabel:"MAXI SERIES 1-PART OUTDOOR SYSTEM",
     tagline:"MaxiGro · MaxiBloom",
     desc:"Simple 1-part dry concentrate system designed for outdoor growing conditions.",
@@ -100,7 +141,7 @@ const SYSTEM_CONFIGS = {
     includedKeys:["mx_gro","mx_bloom_p"],
   },
   "floranvoa_1part": {
-    id:"floranvoa_1part", name:"FloraNova 1-Part", parts:"1", color:"#6A1B9A", isPowder:true,
+    id:"floranvoa_1part", mfr:"gh", brand:"floranvoa", name:"FloraNova 1-Part", parts:"1", color:"#6A1B9A", isPowder:true,
     baseLabel:"FLORANOVA 1-PART NUTRIENT SYSTEM",
     tagline:"FloraNova Grow · FloraNova Bloom",
     desc:"Breakthrough liquid formula with dry-concentrate strength. One product per stage — simple and powerful.",
@@ -108,7 +149,7 @@ const SYSTEM_CONFIGS = {
     includedKeys:["fn_grow","fn_bloom"],
   },
   "floranvoa_4part": {
-    id:"floranvoa_4part", name:"FloraNova 4-Part", parts:"4", color:"#AD1457", isPowder:true,
+    id:"floranvoa_4part", mfr:"gh", brand:"floranvoa", name:"FloraNova 4-Part", parts:"4", color:"#AD1457", isPowder:true,
     baseLabel:"FLORANOVA 4-PART NUTRIENT SYSTEM",
     tagline:"FloraNova Grow · Bloom + CALiMAGic · Floralicious Plus · Liquid KoolBloom",
     desc:"FloraNova base with Pro Performance Pack for enhanced Ca/Mg, plant vitality, and bloom production.",
@@ -116,12 +157,74 @@ const SYSTEM_CONFIGS = {
     includedKeys:["fn_grow","fn_bloom","calimagic","floralicious","koolbloom"],
   },
   "floranvoa_8part": {
-    id:"floranvoa_8part", name:"FloraNova 8-Part", parts:"8", color:"#00838F", isPowder:true,
+    id:"floranvoa_8part", mfr:"gh", brand:"floranvoa", name:"FloraNova 8-Part", parts:"8", color:"#00838F", isPowder:true,
     baseLabel:"FLORANOVA 8-PART NUTRIENT SYSTEM",
     tagline:"FloraNova + Pro Performance Pack + RapidStart · Ripen · Armor Si · FloraKleen",
     desc:"Full custom performance system with root stimulation, ripening agents, and silica for maximum yield.",
     stages:["early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
     includedKeys:["fn_grow","fn_bloom","calimagic","floralicious","koolbloom","rapidstart","ripen_p","armorsi","florakleen"],
+  },
+  // ── ATHENA ────────────────────────────────────────────────────────────────
+  "athena_pro": {
+    id:"athena_pro", mfr:"athena", brand:"athena_proline", name:"Athena Pro Line", parts:"PWD", color:"#1A1A1A", isPowder:true,
+    baseLabel:"ATHENA PRO LINE — DRY SOLUBLE",
+    tagline:"Pro Core · Pro Grow · Pro Bloom",
+    desc:"Commercial dry-soluble program. Pro Core runs all cycle; Pro Grow in veg, Pro Bloom in flower. Measure by weight.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["ath_core","ath_grow","ath_bloom"],
+  },
+  "athena_blended": {
+    id:"athena_blended", mfr:"athena", brand:"athena_blended", name:"Athena Blended Line", parts:"4", color:"#3A3A3A",
+    baseLabel:"ATHENA BLENDED LINE — LIQUID A+B",
+    tagline:"Grow A+B · Bloom A+B",
+    desc:"Two-part liquid line for recirculating systems. Grow A&B in veg, Bloom A&B in flower — equal parts.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["ath_grow_a","ath_grow_b","ath_bloom_a","ath_bloom_b"],
+  },
+  // ── JACK'S ────────────────────────────────────────────────────────────────
+  // ── ADVANCED NUTRIENTS ──────────────────────────────────────────────────
+  "an_phperfect": {
+    id:"an_phperfect", mfr:"advanced", brand:"an_phperfect", name:"pH Perfect Trio", parts:"3", color:"#0072CE",
+    baseLabel:"pH PERFECT — GROW · MICRO · BLOOM",
+    tagline:"Grow · Micro · Bloom",
+    desc:"Three-part liquid base with self-buffering pH Perfect technology. Equal parts, ramped through veg and held through bloom.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["an_grow","an_micro","an_bloom"],
+  },
+  // ── FOX FARM ────────────────────────────────────────────────────────────
+  "ff_trio": {
+    id:"ff_trio", mfr:"foxfarm", brand:"ff_trio", name:"Liquid Trio", parts:"3", color:"#E8531B",
+    baseLabel:"FOX FARM — GROW BIG · TIGER BLOOM · BIG BLOOM",
+    tagline:"Grow Big · Tiger Bloom · Big Bloom",
+    desc:"The classic Fox Farm trio. Grow Big drives veg, Tiger Bloom drives flower, Big Bloom runs the whole cycle.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["ff_grow_big","ff_tiger_bloom","ff_big_bloom"],
+  },
+  // ── CANNA ───────────────────────────────────────────────────────────────
+  "canna_coco": {
+    id:"canna_coco", mfr:"canna", brand:"canna_coco", name:"Coco A+B", parts:"2", color:"#E2001A",
+    baseLabel:"CANNA COCO — A + B",
+    tagline:"Coco A · Coco B",
+    desc:"Two-part coco base used throughout the entire cycle. Equal amounts of A and B, added separately.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["canna_coco_a","canna_coco_b"],
+  },
+  "canna_terra": {
+    id:"canna_terra", mfr:"canna", brand:"canna_terra", name:"Terra", parts:"2", color:"#B8001A",
+    baseLabel:"CANNA TERRA — VEGA + FLORES",
+    tagline:"Terra Vega · Terra Flores",
+    desc:"Soil base line. Terra Vega for vegetative growth, Terra Flores for flowering.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["canna_vega","canna_flores"],
+  },
+  // ── HUMBOLDTS SECRET ────────────────────────────────────────────────────
+  "hs_starter": {
+    id:"hs_starter", mfr:"humboldts", brand:"hs_starter", name:"Starter Kit", parts:"2", color:"#C9A227",
+    baseLabel:"HUMBOLDTS SECRET — BASE A+B · GOLDEN TREE",
+    tagline:"Base A · Base B · Golden Tree",
+    desc:"PPM-targeted program. Base A & B run equal parts all cycle; Golden Tree the whole way. Doses interpolated to hit Humboldts' published PPM windows.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["hs_base_a","hs_base_b","hs_golden_tree"],
   },
 };
 
@@ -138,6 +241,14 @@ const SYSTEM_EXCLUDED_SUPPS = {
   "floranvoa_1part": [],
   "floranvoa_4part": ["calimagic","botanicare_calmag","koolbloom_liquid"],
   "floranvoa_8part": ["calimagic","botanicare_calmag","koolbloom_liquid","armor_si"],
+  "athena_pro": [],
+  "athena_blended": [],
+  "jacks_321": [],
+  "an_phperfect": [],
+  "ff_trio": [],
+  "canna_coco": [],
+  "canna_terra": [],
+  "hs_starter": [],
 };
 
 const SCHEDULES = {
@@ -244,6 +355,81 @@ const SCHEDULES = {
     late_flower:  { light:{micro:0,gro:0,bloom:0,fn_grow:0,fn_bloom:3.4,calimagic:1.8,floralicious:1.0,koolbloom:1.4,rapidstart:0,ripen_p:0,armorsi:2.5,florakleen:0}, medium:{micro:0,gro:0,bloom:0,fn_grow:0,fn_bloom:3.8,calimagic:2.0,floralicious:1.5,koolbloom:1.5,rapidstart:0,ripen_p:0,armorsi:2.5,florakleen:0}, aggressive:{micro:0,gro:0,bloom:0,fn_grow:0,fn_bloom:4.8,calimagic:2.5,floralicious:2.0,koolbloom:2.0,rapidstart:0,ripen_p:0,armorsi:2.5,florakleen:0} },
     flush:        { light:{micro:0,gro:0,bloom:0,fn_grow:0,fn_bloom:0,calimagic:0,floralicious:0,koolbloom:0,rapidstart:0,ripen_p:0,armorsi:0,florakleen:10.0}, medium:{micro:0,gro:0,bloom:0,fn_grow:0,fn_bloom:0,calimagic:0,floralicious:0,koolbloom:0,rapidstart:0,ripen_p:0,armorsi:0,florakleen:10.0}, aggressive:{micro:0,gro:0,bloom:0,fn_grow:0,fn_bloom:0,calimagic:0,floralicious:0,koolbloom:0,rapidstart:0,ripen_p:0,armorsi:0,florakleen:10.0}, isFlush:true },
   },
+  // ── Athena Pro Line (grams/gal — Core all cycle, Grow veg, Bloom flower) ──
+  "athena_pro": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,ath_core:1.8,ath_grow:3.0,ath_bloom:0}, medium:{micro:0,gro:0,bloom:0,ath_core:2.3,ath_grow:3.9,ath_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,ath_core:2.8,ath_grow:4.6,ath_bloom:0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,ath_core:3.6,ath_grow:6.0,ath_bloom:0}, medium:{micro:0,gro:0,bloom:0,ath_core:4.6,ath_grow:7.7,ath_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,ath_core:5.5,ath_grow:9.2,ath_bloom:0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,ath_core:3.6,ath_grow:6.0,ath_bloom:0}, medium:{micro:0,gro:0,bloom:0,ath_core:4.6,ath_grow:7.7,ath_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,ath_core:5.5,ath_grow:9.2,ath_bloom:0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,ath_core:3.6,ath_grow:0,ath_bloom:3.8}, medium:{micro:0,gro:0,bloom:0,ath_core:4.6,ath_grow:0,ath_bloom:4.9}, aggressive:{micro:0,gro:0,bloom:0,ath_core:5.5,ath_grow:0,ath_bloom:5.9} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,ath_core:3.6,ath_grow:0,ath_bloom:6.0}, medium:{micro:0,gro:0,bloom:0,ath_core:4.6,ath_grow:0,ath_bloom:7.7}, aggressive:{micro:0,gro:0,bloom:0,ath_core:5.5,ath_grow:0,ath_bloom:9.2} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,ath_core:3.6,ath_grow:0,ath_bloom:6.0}, medium:{micro:0,gro:0,bloom:0,ath_core:4.6,ath_grow:0,ath_bloom:7.7}, aggressive:{micro:0,gro:0,bloom:0,ath_core:5.5,ath_grow:0,ath_bloom:9.2} },
+    flush:        { light:{micro:0,gro:0,bloom:0,ath_core:0,ath_grow:0,ath_bloom:0}, medium:{micro:0,gro:0,bloom:0,ath_core:0,ath_grow:0,ath_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,ath_core:0,ath_grow:0,ath_bloom:0}, isFlush:true },
+  },
+  // ── Athena Blended Line (ml/gal — Grow A+B veg, Bloom A+B flower, equal parts) ──
+  "athena_blended": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,ath_grow_a:1.5,ath_grow_b:1.5,ath_bloom_a:0,ath_bloom_b:0}, medium:{micro:0,gro:0,bloom:0,ath_grow_a:2.0,ath_grow_b:2.0,ath_bloom_a:0,ath_bloom_b:0}, aggressive:{micro:0,gro:0,bloom:0,ath_grow_a:2.5,ath_grow_b:2.5,ath_bloom_a:0,ath_bloom_b:0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,ath_grow_a:3.0,ath_grow_b:3.0,ath_bloom_a:0,ath_bloom_b:0}, medium:{micro:0,gro:0,bloom:0,ath_grow_a:4.0,ath_grow_b:4.0,ath_bloom_a:0,ath_bloom_b:0}, aggressive:{micro:0,gro:0,bloom:0,ath_grow_a:5.0,ath_grow_b:5.0,ath_bloom_a:0,ath_bloom_b:0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,ath_grow_a:3.0,ath_grow_b:3.0,ath_bloom_a:0,ath_bloom_b:0}, medium:{micro:0,gro:0,bloom:0,ath_grow_a:4.0,ath_grow_b:4.0,ath_bloom_a:0,ath_bloom_b:0}, aggressive:{micro:0,gro:0,bloom:0,ath_grow_a:5.0,ath_grow_b:5.0,ath_bloom_a:0,ath_bloom_b:0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,ath_grow_a:0,ath_grow_b:0,ath_bloom_a:3.0,ath_bloom_b:3.0}, medium:{micro:0,gro:0,bloom:0,ath_grow_a:0,ath_grow_b:0,ath_bloom_a:4.0,ath_bloom_b:4.0}, aggressive:{micro:0,gro:0,bloom:0,ath_grow_a:0,ath_grow_b:0,ath_bloom_a:5.0,ath_bloom_b:5.0} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,ath_grow_a:0,ath_grow_b:0,ath_bloom_a:3.8,ath_bloom_b:3.8}, medium:{micro:0,gro:0,bloom:0,ath_grow_a:0,ath_grow_b:0,ath_bloom_a:5.0,ath_bloom_b:5.0}, aggressive:{micro:0,gro:0,bloom:0,ath_grow_a:0,ath_grow_b:0,ath_bloom_a:6.0,ath_bloom_b:6.0} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,ath_grow_a:0,ath_grow_b:0,ath_bloom_a:3.8,ath_bloom_b:3.8}, medium:{micro:0,gro:0,bloom:0,ath_grow_a:0,ath_grow_b:0,ath_bloom_a:5.0,ath_bloom_b:5.0}, aggressive:{micro:0,gro:0,bloom:0,ath_grow_a:0,ath_grow_b:0,ath_bloom_a:6.0,ath_bloom_b:6.0} },
+    flush:        { light:{micro:0,gro:0,bloom:0,ath_grow_a:0,ath_grow_b:0,ath_bloom_a:0,ath_bloom_b:0}, medium:{micro:0,gro:0,bloom:0,ath_grow_a:0,ath_grow_b:0,ath_bloom_a:0,ath_bloom_b:0}, aggressive:{micro:0,gro:0,bloom:0,ath_grow_a:0,ath_grow_b:0,ath_bloom_a:0,ath_bloom_b:0}, isFlush:true },
+  },
+  // ── Advanced Nutrients pH Perfect (ml/gal — equal Grow/Micro/Bloom, ramp then hold) ──
+  // Chart: 1ml/L wk1 → 4ml/L by wk4, hold 4ml/L through bloom. ×3.785 = ml/gal (≈3.8→15).
+  "an_phperfect": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,an_micro:3.0,an_grow:3.0,an_bloom:0}, medium:{micro:0,gro:0,bloom:0,an_micro:3.8,an_grow:3.8,an_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,an_micro:5.7,an_grow:5.7,an_bloom:0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,an_micro:5.7,an_grow:5.7,an_bloom:0}, medium:{micro:0,gro:0,bloom:0,an_micro:7.6,an_grow:7.6,an_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,an_micro:9.5,an_grow:9.5,an_bloom:0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,an_micro:9.5,an_grow:9.5,an_bloom:0}, medium:{micro:0,gro:0,bloom:0,an_micro:11.4,an_grow:11.4,an_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,an_micro:15.1,an_grow:15.1,an_bloom:0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,an_micro:9.5,an_grow:9.5,an_bloom:9.5}, medium:{micro:0,gro:0,bloom:0,an_micro:11.4,an_grow:11.4,an_bloom:11.4}, aggressive:{micro:0,gro:0,bloom:0,an_micro:15.1,an_grow:15.1,an_bloom:15.1} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,an_micro:11.4,an_grow:11.4,an_bloom:11.4}, medium:{micro:0,gro:0,bloom:0,an_micro:15.1,an_grow:15.1,an_bloom:15.1}, aggressive:{micro:0,gro:0,bloom:0,an_micro:15.1,an_grow:15.1,an_bloom:15.1} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,an_micro:9.5,an_grow:9.5,an_bloom:9.5}, medium:{micro:0,gro:0,bloom:0,an_micro:11.4,an_grow:11.4,an_bloom:11.4}, aggressive:{micro:0,gro:0,bloom:0,an_micro:15.1,an_grow:15.1,an_bloom:15.1} },
+    flush:        { light:{micro:0,gro:0,bloom:0,an_micro:0,an_grow:0,an_bloom:0}, medium:{micro:0,gro:0,bloom:0,an_micro:0,an_grow:0,an_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,an_micro:0,an_grow:0,an_bloom:0}, isFlush:true },
+  },
+  // ── Fox Farm Trio (ml/gal — Big Bloom all cycle, Grow Big veg, Tiger Bloom flower) ──
+  // Chart tsp→ml ×4.929. Big Bloom ~2 Tbsp(30ml), Grow Big 2-3tsp(10-15ml), Tiger Bloom 2tsp(10ml).
+  "ff_trio": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,ff_grow_big:0,ff_tiger_bloom:0,ff_big_bloom:15}, medium:{micro:0,gro:0,bloom:0,ff_grow_big:0,ff_tiger_bloom:0,ff_big_bloom:30}, aggressive:{micro:0,gro:0,bloom:0,ff_grow_big:5,ff_tiger_bloom:0,ff_big_bloom:30} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,ff_grow_big:7,ff_tiger_bloom:0,ff_big_bloom:30}, medium:{micro:0,gro:0,bloom:0,ff_grow_big:10,ff_tiger_bloom:0,ff_big_bloom:30}, aggressive:{micro:0,gro:0,bloom:0,ff_grow_big:15,ff_tiger_bloom:0,ff_big_bloom:30} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,ff_grow_big:10,ff_tiger_bloom:0,ff_big_bloom:30}, medium:{micro:0,gro:0,bloom:0,ff_grow_big:15,ff_tiger_bloom:0,ff_big_bloom:30}, aggressive:{micro:0,gro:0,bloom:0,ff_grow_big:15,ff_tiger_bloom:0,ff_big_bloom:30} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,ff_grow_big:5,ff_tiger_bloom:7,ff_big_bloom:15}, medium:{micro:0,gro:0,bloom:0,ff_grow_big:10,ff_tiger_bloom:10,ff_big_bloom:15}, aggressive:{micro:0,gro:0,bloom:0,ff_grow_big:10,ff_tiger_bloom:15,ff_big_bloom:15} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,ff_grow_big:0,ff_tiger_bloom:10,ff_big_bloom:15}, medium:{micro:0,gro:0,bloom:0,ff_grow_big:0,ff_tiger_bloom:10,ff_big_bloom:15}, aggressive:{micro:0,gro:0,bloom:0,ff_grow_big:0,ff_tiger_bloom:15,ff_big_bloom:15} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,ff_grow_big:0,ff_tiger_bloom:7,ff_big_bloom:15}, medium:{micro:0,gro:0,bloom:0,ff_grow_big:0,ff_tiger_bloom:10,ff_big_bloom:15}, aggressive:{micro:0,gro:0,bloom:0,ff_grow_big:0,ff_tiger_bloom:15,ff_big_bloom:15} },
+    flush:        { light:{micro:0,gro:0,bloom:0,ff_grow_big:0,ff_tiger_bloom:0,ff_big_bloom:0}, medium:{micro:0,gro:0,bloom:0,ff_grow_big:0,ff_tiger_bloom:0,ff_big_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,ff_grow_big:0,ff_tiger_bloom:0,ff_big_bloom:0}, isFlush:true },
+  },
+  // ── CANNA Coco A+B (ml/gal — equal A and B all cycle) ──
+  // Chart ml/L: ~1.5ml/L start → 4ml/L peak. ×3.785 = ml/gal (≈5.7→15).
+  "canna_coco": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,canna_coco_a:4.0,canna_coco_b:4.0}, medium:{micro:0,gro:0,bloom:0,canna_coco_a:5.7,canna_coco_b:5.7}, aggressive:{micro:0,gro:0,bloom:0,canna_coco_a:7.6,canna_coco_b:7.6} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,canna_coco_a:7.6,canna_coco_b:7.6}, medium:{micro:0,gro:0,bloom:0,canna_coco_a:9.5,canna_coco_b:9.5}, aggressive:{micro:0,gro:0,bloom:0,canna_coco_a:11.4,canna_coco_b:11.4} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,canna_coco_a:9.5,canna_coco_b:9.5}, medium:{micro:0,gro:0,bloom:0,canna_coco_a:11.4,canna_coco_b:11.4}, aggressive:{micro:0,gro:0,bloom:0,canna_coco_a:13.2,canna_coco_b:13.2} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,canna_coco_a:9.5,canna_coco_b:9.5}, medium:{micro:0,gro:0,bloom:0,canna_coco_a:11.4,canna_coco_b:11.4}, aggressive:{micro:0,gro:0,bloom:0,canna_coco_a:13.2,canna_coco_b:13.2} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,canna_coco_a:11.4,canna_coco_b:11.4}, medium:{micro:0,gro:0,bloom:0,canna_coco_a:13.2,canna_coco_b:13.2}, aggressive:{micro:0,gro:0,bloom:0,canna_coco_a:15.1,canna_coco_b:15.1} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,canna_coco_a:9.5,canna_coco_b:9.5}, medium:{micro:0,gro:0,bloom:0,canna_coco_a:11.4,canna_coco_b:11.4}, aggressive:{micro:0,gro:0,bloom:0,canna_coco_a:13.2,canna_coco_b:13.2} },
+    flush:        { light:{micro:0,gro:0,bloom:0,canna_coco_a:0,canna_coco_b:0}, medium:{micro:0,gro:0,bloom:0,canna_coco_a:0,canna_coco_b:0}, aggressive:{micro:0,gro:0,bloom:0,canna_coco_a:0,canna_coco_b:0}, isFlush:true },
+  },
+  // ── CANNA Terra (ml/gal — Vega veg, Flores flower) ──
+  "canna_terra": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,canna_vega:4.0,canna_flores:0}, medium:{micro:0,gro:0,bloom:0,canna_vega:5.7,canna_flores:0}, aggressive:{micro:0,gro:0,bloom:0,canna_vega:7.6,canna_flores:0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,canna_vega:7.6,canna_flores:0}, medium:{micro:0,gro:0,bloom:0,canna_vega:9.5,canna_flores:0}, aggressive:{micro:0,gro:0,bloom:0,canna_vega:13.2,canna_flores:0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,canna_vega:9.5,canna_flores:0}, medium:{micro:0,gro:0,bloom:0,canna_vega:13.2,canna_flores:0}, aggressive:{micro:0,gro:0,bloom:0,canna_vega:15.1,canna_flores:0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:9.5}, medium:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:13.2}, aggressive:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:15.1} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:11.4}, medium:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:15.1}, aggressive:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:17.0} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:9.5}, medium:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:13.2}, aggressive:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:15.1} },
+    flush:        { light:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:0}, medium:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:0}, aggressive:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:0}, isFlush:true },
+  },
+  // ── Humboldts Secret Starter Kit (ml/gal — Base A&B equal parts 5-14, Golden Tree all cycle) ──
+  // Base A&B interpolated across 5-14 ml/gal to land inside published PPM windows
+  // (Veg 800-1000 PPM, Bloom 1000-1300 PPM). Golden Tree 1-2 ml veg, 2-5 ml bloom.
+  "hs_starter": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,hs_base_a:4.0,hs_base_b:4.0,hs_golden_tree:1.0}, medium:{micro:0,gro:0,bloom:0,hs_base_a:5.0,hs_base_b:5.0,hs_golden_tree:1.0}, aggressive:{micro:0,gro:0,bloom:0,hs_base_a:6.0,hs_base_b:6.0,hs_golden_tree:1.5} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,hs_base_a:6.0,hs_base_b:6.0,hs_golden_tree:1.0}, medium:{micro:0,gro:0,bloom:0,hs_base_a:7.5,hs_base_b:7.5,hs_golden_tree:1.5}, aggressive:{micro:0,gro:0,bloom:0,hs_base_a:9.0,hs_base_b:9.0,hs_golden_tree:2.0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,hs_base_a:7.5,hs_base_b:7.5,hs_golden_tree:1.5}, medium:{micro:0,gro:0,bloom:0,hs_base_a:9.0,hs_base_b:9.0,hs_golden_tree:2.0}, aggressive:{micro:0,gro:0,bloom:0,hs_base_a:10.5,hs_base_b:10.5,hs_golden_tree:2.0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,hs_base_a:9.0,hs_base_b:9.0,hs_golden_tree:2.0}, medium:{micro:0,gro:0,bloom:0,hs_base_a:10.5,hs_base_b:10.5,hs_golden_tree:3.0}, aggressive:{micro:0,gro:0,bloom:0,hs_base_a:12.0,hs_base_b:12.0,hs_golden_tree:4.0} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,hs_base_a:11.0,hs_base_b:11.0,hs_golden_tree:3.0}, medium:{micro:0,gro:0,bloom:0,hs_base_a:13.0,hs_base_b:13.0,hs_golden_tree:4.0}, aggressive:{micro:0,gro:0,bloom:0,hs_base_a:14.0,hs_base_b:14.0,hs_golden_tree:5.0} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,hs_base_a:9.0,hs_base_b:9.0,hs_golden_tree:2.0}, medium:{micro:0,gro:0,bloom:0,hs_base_a:11.0,hs_base_b:11.0,hs_golden_tree:3.0}, aggressive:{micro:0,gro:0,bloom:0,hs_base_a:12.5,hs_base_b:12.5,hs_golden_tree:4.0} },
+    flush:        { light:{micro:0,gro:0,bloom:0,hs_base_a:0,hs_base_b:0,hs_golden_tree:0}, medium:{micro:0,gro:0,bloom:0,hs_base_a:0,hs_base_b:0,hs_golden_tree:0}, aggressive:{micro:0,gro:0,bloom:0,hs_base_a:0,hs_base_b:0,hs_golden_tree:0}, isFlush:true },
+  },
 };
 
 const EC_RANGES = {
@@ -337,6 +523,78 @@ const EC_RANGES = {
     late_flower:  { light:[1.3,1.6],  medium:[1.5,1.8],  aggressive:[1.9,2.2]  },
     flush:        { light:[0.0,0.3],  medium:[0.0,0.3],  aggressive:[0.0,0.3]  },
   },
+  "athena_pro": {
+    seedling:     { light:[0.8,1.2],  medium:[1.0,1.4],  aggressive:[1.2,1.6]  },
+    early_growth: { light:[1.4,1.8],  medium:[1.8,2.2],  aggressive:[2.2,2.6]  },
+    late_growth:  { light:[1.4,1.8],  medium:[1.8,2.2],  aggressive:[2.2,2.6]  },
+    early_flower: { light:[1.6,2.0],  medium:[2.0,2.4],  aggressive:[2.4,2.8]  },
+    peak_flower:  { light:[1.8,2.2],  medium:[2.2,2.8],  aggressive:[2.8,3.2]  },
+    late_flower:  { light:[1.6,2.0],  medium:[2.0,2.4],  aggressive:[2.4,2.8]  },
+    flush:        { light:[0.5,1.0],  medium:[0.5,1.0],  aggressive:[0.5,1.0]  },
+  },
+  "athena_blended": {
+    seedling:     { light:[0.8,1.2],  medium:[1.0,1.4],  aggressive:[1.2,1.6]  },
+    early_growth: { light:[1.4,1.8],  medium:[1.8,2.2],  aggressive:[2.2,2.6]  },
+    late_growth:  { light:[1.4,1.8],  medium:[1.8,2.2],  aggressive:[2.2,2.6]  },
+    early_flower: { light:[1.6,2.0],  medium:[2.0,2.4],  aggressive:[2.4,2.8]  },
+    peak_flower:  { light:[1.8,2.2],  medium:[2.2,2.8],  aggressive:[2.8,3.2]  },
+    late_flower:  { light:[1.6,2.0],  medium:[2.0,2.4],  aggressive:[2.4,2.8]  },
+    flush:        { light:[0.5,1.0],  medium:[0.5,1.0],  aggressive:[0.5,1.0]  },
+  },
+  "jacks_321": {
+    seedling:     { light:[0.8,1.0],  medium:[0.9,1.1],  aggressive:[1.1,1.3]  },
+    early_growth: { light:[1.4,1.7],  medium:[1.6,1.9],  aggressive:[1.9,2.2]  },
+    late_growth:  { light:[1.4,1.7],  medium:[1.6,1.9],  aggressive:[1.9,2.2]  },
+    early_flower: { light:[1.4,1.7],  medium:[1.6,1.9],  aggressive:[1.9,2.2]  },
+    peak_flower:  { light:[1.6,1.9],  medium:[1.8,2.1],  aggressive:[2.1,2.4]  },
+    late_flower:  { light:[1.6,1.9],  medium:[1.8,2.1],  aggressive:[2.1,2.4]  },
+    flush:        { light:[0.0,0.3],  medium:[0.0,0.3],  aggressive:[0.0,0.3]  },
+  },
+  "an_phperfect": {
+    seedling:     { light:[0.6,0.9],  medium:[0.8,1.1],  aggressive:[1.0,1.3]  },
+    early_growth: { light:[1.0,1.4],  medium:[1.3,1.7],  aggressive:[1.6,2.0]  },
+    late_growth:  { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    early_flower: { light:[1.8,2.2],  medium:[2.1,2.5],  aggressive:[2.4,2.8]  },
+    peak_flower:  { light:[2.0,2.4],  medium:[2.3,2.7],  aggressive:[2.6,3.0]  },
+    late_flower:  { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "ff_trio": {
+    seedling:     { light:[0.6,0.9],  medium:[0.8,1.1],  aggressive:[1.0,1.3]  },
+    early_growth: { light:[1.0,1.4],  medium:[1.3,1.7],  aggressive:[1.6,2.0]  },
+    late_growth:  { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    early_flower: { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    peak_flower:  { light:[1.8,2.2],  medium:[2.1,2.5],  aggressive:[2.4,2.8]  },
+    late_flower:  { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "canna_coco": {
+    seedling:     { light:[0.8,1.1],  medium:[1.0,1.3],  aggressive:[1.2,1.5]  },
+    early_growth: { light:[1.2,1.6],  medium:[1.5,1.9],  aggressive:[1.8,2.2]  },
+    late_growth:  { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    early_flower: { light:[1.8,2.2],  medium:[2.1,2.5],  aggressive:[2.4,2.8]  },
+    peak_flower:  { light:[2.0,2.4],  medium:[2.3,2.7],  aggressive:[2.6,3.0]  },
+    late_flower:  { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "canna_terra": {
+    seedling:     { light:[0.8,1.1],  medium:[1.0,1.3],  aggressive:[1.2,1.5]  },
+    early_growth: { light:[1.2,1.6],  medium:[1.5,1.9],  aggressive:[1.8,2.2]  },
+    late_growth:  { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    early_flower: { light:[1.8,2.2],  medium:[2.1,2.5],  aggressive:[2.4,2.8]  },
+    peak_flower:  { light:[2.0,2.4],  medium:[2.3,2.7],  aggressive:[2.6,3.0]  },
+    late_flower:  { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "hs_starter": {
+    seedling:     { light:[0.8,1.2],  medium:[1.0,1.4],  aggressive:[1.2,1.6]  },
+    early_growth: { light:[1.4,1.7],  medium:[1.6,2.0],  aggressive:[1.9,2.2]  },
+    late_growth:  { light:[1.6,1.9],  medium:[1.8,2.0],  aggressive:[2.0,2.3]  },
+    early_flower: { light:[1.8,2.1],  medium:[2.0,2.3],  aggressive:[2.2,2.5]  },
+    peak_flower:  { light:[2.0,2.3],  medium:[2.2,2.6],  aggressive:[2.5,2.8]  },
+    late_flower:  { light:[1.6,2.0],  medium:[2.0,2.3],  aggressive:[2.2,2.5]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
 };
 
 const INCL_META = {
@@ -368,8 +626,38 @@ const INCL_META = {
   fn_grow:      { name:"FloraNova Grow",       brand:"General Hydroponics", color:"#2E7D32", icon:"🌿", mixOrder:2, powderNote:"Liquid concentrate — add after any silica or cal-mag" },
   fn_bloom:     { name:"FloraNova Bloom",      brand:"General Hydroponics", color:"#6A1B9A", icon:"🌸", mixOrder:3, powderNote:"Liquid concentrate — use Grow in veg, Bloom in flower" },
   florakleen:   { name:"FloraKleen",             brand:"General Hydroponics", color:"#00AEEF", icon:"🚿", mixOrder:10, powderNote:"Flush only — dissolve in full reservoir, no other products" },
+  // Athena Pro Line (dry, grams)
+  ath_core:     { name:"Pro Core",  brand:"Athena", color:"#1A1A1A", icon:"⚫", mixOrder:2, unit:"g", powderNote:"14-0-0 base — runs all cycle. Weigh out; dissolve fully before Grow/Bloom" },
+  ath_grow:     { name:"Pro Grow",  brand:"Athena", color:"#2E7D32", icon:"🌿", mixOrder:3, unit:"g", powderNote:"2-8-20 veg formula — weigh out, use with Pro Core" },
+  ath_bloom:    { name:"Pro Bloom", brand:"Athena", color:"#C2185B", icon:"🌸", mixOrder:4, unit:"g", powderNote:"0-12-24 flower formula — weigh out, use with Pro Core" },
+  // Athena Blended Line (liquid, ml)
+  ath_grow_a:   { name:"Grow A",  brand:"Athena", color:"#2E7D32", icon:"🌿", mixOrder:2, powderNote:"Liquid veg part A — equal amount to Grow B" },
+  ath_grow_b:   { name:"Grow B",  brand:"Athena", color:"#388E3C", icon:"🌿", mixOrder:3, powderNote:"Liquid veg part B — add after Grow A" },
+  ath_bloom_a:  { name:"Bloom A", brand:"Athena", color:"#C2185B", icon:"🌸", mixOrder:4, powderNote:"Liquid flower part A — equal amount to Bloom B" },
+  ath_bloom_b:  { name:"Bloom B", brand:"Athena", color:"#AD1457", icon:"🌸", mixOrder:5, powderNote:"Liquid flower part B — add after Bloom A" },
+  // Jack's 321 (dry, grams)
+  jacks_a:      { name:"Part A (5-12-26)",      brand:"Jack's", color:"#C8102E", icon:"🅰️", mixOrder:2, unit:"g", powderNote:"Weigh out — add FIRST and dissolve fully" },
+  jacks_epsom:  { name:"Epsom Salt (MgSO₄)",    brand:"Jack's", color:"#5C6BC0", icon:"🧂", mixOrder:3, unit:"g", powderNote:"Weigh out — add SECOND after Part A dissolves" },
+  jacks_b:      { name:"Part B (Calcium Nitrate)",brand:"Jack's", color:"#0277BD", icon:"🅱️", mixOrder:4, unit:"g", powderNote:"15-0-0 — weigh out, add LAST. Never mix dry with Part A" },
+  // Advanced Nutrients pH Perfect (liquid, ml) — add Micro first, then Grow, then Bloom
+  an_micro:     { name:"pH Perfect Micro", brand:"Advanced Nutrients", color:"#0072CE", icon:"🔵", mixOrder:2, powderNote:"Add FIRST — mix well before Grow" },
+  an_grow:      { name:"pH Perfect Grow",  brand:"Advanced Nutrients", color:"#2E7D32", icon:"🌿", mixOrder:3, powderNote:"Add after Micro, mix well" },
+  an_bloom:     { name:"pH Perfect Bloom", brand:"Advanced Nutrients", color:"#C2185B", icon:"🌸", mixOrder:4, powderNote:"Add LAST, after Grow" },
+  // Fox Farm trio (liquid, ml)
+  ff_big_bloom:  { name:"Big Bloom",   brand:"Fox Farm", color:"#6B3F1D", icon:"🌍", mixOrder:2, powderNote:"Organic — runs every feeding, all cycle. Add first" },
+  ff_grow_big:   { name:"Grow Big",    brand:"Fox Farm", color:"#2E7D32", icon:"🌿", mixOrder:3, powderNote:"Veg growth driver" },
+  ff_tiger_bloom:{ name:"Tiger Bloom", brand:"Fox Farm", color:"#E8531B", icon:"🐯", mixOrder:4, powderNote:"Flower driver — start at first sign of bud" },
+  // CANNA Coco + Terra (liquid, ml)
+  canna_coco_a: { name:"Coco A", brand:"CANNA", color:"#E2001A", icon:"🅰️", mixOrder:2, powderNote:"Add A first, equal amount to B" },
+  canna_coco_b: { name:"Coco B", brand:"CANNA", color:"#B8001A", icon:"🅱️", mixOrder:3, powderNote:"Add B after A, never mix concentrates" },
+  canna_vega:   { name:"Terra Vega",   brand:"CANNA", color:"#2E7D32", icon:"🌿", mixOrder:2, powderNote:"Veg base for soil" },
+  canna_flores: { name:"Terra Flores", brand:"CANNA", color:"#C2185B", icon:"🌸", mixOrder:3, powderNote:"Flower base for soil" },
+  // Humboldts Secret base
+  hs_base_a:      { name:"Base A",      brand:"Humboldts Secret", color:"#2E7D32", icon:"🅰️", mixOrder:2, powderNote:"Equal parts with Base B — add A first, never combine concentrates" },
+  hs_base_b:      { name:"Base B",      brand:"Humboldts Secret", color:"#1B5E20", icon:"🅱️", mixOrder:3, powderNote:"Equal amount to Base A — add after A is mixed in" },
+  hs_golden_tree: { name:"Golden Tree", brand:"Humboldts Secret", color:"#C9A227", icon:"🌳", mixOrder:1, powderNote:"All-cycle catalyst — add first to the reservoir" },
 };
-const INCL_EC = { calimagic:0.07, floralicious:0.03, koolbloom:0.08, rapidstart:0.02, ripen_p:0.05, armorsi:0.04, fp_ca_micros:0.0, fp_grow:0.0, fp_bloom:0.0, fp_late_bloom:0.0, bt_grow:0.0, bt_bloom_p:0.0, bt_camg:0.07, bt_bioroot:0.01, bt_bioweed:0.01, bt_biobud:0.02, bt_biomarine:0.02, bt_diamond:0.01, mx_gro:0.0, mx_bloom_p:0.0, mx_calmag:0.07, fn_grow:0.04, fn_bloom:0.04, florakleen:0.0 };
+const INCL_EC = { calimagic:0.07, floralicious:0.03, koolbloom:0.08, rapidstart:0.02, ripen_p:0.05, armorsi:0.04, fp_ca_micros:0.0, fp_grow:0.0, fp_bloom:0.0, fp_late_bloom:0.0, bt_grow:0.0, bt_bloom_p:0.0, bt_camg:0.07, bt_bioroot:0.01, bt_bioweed:0.01, bt_biobud:0.02, bt_biomarine:0.02, bt_diamond:0.01, mx_gro:0.0, mx_bloom_p:0.0, mx_calmag:0.07, fn_grow:0.04, fn_bloom:0.04, florakleen:0.0, ath_core:0.0, ath_grow:0.0, ath_bloom:0.0, ath_grow_a:0.0, ath_grow_b:0.0, ath_bloom_a:0.0, ath_bloom_b:0.0, jacks_a:0.0, jacks_epsom:0.0, jacks_b:0.0, an_micro:0.0, an_grow:0.0, an_bloom:0.0, ff_big_bloom:0.0, ff_grow_big:0.0, ff_tiger_bloom:0.0, canna_coco_a:0.0, canna_coco_b:0.0, canna_vega:0.0, canna_flores:0.0, hs_base_a:0.0, hs_base_b:0.0, hs_golden_tree:0.0 };
 const WATER_BOOST_INCL = { calimagic:{ ro:1.25, soft:1.0, tap:0.5 } };
 
 const DWC_EC_CEILING = 2.5;
@@ -408,6 +696,12 @@ const BOTTLE = {
 const EC_COLOR = { safe:"#78BE20", caution:"#F7941D", danger:"#e05050" };
 
 const SUPPLEMENTS = [
+  { id:"hs_calmag_iron",name:"CalMag & Iron",brand:"Humboldts Secret",category:"cal-mag",tapWaterWarning:true,waterBoost:{ro:1.25,soft:1.0,tap:0.5},mixOrder:1,conflicts:["calimagic","botanicare_calmag"],
+    stageRules:{seedling:{dose:1.0,note:"conservative"},early_growth:{dose:2.5},late_growth:{dose:5.0},early_flower:{dose:5.0},peak_flower:{dose:3.0},late_flower:{dose:1.5,note:"taper"}} },
+  { id:"hs_flower_stacker",name:"Flower Stacker",brand:"Humboldts Secret",category:"pk-booster",waterBoost:{ro:1.0,soft:1.0,tap:1.0},mixOrder:6,conflicts:[],
+    stageRules:{early_flower:{dose:2.0,note:"start at flip"},peak_flower:{dose:5.0},late_flower:{dose:2.0,note:"taper"}} },
+  { id:"hs_plant_enzymes",name:"Plant Enzymes",brand:"Humboldts Secret",category:"enzyme",waterBoost:{ro:1.0,soft:1.0,tap:1.0},mixOrder:9,conflicts:[],
+    stageRules:{seedling:{dose:2.5},early_growth:{dose:2.5},late_growth:{dose:2.5},early_flower:{dose:2.5},peak_flower:{dose:2.5},late_flower:{dose:2.5},flush:{dose:5.0,note:"boost during flush"}} },
   { id:"calimagic",name:"CALiMAGiC",brand:"Gen. Hydroponics",category:"cal-mag",tapWaterWarning:true,waterBoost:{ro:1.25,soft:1.0,tap:0.5},mixOrder:1,conflicts:["botanicare_calmag"],
     stageRules:{seedling:{dose:{light:1.0,medium:1.0,aggressive:1.0},note:"conservative"},early_growth:{dose:{light:1.8,medium:1.9,aggressive:2.0}},late_growth:{dose:{light:1.8,medium:1.9,aggressive:2.0}},early_flower:{dose:{light:1.8,medium:1.9,aggressive:2.0}},peak_flower:{dose:{light:1.5,medium:1.6,aggressive:1.8}},late_flower:{dose:{light:1.0,medium:1.0,aggressive:1.0},note:"taper"}} },
   { id:"botanicare_calmag",name:"Cal-Mag Plus",brand:"Botanicare",category:"cal-mag",tapWaterWarning:true,waterBoost:{ro:1.25,soft:1.0,tap:0.5},mixOrder:1,conflicts:["calimagic"],
@@ -770,6 +1064,7 @@ function getSuppRec(supp, plantId, stageId) {
 // ─── APP ─────────────────────────────────────────────────────────────────────
 export default function FloraApp() {
   const [substrate,  setSubstrate]  = useState(null); // "hydro"|"inert"|"potting"|"soil"
+  const [manufacturer, setManufacturer] = useState(null); // "gh"|"athena"|"jacks"
   const [brand,     setBrand]     = useState(null); // "classic" | "florapro"
   const [usePlantMod, setUsePlantMod] = useState(true);
   const [system,    setSystem]    = useState(null);
@@ -812,8 +1107,10 @@ export default function FloraApp() {
   const handleDelete = async(id)=>{try{await window.storage.delete(id);setConfirmDel(null);loadRuns();}catch{}};
   const loadRun = (run,targetStep)=>{
     const sys=run.system||"3part";
-    const br=sys.startsWith("florapro")?"florapro":sys.startsWith("biothrive")?"biothrive":sys.startsWith("maxi")?"maxi":sys.startsWith("floranvoa")?"floranvoa":"classic";
-    setBrand(br);setSystem(sys);setPlant(run.plant);setStage(run.stage);
+    const cfg=SYSTEM_CONFIGS[sys];
+    const mfr=cfg?.mfr||"gh";
+    const br=cfg?.brand||(sys.startsWith("florapro")?"florapro":sys.startsWith("biothrive")?"biothrive":sys.startsWith("maxi")?"maxi":sys.startsWith("floranvoa")?"floranvoa":"classic");
+    setManufacturer(mfr);setBrand(br);setSystem(sys);setPlant(run.plant);setStage(run.stage);
     setStrength(run.strength);setVolume(run.volume);setUnit(run.unit);
     setWater(run.water);setSupps(new Set(run.supps));setStep(targetStep);
   };
@@ -833,7 +1130,10 @@ export default function FloraApp() {
 
   const core=computed?.core??null,included=computed?.included??{},isFlush=computed?.isFlush??false;
 
+  // Brand-specific supplements only appear for their own system
+  const BRAND_ONLY_SUPPS = { hs_calmag_iron:"hs_starter", hs_flower_stacker:"hs_starter", hs_plant_enzymes:"hs_starter" };
   const excludedSupps = system ? new Set(SYSTEM_EXCLUDED_SUPPS[system]||[]) : new Set();
+  Object.entries(BRAND_ONLY_SUPPS).forEach(([suppId,onlySystem])=>{ if(system!==onlySystem)excludedSupps.add(suppId); });
   const suppData = useMemo(()=>{
     if(!stage)return[];
     return SUPPLEMENTS.filter(s=>!excludedSupps.has(s.id)).map(s=>({...s,dose:resolveSupplementDose(s,stage,gallons,water,strength,substrate),active:supps.has(s.id)}));
@@ -854,16 +1154,22 @@ export default function FloraApp() {
   },[plantObj,sysCfg]);
 
   const hasResults = core&&plantObj&&stageObj;
-  const steps = ["Medium","Brand","System","Plant","Stage","Settings","Supps","Results"];
+  const steps = ["Fertilizer","Medium","Brand","System","Plant","Stage","Settings","Supps","Results"];
+  // Lines for current manufacturer; brand step is skippable when only one line
+  const mfrLines = manufacturer?BRAND_LINES[manufacturer]||[]:[];
+  const brandLine = mfrLines.find(l=>l.id===brand);
+  const brandSkippable = mfrLines.length<=1;
+  const systemSkippable = brandLine?brandLine.systems.length<=1:false;
   const goTo=(i)=>{
     if(i===0)setStep(0);
-    else if(i===1&&substrate)setStep(1);
-    else if(i===2&&brand)setStep(2);
-    else if(i===3&&system)setStep(3);
-    else if(i===4&&plant)setStep(4);
-    else if(i===5&&stage)setStep(5);
+    else if(i===1&&manufacturer)setStep(1);
+    else if(i===2&&substrate&&!brandSkippable)setStep(2);
+    else if(i===3&&brand&&!systemSkippable)setStep(3);
+    else if(i===4&&system)setStep(4);
+    else if(i===5&&plant)setStep(5);
     else if(i===6&&stage)setStep(6);
-    else if(i===7&&hasResults)setStep(7);
+    else if(i===7&&stage)setStep(7);
+    else if(i===8&&hasResults)setStep(8);
   };
 
   // ── GH BRAND DESIGN TOKENS ──────────────────────────────────────────────
@@ -881,8 +1187,38 @@ export default function FloraApp() {
   };
 
   const renderStep = () => {
-    // ── STEP 0: SUBSTRATE / MEDIUM ──────────────────────────────────────────
+    // ── STEP 0: FERTILIZER / MANUFACTURER ───────────────────────────────────
     if(step===0) return (
+      <div>
+        <div style={sectionLabel()}>SELECT YOUR FERTILIZER</div>
+        <div style={{fontSize:12,color:"#444",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",marginBottom:20,lineHeight:1.6}}>
+          Choose the nutrient manufacturer you're feeding with. Each brand has its own product lines and dosing chart.
+        </div>
+        {MANUFACTURERS.map(m=>{
+          const sel=manufacturer===m.id;
+          return (
+            <button key={m.id} onClick={()=>{setManufacturer(m.id);setBrand(null);setSystem(null);setPlant(null);setStage(null);setSupps(new Set());setStep(1);}}
+              style={{display:"flex",alignItems:"center",gap:16,width:"100%",marginBottom:10,padding:"20px",background:sel?`${m.color}14`:"#FFFFFF",border:`1px solid ${sel?m.color:"#e0e0e0"}`,borderRadius:14,cursor:"pointer",textAlign:"left",transition:"all 0.15s",position:"relative"}}>
+              {sel&&<div style={{position:"absolute",left:0,top:0,bottom:0,width:4,background:m.color,borderRadius:"14px 0 0 14px"}}/>}
+              <span style={{fontSize:34,flexShrink:0}}>{m.icon}</span>
+              <div style={{flex:1,paddingLeft:sel?4:0}}>
+                <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:22,fontWeight:800,color:sel?m.color:"#111",letterSpacing:"0.01em"}}>{m.name}</div>
+                <div style={{fontSize:11,color:"#777",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",marginTop:3,lineHeight:1.4}}>{m.desc}</div>
+              </div>
+            </button>
+          );
+        })}
+        <div style={{marginTop:24,paddingTop:20,borderTop:"1px solid #e0e0e0",textAlign:"center"}}>
+          <button onClick={()=>setShowDisclaimer(true)}
+            style={{background:"none",border:"1px solid #e0e0e0",color:"#777",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",fontSize:12,padding:"10px 20px",cursor:"pointer",letterSpacing:"0.03em"}}>
+            ⚖ Legal Disclaimer
+          </button>
+        </div>
+      </div>
+    );
+
+    // ── STEP 1: SUBSTRATE / MEDIUM ──────────────────────────────────────────
+    if(step===1) return (
       <div>
         <div style={sectionLabel()}>SELECT GROWING MEDIUM</div>
         <div style={{fontSize:12,color:"#444",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",marginBottom:20,lineHeight:1.6}}>
@@ -896,9 +1232,9 @@ export default function FloraApp() {
         ].map(opt=>{
           const sel=substrate===opt.value;
           return (
-            <button key={opt.value} onClick={()=>{setSubstrate(opt.value);setStep(1);}}
-              style={{display:"flex",alignItems:"center",gap:16,width:"100%",marginBottom:10,padding:"18px 20px",background:sel?"rgba(120,190,32,0.09)":"#FFFFFF",border:`1px solid ${sel?"#78BE20":"#e0e0e0"}`,cursor:"pointer",textAlign:"left",transition:"all 0.15s",position:"relative"}}>
-              {sel&&<div style={{position:"absolute",left:0,top:0,bottom:0,width:4,background:"#78BE20"}}/>}
+            <button key={opt.value} onClick={()=>{setSubstrate(opt.value); if(brandSkippable){const onlyLine=mfrLines[0]; setBrand(onlyLine.id); if(onlyLine.systems.length<=1){setSystem(onlyLine.systems[0]);setStep(4);}else{setStep(3);}}else{setStep(2);}}}
+              style={{display:"flex",alignItems:"center",gap:16,width:"100%",marginBottom:10,padding:"18px 20px",background:sel?"rgba(120,190,32,0.09)":"#FFFFFF",border:`1px solid ${sel?"#78BE20":"#e0e0e0"}`,borderRadius:14,cursor:"pointer",textAlign:"left",transition:"all 0.15s",position:"relative"}}>
+              {sel&&<div style={{position:"absolute",left:0,top:0,bottom:0,width:4,background:"#78BE20",borderRadius:"14px 0 0 14px"}}/>}
               <span style={{fontSize:36,flexShrink:0}}>{opt.icon}</span>
               <div style={{flex:1,paddingLeft:sel?4:0}}>
                 <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:20,fontWeight:900,color:sel?"#78BE20":"#111",textTransform:"uppercase",letterSpacing:"0.05em"}}>{opt.label}</div>
@@ -918,166 +1254,102 @@ export default function FloraApp() {
         </div>
       </div>
     );
-
-    // ── STEP 1: BRAND PICKER ────────────────────────────────────────────────
-    if(step===1) return (
-      <div>
-        {storageReady&&savedRuns.length>0&&(
-          <div style={{marginBottom:32}}>
-            <div style={sectionLabel("SAVED RUNS")}>SAVED RUNS</div>
-            {savedRuns.map(run=>{
-              const p=PLANTS.find(x=>x.id===run.plant),s=STAGE_META[run.stage],sys=SYSTEM_CONFIGS[run.system||"3part"];
-              const isConf=confirmDel===run.id;
-              return (
-                <div key={run.id} style={{background:GH.card,borderRadius:14,border:`1px solid ${GH.border}`,marginBottom:8,overflow:"hidden"}}>
-                  <div style={{display:"flex",alignItems:"center",gap:12,padding:"14px 16px"}}>
-                    <span style={{fontSize:26,flexShrink:0}}>{p?.icon||"🌱"}</span>
-                    <div style={{flex:1,minWidth:0}}>
-                      <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:16,fontWeight:700,color:GH.text,textTransform:"uppercase",letterSpacing:"0.04em",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{run.name}</div>
-                      <div style={{display:"flex",gap:8,marginTop:3,flexWrap:"wrap"}}>
-                        {sys&&<span style={{fontSize:10,color:sys.color,fontWeight:700,letterSpacing:"0.1em",textTransform:"uppercase"}}>{sys.name}</span>}
-                        <span style={{fontSize:10,color:GH.dim}}>·</span>
-                        <span style={{fontSize:10,color:s?.color||GH.green}}>{s?.label}</span>
-                        <span style={{fontSize:10,color:GH.dim}}>·</span>
-                        <span style={{fontSize:10,color:GH.muted}}>{run.volume} {run.unit}</span>
-                        <span style={{fontSize:10,color:GH.dim}}>·</span>
-                        <span style={{fontSize:10,color:STRENGTH_META[run.strength]?.color}}>{STRENGTH_META[run.strength]?.label}</span>
-                      </div>
-                    </div>
-                  </div>
-                  {!isConf?(
-                    <div style={{display:"flex",borderTop:`1px solid ${GH.border}`}}>
-                      <button onClick={()=>loadRun(run,7)} style={runBtn(GH.green)}>▶ LOAD</button>
-                      <button onClick={()=>loadRun(run,5)} style={{...runBtn(GH.blue),borderLeft:`1px solid ${GH.border}`}}>✎ MODIFY</button>
-                      <button onClick={()=>setConfirmDel(run.id)} style={{...runBtn("#e05050"),borderLeft:`1px solid ${GH.border}`}}>✕ DELETE</button>
-                    </div>
-                  ):(
-                    <div style={{display:"flex",borderTop:`1px solid #3a1a1a`,background:"rgba(200,50,50,0.08)"}}>
-                      <div style={{flex:1,padding:"11px 14px",fontSize:12,color:"#e89a8a",display:"flex",alignItems:"center",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif"}}>Delete this run?</div>
-                      <button onClick={()=>handleDelete(run.id)} style={{padding:"11px 20px",background:"rgba(200,50,50,0.3)",border:"none",borderLeft:`1px solid ${GH.border}`,color:"#ff8a8a",cursor:"pointer",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:13,fontWeight:700,letterSpacing:"0.08em"}}>YES</button>
-                      <button onClick={()=>setConfirmDel(null)} style={{padding:"11px 20px",background:"none",border:"none",borderLeft:`1px solid ${GH.border}`,color:GH.muted,cursor:"pointer",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:13,fontWeight:700,letterSpacing:"0.08em"}}>NO</button>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-            <div style={{height:1,background:`linear-gradient(90deg,transparent,${GH.border},transparent)`,margin:"24px 0"}}/>
-          </div>
-        )}
-
-        <div style={sectionLabel()}>SELECT PROGRAM</div>
-
-        {/* Classic */}
-        <div style={{marginBottom:10,background:brand==="classic"?`linear-gradient(135deg,${GH.green}15,${GH.green}05)`:GH.card,border:`1px solid ${brand==="classic"?GH.green:GH.border}`,transition:"all 0.15s"}}>
-          <button onClick={()=>{setBrand("classic");setSystem(null);setPlant(null);setStage(null);setSupps(new Set());setStep(2);}}
-            style={{display:"flex",alignItems:"stretch",width:"100%",background:"none",border:"none",cursor:"pointer",textAlign:"left",padding:0}}>
-            <div style={{width:72,background:`${GH.green}22`,borderRight:`1px solid ${GH.green}44`,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",flexShrink:0,gap:3,padding:"20px 0"}}>
-              <span style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:11,fontWeight:900,color:GH.green,letterSpacing:"0.12em"}}>FLORA</span>
-              <span style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:11,fontWeight:900,color:GH.green,letterSpacing:"0.12em"}}>SERIES</span>
-            </div>
-            <div style={{flex:1,padding:"18px 20px"}}>
-              <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:24,fontWeight:900,color:brand==="classic"?GH.green:GH.text,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:4}}>Classic</div>
-              <div style={{fontSize:12,color:GH.muted,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",marginBottom:6}}>3-Part · 6-Part · 10-Part</div>
-              <div style={{fontSize:11,color:GH.dim,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif"}}>Liquid concentrate systems. The foundation of Flora Series nutrition.</div>
-            </div>
-            {brand==="classic"&&<div style={{width:4,background:GH.green,flexShrink:0}}/>}
-          </button>
-          <div style={{borderTop:`1px solid ${GH.green}33`,padding:"12px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
-            <div>
-              <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:12,fontWeight:700,color:GH.green,letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:2}}>Plant Modifiers</div>
-              <div style={{fontSize:11,color:GH.dim,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",lineHeight:1.4}}>Adjusts doses for your specific crop — e.g. cannabis gets more nitrogen, orchids get less.</div>
-            </div>
-            <button onClick={e=>{e.stopPropagation();setUsePlantMod(v=>!v);}}
-              style={{flexShrink:0,width:44,height:24,borderRadius:12,background:usePlantMod?GH.green:"#ccc",border:"none",cursor:"pointer",position:"relative",transition:"background 0.2s"}}>
-              <div style={{position:"absolute",top:3,left:usePlantMod?22:3,width:18,height:18,borderRadius:9,background:"#fff",transition:"left 0.2s",boxShadow:"0 1px 3px rgba(0,0,0,0.2)"}}/>
-            </button>
-          </div>
-        </div>
-
-        {/* FloraPro */}
-        <button onClick={()=>{setBrand("florapro");setSystem(null);setPlant(null);setStage(null);setSupps(new Set());setStep(2);}}
-          style={{display:"flex",alignItems:"stretch",width:"100%",marginBottom:10,background:brand==="florapro"?`linear-gradient(135deg,#1B9E7815,#1B9E7805)`:GH.card,border:`1px solid ${brand==="florapro"?"#1B9E78":GH.border}`,cursor:"pointer",textAlign:"left",padding:0,transition:"all 0.15s"}}>
-          <div style={{width:72,background:"#1B9E7822",borderRight:"1px solid #1B9E7844",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",flexShrink:0,gap:3,padding:"20px 0"}}>
-            <span style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:11,fontWeight:900,color:"#1B9E78",letterSpacing:"0.12em"}}>FLORA</span>
-            <span style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:11,fontWeight:900,color:"#1B9E78",letterSpacing:"0.12em"}}>PRO</span>
-          </div>
-          <div style={{flex:1,padding:"18px 20px"}}>
-            <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:24,fontWeight:900,color:brand==="florapro"?"#1B9E78":GH.text,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:4}}>FloraPro</div>
-            <div style={{fontSize:12,color:GH.muted,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",marginBottom:6}}>Standard · High EC</div>
-            <div style={{fontSize:11,color:GH.dim,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif"}}>Powder concentrate system for commercial and high-performance grows.</div>
-          </div>
-          {brand==="florapro"&&<div style={{width:4,background:"#1B9E78",flexShrink:0}}/>}
-        </button>
-
-        {/* BioThrive */}
-        <button onClick={()=>{setBrand("biothrive");setSystem(null);setPlant(null);setStage(null);setSupps(new Set());setStep(2);}}
-          style={{display:"flex",alignItems:"stretch",width:"100%",marginBottom:10,background:brand==="biothrive"?`linear-gradient(135deg,#E8910A15,#E8910A05)`:GH.card,border:`1px solid ${brand==="biothrive"?"#E8910A":GH.border}`,cursor:"pointer",textAlign:"left",padding:0,transition:"all 0.15s"}}>
-          <div style={{width:72,background:"#E8910A22",borderRight:"1px solid #E8910A44",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",flexShrink:0,gap:3,padding:"20px 0"}}>
-            <span style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:11,fontWeight:900,color:"#E8910A",letterSpacing:"0.08em"}}>BIO</span>
-            <span style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:11,fontWeight:900,color:"#E8910A",letterSpacing:"0.08em"}}>THRIVE</span>
-          </div>
-          <div style={{flex:1,padding:"18px 20px"}}>
-            <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:24,fontWeight:900,color:brand==="biothrive"?"#E8910A":GH.text,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:4}}>BioThrive</div>
-            <div style={{fontSize:12,color:GH.muted,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",marginBottom:6}}>Basic 2-Part · Custom 7-Part</div>
-            <div style={{fontSize:11,color:GH.dim,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif"}}>Organic-based professional system with targeted supplements for veg and bloom.</div>
-          </div>
-          {brand==="biothrive"&&<div style={{width:4,background:"#E8910A",flexShrink:0}}/>}
-        </button>
-
-        {/* MaxiSeries */}
-        <button onClick={()=>{setBrand("maxi");setSystem(null);setPlant(null);setStage(null);setSupps(new Set());setStep(2);}}
-          style={{display:"flex",alignItems:"stretch",width:"100%",marginBottom:10,background:brand==="maxi"?`linear-gradient(135deg,#1565C015,#1565C005)`:GH.card,border:`1px solid ${brand==="maxi"?"#1565C0":GH.border}`,cursor:"pointer",textAlign:"left",padding:0,transition:"all 0.15s"}}>
-          <div style={{width:72,background:"#1565C022",borderRight:"1px solid #1565C044",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",flexShrink:0,gap:3,padding:"20px 0"}}>
-            <span style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:11,fontWeight:900,color:"#1565C0",letterSpacing:"0.1em"}}>MAXI</span>
-            <span style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:11,fontWeight:900,color:"#1565C0",letterSpacing:"0.08em"}}>SERIES</span>
-          </div>
-          <div style={{flex:1,padding:"18px 20px"}}>
-            <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:24,fontWeight:900,color:brand==="maxi"?"#1565C0":GH.text,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:4}}>MaxiSeries</div>
-            <div style={{fontSize:12,color:GH.muted,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",marginBottom:6}}>Indoor 2-Part · Outdoor 1-Part</div>
-            <div style={{fontSize:11,color:GH.dim,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif"}}>Professional dry concentrate system — simple 1 or 2 product mixing for any environment.</div>
-          </div>
-          {brand==="maxi"&&<div style={{width:4,background:"#1565C0",flexShrink:0}}/>}
-        </button>
-
-        {/* FloraNova */}
-        <button onClick={()=>{setBrand("floranvoa");setSystem(null);setPlant(null);setStage(null);setSupps(new Set());setStep(2);}}
-          style={{display:"flex",alignItems:"stretch",width:"100%",marginBottom:10,background:brand==="floranvoa"?`linear-gradient(135deg,#00838F15,#00838F05)`:GH.card,border:`1px solid ${brand==="floranvoa"?"#00838F":GH.border}`,cursor:"pointer",textAlign:"left",padding:0,transition:"all 0.15s"}}>
-          <div style={{width:72,background:"#00838F22",borderRight:"1px solid #00838F44",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",flexShrink:0,gap:3,padding:"20px 0"}}>
-            <span style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:11,fontWeight:900,color:"#00838F",letterSpacing:"0.06em"}}>FLORA</span>
-            <span style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:11,fontWeight:900,color:"#00838F",letterSpacing:"0.06em"}}>NOVA</span>
-          </div>
-          <div style={{flex:1,padding:"18px 20px"}}>
-            <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:24,fontWeight:900,color:brand==="floranvoa"?"#00838F":GH.text,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:4}}>FloraNova</div>
-            <div style={{fontSize:12,color:GH.muted,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",marginBottom:6}}>1-Part · 4-Part · 8-Part</div>
-            <div style={{fontSize:11,color:GH.dim,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif"}}>Liquid concentrate with dry-strength performance. One product per stage — simple and powerful.</div>
-          </div>
-          {brand==="floranvoa"&&<div style={{width:4,background:"#00838F",flexShrink:0}}/>}
-        </button>
-      </div>
-    );
-
-    // ── STEP 1: SYSTEM PICKER ───────────────────────────────────────────────
+    // ── STEP 2: BRAND / LINE PICKER (manufacturer-aware) ────────────────────
     if(step===2) {
-      const brandSystems = brand==="classic"
-        ? [SYSTEM_CONFIGS["3part"],SYSTEM_CONFIGS["6part"],SYSTEM_CONFIGS["10part"]]
-        : brand==="florapro"
-        ? [SYSTEM_CONFIGS["florapro_std"],SYSTEM_CONFIGS["florapro_highec"]]
-        : brand==="maxi"
-        ? [SYSTEM_CONFIGS["maxi_indoor"],SYSTEM_CONFIGS["maxi_outdoor"]]
-        : brand==="floranvoa"
-        ? [SYSTEM_CONFIGS["floranvoa_1part"],SYSTEM_CONFIGS["floranvoa_4part"],SYSTEM_CONFIGS["floranvoa_8part"]]
-        : [SYSTEM_CONFIGS["biothrive_basic"],SYSTEM_CONFIGS["biothrive_custom"]];
-      const backLabel = brand==="classic"?"CLASSIC":brand==="florapro"?"FLORAPRO":brand==="maxi"?"MAXISERIES":brand==="floranvoa"?"FLORANOVA":"BIOTHRIVE";
+      const lines = mfrLines;
+      const mfrObj = MANUFACTURERS.find(m=>m.id===manufacturer);
       return (
         <div>
-          <button onClick={()=>setStep(0)} style={{display:"flex",alignItems:"center",gap:6,background:"none",border:"none",color:GH.dim,cursor:"pointer",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:12,fontWeight:700,letterSpacing:"0.1em",paddingLeft:0,marginBottom:4,paddingTop:8}}>
+          {storageReady&&savedRuns.length>0&&(
+            <div style={{marginBottom:32}}>
+              <div style={sectionLabel()}>SAVED RUNS</div>
+              {savedRuns.map(run=>{
+                const p=PLANTS.find(x=>x.id===run.plant),st=STAGE_META[run.stage],sys=SYSTEM_CONFIGS[run.system||"3part"];
+                const isConf=confirmDel===run.id;
+                return (
+                  <div key={run.id} style={{background:GH.card,borderRadius:14,border:`1px solid ${GH.border}`,marginBottom:8,overflow:"hidden"}}>
+                    <div style={{display:"flex",alignItems:"center",gap:12,padding:"14px 16px"}}>
+                      <span style={{fontSize:26,flexShrink:0}}>{p?.icon||"🌱"}</span>
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:16,fontWeight:700,color:GH.text,letterSpacing:"0.01em",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{run.name}</div>
+                        <div style={{display:"flex",gap:8,marginTop:3,flexWrap:"wrap"}}>
+                          {sys&&<span style={{fontSize:10,color:sys.color,fontWeight:700,letterSpacing:"0.06em"}}>{sys.name}</span>}
+                          <span style={{fontSize:10,color:GH.dim}}>·</span>
+                          <span style={{fontSize:10,color:st?.color||GH.green}}>{st?.label}</span>
+                          <span style={{fontSize:10,color:GH.dim}}>·</span>
+                          <span style={{fontSize:10,color:GH.muted}}>{run.volume} {run.unit}</span>
+                        </div>
+                      </div>
+                    </div>
+                    {!isConf?(
+                      <div style={{display:"flex",borderTop:`1px solid ${GH.border}`}}>
+                        <button onClick={()=>loadRun(run,8)} style={runBtn(GH.green)}>▶ LOAD</button>
+                        <button onClick={()=>loadRun(run,6)} style={{...runBtn(GH.blue),borderLeft:`1px solid ${GH.border}`}}>✎ MODIFY</button>
+                        <button onClick={()=>setConfirmDel(run.id)} style={{...runBtn("#e05050"),borderLeft:`1px solid ${GH.border}`}}>✕ DELETE</button>
+                      </div>
+                    ):(
+                      <div style={{display:"flex",borderTop:`1px solid #f0d0d0`,background:"rgba(200,50,50,0.06)"}}>
+                        <div style={{flex:1,padding:"11px 14px",fontSize:12,color:"#b05050",display:"flex",alignItems:"center"}}>Delete this run?</div>
+                        <button onClick={()=>handleDelete(run.id)} style={{padding:"11px 20px",background:"rgba(200,50,50,0.15)",border:"none",borderLeft:`1px solid ${GH.border}`,color:"#c03030",cursor:"pointer",fontWeight:700,letterSpacing:"0.08em"}}>YES</button>
+                        <button onClick={()=>setConfirmDel(null)} style={{padding:"11px 20px",background:"none",border:"none",borderLeft:`1px solid ${GH.border}`,color:GH.muted,cursor:"pointer",fontWeight:700,letterSpacing:"0.08em"}}>NO</button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+              <div style={{height:1,background:`linear-gradient(90deg,transparent,${GH.border},transparent)`,margin:"24px 0"}}/>
+            </div>
+          )}
+
+          <button onClick={()=>setStep(1)} style={{display:"flex",alignItems:"center",gap:6,background:"none",border:"none",color:GH.dim,cursor:"pointer",fontSize:12,fontWeight:700,letterSpacing:"0.06em",paddingLeft:0,marginBottom:8}}>← MEDIUM</button>
+          <div style={sectionLabel()}>{mfrObj?.name?.toUpperCase()} — SELECT LINE</div>
+
+          {lines.map(line=>{
+            const sel=brand===line.id;
+            const isClassic=line.id==="classic";
+            return (
+              <div key={line.id} style={{marginBottom:10,background:sel?`${line.color}12`:GH.card,borderRadius:14,border:`1px solid ${sel?line.color:GH.border}`,overflow:"hidden",transition:"all 0.15s"}}>
+                <button onClick={()=>{const onlyOne=line.systems.length<=1;setBrand(line.id);setSystem(onlyOne?line.systems[0]:null);setPlant(null);setStage(null);setSupps(new Set());setStep(onlyOne?4:3);}}
+                  style={{display:"flex",alignItems:"center",width:"100%",background:"none",border:"none",cursor:"pointer",textAlign:"left",padding:"18px 20px",gap:14}}>
+                  <div style={{flex:1}}>
+                    <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:22,fontWeight:800,color:sel?line.color:GH.text,letterSpacing:"0.01em",marginBottom:3}}>{line.name}</div>
+                    <div style={{fontSize:12,color:GH.muted,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif"}}>{line.tagline}</div>
+                  </div>
+                  {sel&&<span style={{color:line.color,fontSize:20,fontWeight:700}}>→</span>}
+                </button>
+                {isClassic&&(
+                  <div style={{borderTop:`1px solid ${line.color}33`,padding:"12px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
+                    <div>
+                      <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:12,fontWeight:700,color:line.color,letterSpacing:"0.06em",marginBottom:2}}>Plant Modifiers</div>
+                      <div style={{fontSize:11,color:GH.dim,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",lineHeight:1.4}}>Adjusts doses for your specific crop — cannabis gets more nitrogen, orchids get less.</div>
+                    </div>
+                    <button onClick={e=>{e.stopPropagation();setUsePlantMod(v=>!v);}}
+                      style={{flexShrink:0,width:44,height:24,borderRadius:12,background:usePlantMod?line.color:"#ccc",border:"none",cursor:"pointer",position:"relative",transition:"background 0.2s"}}>
+                      <div style={{position:"absolute",top:3,left:usePlantMod?22:3,width:18,height:18,borderRadius:9,background:"#fff",transition:"left 0.2s",boxShadow:"0 1px 3px rgba(0,0,0,0.2)"}}/>
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
+    // ── STEP 3: SYSTEM PICKER (variations within a line) ────────────────────
+    if(step===3) {
+      const brandSystems = (brandLine?brandLine.systems:[]).map(id=>SYSTEM_CONFIGS[id]).filter(Boolean);
+      const backLabel = (brandLine?.name||"BRAND").toUpperCase();
+      return (
+        <div>
+          <button onClick={()=>setStep(2)} style={{display:"flex",alignItems:"center",gap:6,background:"none",border:"none",color:GH.dim,cursor:"pointer",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:12,fontWeight:700,letterSpacing:"0.1em",paddingLeft:0,marginBottom:4,paddingTop:8}}>
             ← {backLabel}
           </button>
           <div style={sectionLabel()}>{brand==="classic"?"SELECT SYSTEM":"SELECT PROGRAM"}</div>
           {brandSystems.map(sys=>{
             const sel=system===sys.id;
             return (
-              <button key={sys.id} onClick={()=>{setSystem(sys.id);setPlant(null);setStage(null);setSupps(new Set());setStep(3);}}
+              <button key={sys.id} onClick={()=>{setSystem(sys.id);setPlant(null);setStage(null);setSupps(new Set());setStep(4);}}
                 style={{display:"flex",alignItems:"stretch",width:"100%",marginBottom:8,background:sel?`linear-gradient(135deg,${sys.color}15,${sys.color}05)`:GH.card,border:`1px solid ${sel?sys.color:GH.border}`,cursor:"pointer",textAlign:"left",padding:0,transition:"all 0.15s"}}>
                 <div style={{width:72,background:`${sys.color}22`,borderRight:`1px solid ${sys.color}44`,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",flexShrink:0,gap:2,padding:"20px 0"}}>
                   <span style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:sys.isPowder?13:28,fontWeight:900,color:sys.color,lineHeight:1}}>{sys.parts}</span>
@@ -1096,8 +1368,8 @@ export default function FloraApp() {
       );
     }
 
-    // ── STEP 2: PLANT ───────────────────────────────────────────────────────
-    if(step===3) return (
+    // ── STEP 4: PLANT ───────────────────────────────────────────────────────
+    if(step===4) return (
       <div>
         <div style={sectionLabel()}>SELECT CROP</div>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
@@ -1105,7 +1377,7 @@ export default function FloraApp() {
             const sel=plant===p.id;
             const stgCount=p.maxStages.filter(s=>sysCfg?.stages.includes(s)).length;
             return (
-              <button key={p.id} onClick={()=>{setPlant(p.id);setStage(null);setSupps(new Set());setStep(4);}}
+              <button key={p.id} onClick={()=>{setPlant(p.id);setStage(null);setSupps(new Set());setStep(5);}}
                 style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"20px 12px",background:sel?`linear-gradient(135deg,${GH.green}20,${GH.green}08)`:GH.card,border:`1px solid ${sel?GH.green:GH.border}`,cursor:"pointer",textAlign:"center",position:"relative",transition:"all 0.15s"}}>
                 {sel&&<div style={{position:"absolute",top:0,left:0,right:0,height:3,background:GH.green}}/>}
                 <span style={{fontSize:36,marginBottom:8}}>{p.icon}</span>
@@ -1118,15 +1390,15 @@ export default function FloraApp() {
       </div>
     );
 
-    // ── STEP 4: STAGE ───────────────────────────────────────────────────────
-    if(step===4) return (
+    // ── STEP 5: STAGE ───────────────────────────────────────────────────────
+    if(step===5) return (
       <div>
         <div style={sectionLabel()}>GROWTH STAGE</div>
         {avail.map(s=>{
           const sel=stage===s.id;
 
           return (
-            <button key={s.id} onClick={()=>{setStage(s.id);setStep(5);}}
+            <button key={s.id} onClick={()=>{setStage(s.id);setStep(6);}}
               style={{display:"flex",alignItems:"center",gap:14,width:"100%",marginBottom:8,padding:"16px 18px",background:sel?`${s.color}18`:GH.card,border:`1px solid ${sel?s.color:GH.border}`,cursor:"pointer",textAlign:"left",transition:"all 0.15s"}}>
               <div style={{width:14,height:14,borderRadius:"50%",background:s.color,flexShrink:0,boxShadow:sel?`0 0 12px ${s.color}88`:"none"}}/>
               <div style={{flex:1}}>
@@ -1141,7 +1413,7 @@ export default function FloraApp() {
     );
 
     // ── STEP 5: SETTINGS ────────────────────────────────────────────────────
-    if(step===5) return (
+    if(step===6) return (
       <div>
         <div style={sectionLabel()}>RESERVOIR VOLUME</div>
         <div style={{display:"flex",alignItems:"stretch",background:GH.card,borderRadius:14,border:`1px solid ${GH.border}`,overflow:"hidden",marginBottom:8}}>
@@ -1187,12 +1459,12 @@ export default function FloraApp() {
             </button>
           );
         })}
-        <button onClick={()=>setStep(6)} style={ghPrimaryBtn()}>NEXT: SUPPLEMENTS →</button>
+        <button onClick={()=>setStep(7)} style={ghPrimaryBtn()}>NEXT: SUPPLEMENTS →</button>
       </div>
     );
 
     // ── STEP 6: SUPPLEMENTS ─────────────────────────────────────────────────
-    if(step===6) {
+    if(step===7) {
       // Group suppData by category, sorted by CAT_META order
       const catOrder = Object.entries(CAT_META).sort((a,b)=>a[1].order-b[1].order).map(([k])=>k);
       const grouped = catOrder.map(catId => {
@@ -1296,14 +1568,21 @@ export default function FloraApp() {
               )}
             </div>
           ))}
-          <button onClick={()=>setStep(7)} style={ghPrimaryBtn()}>VIEW FEEDING SCHEDULE →</button>
+          <button onClick={()=>setStep(8)} style={ghPrimaryBtn()}>VIEW FEEDING SCHEDULE →</button>
         </div>
       );
     }
 
     // ── STEP 7: RESULTS ─────────────────────────────────────────────────────
-    if(step===7) return (
+    if(step===8) return (
       <div>
+        {/* Starting-point advisory */}
+        <div style={{background:"rgba(255,159,10,0.08)",borderRadius:12,border:"1px solid rgba(255,159,10,0.35)",padding:"12px 14px",marginBottom:12,display:"flex",gap:10,alignItems:"flex-start"}}>
+          <span style={{fontSize:18,flexShrink:0,lineHeight:1.2}}>⚠️</span>
+          <div style={{fontSize:12,color:"#7a4a00",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",lineHeight:1.5}}>
+            <span style={{fontWeight:700}}>Starting point, not a prescription.</span> Mix, then check your EC/PPM and pH before feeding. Start on the lighter side and watch your plants — adjust to how they respond, not just the numbers.
+          </div>
+        </div>
         {/* Context bar */}
         <div style={{background:GH.card,borderRadius:14,border:`1px solid ${GH.border}`,borderLeft:`4px solid ${sysCfg?.color||GH.green}`,padding:"12px 16px",marginBottom:12}}>
           <div style={{display:"flex",flexWrap:"wrap",gap:"6px 14px",alignItems:"center"}}>
@@ -1473,9 +1752,9 @@ export default function FloraApp() {
       <div style={{background:"#FFFFFF",borderBottom:"0.5px solid rgba(0,0,0,0.1)",padding:"0 20px"}}>
         <div style={{maxWidth:480,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between",padding:"16px 0"}}>
           <div>
-            <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:9,fontWeight:700,letterSpacing:"0.18em",color:"#888",textTransform:"uppercase",marginBottom:2}}>GENERAL HYDROPONICS</div>
+            <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:9,fontWeight:700,letterSpacing:"0.18em",color:"#888",textTransform:"uppercase",marginBottom:2}}>RESERVOIR</div>
             <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:26,fontWeight:900,color:"#111111",textTransform:"uppercase",letterSpacing:"0.04em",lineHeight:1}}>
-              FLORA SERIES <span style={{color:"#78BE20"}}>™</span>
+              {(step>0&&MANUFACTURERS.find(m=>m.id===manufacturer)?.name)||"Nutrient Calculator"} <span style={{color:(step>0&&MANUFACTURERS.find(m=>m.id===manufacturer)?.color)||"#78BE20"}}>™</span>
             </div>
           </div>
           {sysCfg&&(
@@ -1487,8 +1766,8 @@ export default function FloraApp() {
         </div>
       </div>
 
-      {/* Green accent bar */}
-      <div style={{height:2,background:"#78BE20",opacity:0.9}}/>
+      {/* Accent bar */}
+      <div style={{height:2,background:(step>0&&MANUFACTURERS.find(m=>m.id===manufacturer)?.color)||"#78BE20",opacity:0.9,transition:"background 0.3s"}}/>
 
       {/* Step nav */}
       <div style={{position:"sticky",top:0,zIndex:50,background:"rgba(249,249,249,0.94)",backdropFilter:"blur(20px) saturate(1.8)",WebkitBackdropFilter:"blur(20px) saturate(1.8)",borderBottom:"0.5px solid rgba(0,0,0,0.12)"}}>

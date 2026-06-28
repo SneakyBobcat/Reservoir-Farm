@@ -9,9 +9,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'icons/*.png'],
       manifest: {
-        name: 'GH Nutrient Calculator',
-        short_name: 'GH Calc',
-        description: 'General Hydroponics nutrient calculator — Flora Series, FloraNova, BioThrive, MaxiSeries, and FloraPro systems.',
+        name: 'Nutrient Calculator',
+        short_name: 'Nutrients',
+        description: 'Multi-brand hydroponic nutrient calculator — General Hydroponics, Athena, and Jack\'s.',
         theme_color: '#78BE20',
         background_color: '#F2F2F7',
         display: 'standalone',
@@ -24,9 +24,7 @@ export default defineConfig({
           { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
         ]
       },
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}']
-      }
+      workbox: { globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'] }
     })
   ]
 })
