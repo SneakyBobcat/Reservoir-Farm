@@ -32,14 +32,66 @@ const PLANTS = [
 ];
 
 const MANUFACTURERS = [
-  { id:"gh",     name:"General Hydroponics", short:"GH",     icon:"🌊", color:"#78BE20", desc:"Flora Series, FloraNova, MaxiSeries, BioThrive, FloraPro" },
-  { id:"advanced", name:"Advanced Nutrients", short:"AN",  icon:"🧬", color:"#0072CE", desc:"pH Perfect Grow · Micro · Bloom" },
-  { id:"foxfarm", name:"Fox Farm",           short:"FF",    icon:"🦊", color:"#E8531B", desc:"Grow Big · Tiger Bloom · Big Bloom trio" },
-  { id:"canna",   name:"CANNA",              short:"CANNA", icon:"🅒", color:"#E2001A", desc:"Coco A+B · Terra Vega & Flores" },
-  { id:"humboldts", name:"Humboldts Secret", short:"HS",   icon:"🌳", color:"#C9A227", desc:"Base A+B · Golden Tree · PPM-targeted" },
-  { id:"athena", name:"Athena",              short:"Athena", icon:"⚫", color:"#1A1A1A", desc:"Pro Line powder · Blended Line liquid" },
-  { id:"jacks",  name:"Jack's Nutrients",    short:"Jack's", icon:"🅰️", color:"#C8102E", desc:"The 3-2-1 dry program" },
+  { id:"gh",       name:"General Hydroponics", short:"GH",     icon:"🌊", color:"#78BE20", cat:"mineral", desc:"Flora Series, FloraNova, MaxiSeries, BioThrive, FloraPro" },
+  { id:"advanced", name:"Advanced Nutrients",  short:"AN",     icon:"🧬", color:"#0072CE", cat:"mineral", desc:"pH Perfect, Sensi, Connoisseur, Jungle Juice, Iguana Juice" },
+  { id:"botanicare", name:"Botanicare",        short:"Bota",   icon:"🌵", color:"#6BA539", cat:"mineral", desc:"Pure Blend Pro, CNS17, KIND" },
+  { id:"foxfarm",  name:"Fox Farm",            short:"FF",     icon:"🦊", color:"#E8531B", cat:"mineral", desc:"Grow Big · Tiger Bloom · Big Bloom trio" },
+  { id:"canna",    name:"CANNA",               short:"CANNA",  icon:"🅒", color:"#E2001A", cat:"mineral", desc:"Coco A+B · Terra Vega & Flores" },
+  { id:"athena",   name:"Athena",              short:"Athena", icon:"⚫", color:"#1A1A1A", cat:"mineral", desc:"Pro Line powder · Blended Line liquid" },
+  { id:"jacks",    name:"Jack's Nutrients",    short:"Jack's", icon:"🅰️", color:"#C8102E", cat:"dry",     desc:"The 3-2-1 dry program" },
+  { id:"humboldts", name:"Humboldts Secret",   short:"HS",     icon:"🌳", color:"#C9A227", cat:"mineral", desc:"Base A+B · Golden Tree · PPM-targeted" },
+  { id:"emerald",   name:"Emerald Harvest",     short:"EH",     icon:"💚", color:"#1FA055", cat:"mineral", desc:"Cali Pro Grow · Micro · Bloom" },
+  { id:"houseandgarden", name:"House & Garden", short:"H&G",    icon:"🏡", color:"#0E5B3A", cat:"mineral", desc:"Aqua Flakes · Cocos · Soil A+B" },
+  { id:"dynagro",   name:"Dyna-Gro",            short:"Dyna",   icon:"⚗️", color:"#1565C0", cat:"mineral", desc:"Grow 7-9-5 · Bloom 3-12-6 (one-part)" },
+  { id:"technaflora", name:"Technaflora",       short:"Techna", icon:"🍁", color:"#E84B3C", cat:"mineral", desc:"B.C. Grow · B.C. Bloom" },
+  { id:"remo",      name:"Remo Nutrients",      short:"Remo",   icon:"🟣", color:"#6A2C8E", cat:"mineral", desc:"Grow · Micro · Bloom 3-part" },
+  { id:"heavy16",   name:"Heavy 16",            short:"H16",    icon:"⬛", color:"#2C2C2C", cat:"mineral", desc:"Veg A+B · Bud A+B" },
+  { id:"mills",     name:"Mills Nutrients",     short:"Mills",  icon:"🔷", color:"#0A7CC0", cat:"mineral", desc:"Basis A+B · C4" },
+  { id:"roots",     name:"Roots Organics",      short:"Roots",  icon:"🪴", color:"#7B5E3B", cat:"organic", desc:"Buddha Grow · Buddha Bloom" },
+  { id:"nectar",    name:"Nectar for the Gods", short:"Nectar", icon:"🏛️", color:"#B08D2E", cat:"organic", desc:"Medusa's Magic · Gaia Mania · Demeter's Destiny" },
 ];
+
+// Display groupings for the fertilizer picker
+const MFR_CATEGORIES = [
+  { id:"mineral", label:"Mineral & Synthetic Base Lines" },
+  { id:"organic", label:"Organic" },
+  { id:"dry",     label:"Dry & Powder" },
+];
+
+// Official manufacturer feed-chart / feeding-schedule pages.
+// Deep links where confirmed; manufacturer site otherwise (chart is a click in).
+const CHART_URLS = {
+  gh:            "https://generalhydroponics.com/pages/feedcharts/feed-charts-hub",
+  advanced:      "https://www.advancednutrients.com/feeding/",
+  botanicare:    "https://www.botanicare.com/category/feed-sheet/",
+  canna:         "https://www.cannagardening.com/growguide",
+  houseandgarden:"https://house-garden.us/feeding-schedules/",
+  emerald:       "https://emeraldharvest.co/downloads/feed-charts/",
+  foxfarm:       "https://foxfarm.com/feeding-schedules/",
+  humboldts:     "https://humboldtssecretsupplies.com/pages/feed-chart",
+  athena:        "https://athenaag.com",
+  jacks:         "https://jacksnutrients.com",
+  dynagro:       "https://dyna-gro.com",
+  technaflora:   "https://technaflora.com",
+  remo:          "https://www.remonutrients.com",
+  heavy16:       "https://heavy16.com",
+  mills:         "https://www.millsnutrients.com",
+  roots:         "https://rootsorganics.com",
+  nectar:        "https://nectarforthegods.com",
+};
+
+// Line-specific feed charts (direct to the exact product's schedule/PDF).
+// Keyed by line id; takes priority over the manufacturer-level link above.
+const LINE_CHART_URLS = {
+  // CANNA — direct downloadable PDF schedules per medium
+  canna_coco:  "https://www.cannagardening.com/sites/united_states/files/2024-02/downloads-grow-schedule-coco.pdf",
+};
+
+// Resolve the best chart link for a system: line-specific first, then manufacturer.
+function chartUrlFor(sysCfg){
+  if(!sysCfg) return null;
+  return LINE_CHART_URLS[sysCfg.brand] || CHART_URLS[sysCfg.mfr] || null;
+}
 
 // Brand lines within each manufacturer. {id, name, color, systems:[systemId...]}
 const BRAND_LINES = {
@@ -66,6 +118,41 @@ const BRAND_LINES = {
   ],
   humboldts: [
     { id:"hs_starter", name:"Starter Kit", color:"#C9A227", tagline:"Base A+B · Golden Tree", systems:["hs_starter"] },
+  ],
+  botanicare: [
+    { id:"bc_pbp",   name:"Pure Blend Pro", color:"#6BA539", tagline:"Grow · Bloom (soil/coco/hydro)", systems:["bc_pbp"] },
+    { id:"bc_cns17", name:"CNS17",          color:"#4A7A2A", tagline:"Grow · Bloom · Ripe (one-part)", systems:["bc_cns17"] },
+    { id:"bc_kind",  name:"KIND",           color:"#8BC34A", tagline:"Base · Grow · Bloom (3-part)", systems:["bc_kind"] },
+  ],
+  emerald: [
+    { id:"eh_calipro", name:"Cali Pro", color:"#1FA055", tagline:"Grow · Micro · Bloom (3-part)", systems:["eh_calipro"] },
+  ],
+  houseandgarden: [
+    { id:"hg_aqua",  name:"Aqua Flakes", color:"#0E5B3A", tagline:"A + B (hydro/DWC/clay)", systems:["hg_aqua"] },
+    { id:"hg_cocos", name:"Cocos",       color:"#1E7B4A", tagline:"A + B (coco coir)", systems:["hg_cocos"] },
+    { id:"hg_soil",  name:"Soil",        color:"#2E6B3A", tagline:"A + B (soil)", systems:["hg_soil"] },
+  ],
+  dynagro: [
+    { id:"dg_grobloom", name:"Grow & Bloom", color:"#1565C0", tagline:"Grow 7-9-5 · Bloom 3-12-6", systems:["dg_grobloom"] },
+    { id:"dg_foliagepro", name:"Foliage Pro", color:"#1976D2", tagline:"9-3-6 all-purpose one-part", systems:["dg_foliagepro"] },
+  ],
+  technaflora: [
+    { id:"tf_bc", name:"B.C. Grow & Bloom", color:"#E84B3C", tagline:"B.C. Grow · B.C. Bloom", systems:["tf_bc"] },
+  ],
+  remo: [
+    { id:"remo_3part", name:"Grow · Micro · Bloom", color:"#6A2C8E", tagline:"Remo 3-part base", systems:["remo_3part"] },
+  ],
+  heavy16: [
+    { id:"h16_vegbud", name:"Veg & Bud A+B", color:"#2C2C2C", tagline:"Veg A+B · Bud A+B", systems:["h16_vegbud"] },
+  ],
+  mills: [
+    { id:"mills_basis", name:"Basis A+B", color:"#0A7CC0", tagline:"Basis A · Basis B base", systems:["mills_basis"] },
+  ],
+  roots: [
+    { id:"ro_buddha", name:"Buddha Grow & Bloom", color:"#7B5E3B", tagline:"Buddha Grow · Buddha Bloom", systems:["ro_buddha"] },
+  ],
+  nectar: [
+    { id:"nftg_greek", name:"Greek Goddess", color:"#B08D2E", tagline:"Medusa's · Gaia · Demeter's · Zeus", systems:["nftg_greek"] },
   ],
   athena: [
     { id:"athena_proline", name:"Pro Line",     color:"#1A1A1A", tagline:"Dry soluble · commercial", systems:["athena_pro"] },
@@ -262,6 +349,136 @@ const SYSTEM_CONFIGS = {
     stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
     includedKeys:["hs_base_a","hs_base_b","hs_golden_tree"],
   },
+  // ── BOTANICARE ──────────────────────────────────────────────────────────
+  "bc_pbp": {
+    id:"bc_pbp", mfr:"botanicare", brand:"bc_pbp", name:"Pure Blend Pro", parts:"2", color:"#6BA539",
+    baseLabel:"PURE BLEND PRO — GROW · BLOOM",
+    tagline:"PBP Grow · PBP Bloom",
+    desc:"Organic-based two-bottle program. Pure Blend Pro Grow in veg, Pure Blend Pro Bloom in flower. Widely run leaner than label.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["bc_pbp_grow","bc_pbp_bloom"],
+  },
+  "bc_cns17": {
+    id:"bc_cns17", mfr:"botanicare", brand:"bc_cns17", name:"CNS17", parts:"3", color:"#4A7A2A",
+    baseLabel:"CNS17 — GROW · BLOOM · RIPE",
+    tagline:"CNS17 Grow · Bloom · Ripe",
+    desc:"Complete one-part base — only one bottle active per stage. Grow in veg, Bloom in flower, Ripe to finish. Label rates run hot; start low.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["bc_cns_grow","bc_cns_bloom","bc_cns_ripe"],
+  },
+  "bc_kind": {
+    id:"bc_kind", mfr:"botanicare", brand:"bc_kind", name:"KIND", parts:"3", color:"#8BC34A",
+    baseLabel:"KIND — BASE · GROW · BLOOM",
+    tagline:"KIND Base · Grow · Bloom",
+    desc:"Three-part mineral system for coco and hydro. Base runs all cycle; Grow leads in veg, Bloom in flower.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["bc_kind_base","bc_kind_grow","bc_kind_bloom"],
+  },
+  // ── EMERALD HARVEST ─────────────────────────────────────────────────────
+  "eh_calipro": {
+    id:"eh_calipro", mfr:"emerald", brand:"eh_calipro", name:"Cali Pro", parts:"3", color:"#1FA055",
+    baseLabel:"CALI PRO — GROW · MICRO · BLOOM",
+    tagline:"Cali Pro Grow · Micro · Bloom",
+    desc:"Three-part base. Micro runs all cycle; Grow leads in veg, Bloom in flower. Used together as a complete program.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["eh_grow","eh_micro","eh_bloom"],
+  },
+  // ── HOUSE & GARDEN ──────────────────────────────────────────────────────
+  "hg_aqua": {
+    id:"hg_aqua", mfr:"houseandgarden", brand:"hg_aqua", name:"Aqua Flakes", parts:"2", color:"#0E5B3A",
+    baseLabel:"AQUA FLAKES — A + B",
+    tagline:"Aqua Flakes A · B",
+    desc:"Two-part base for recirculating hydro, clay, and DWC. Equal A and B all cycle, added separately. pH 5.7–5.9.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["hg_aqua_a","hg_aqua_b"],
+  },
+  "hg_cocos": {
+    id:"hg_cocos", mfr:"houseandgarden", brand:"hg_cocos", name:"Cocos", parts:"2", color:"#1E7B4A",
+    baseLabel:"COCOS — A + B",
+    tagline:"Cocos A · B",
+    desc:"Two-part base formulated for coco coir, with magnesium balanced for the medium. Equal A and B all cycle. pH 5.8–6.3.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["hg_cocos_a","hg_cocos_b"],
+  },
+  "hg_soil": {
+    id:"hg_soil", mfr:"houseandgarden", brand:"hg_soil", name:"Soil", parts:"2", color:"#2E6B3A",
+    baseLabel:"SOIL — A + B",
+    tagline:"Soil A · B",
+    desc:"Two-part base for soil and soilless mixes. Equal A and B all cycle. pH 5.8–6.3.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["hg_soil_a","hg_soil_b"],
+  },
+  // ── DYNA-GRO ────────────────────────────────────────────────────────────
+  "dg_grobloom": {
+    id:"dg_grobloom", mfr:"dynagro", brand:"dg_grobloom", name:"Grow & Bloom", parts:"2", color:"#1565C0",
+    baseLabel:"DYNA-GRO — GROW · BLOOM",
+    tagline:"Grow 7-9-5 · Bloom 3-12-6",
+    desc:"Highly concentrated complete one-part formulas. Grow in veg, Bloom in flower. Tiny doses — about 1 tsp/gal. Pair with Pro-TeKt for silica.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["dg_grow","dg_bloom"],
+  },
+  "dg_foliagepro": {
+    id:"dg_foliagepro", mfr:"dynagro", brand:"dg_foliagepro", name:"Foliage Pro", parts:"1", color:"#1976D2",
+    baseLabel:"DYNA-GRO — FOLIAGE PRO 9-3-6",
+    tagline:"Foliage Pro 9-3-6 (all cycle)",
+    desc:"Single complete one-part formula usable the whole cycle. High-nitrogen 9-3-6. About 1 tsp/gal. Simplest possible program.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["dg_foliage"],
+  },
+  // ── TECHNAFLORA ─────────────────────────────────────────────────────────
+  "tf_bc": {
+    id:"tf_bc", mfr:"technaflora", brand:"tf_bc", name:"B.C. Grow & Bloom", parts:"2", color:"#E84B3C",
+    baseLabel:"B.C. — GROW · BLOOM",
+    tagline:"B.C. Grow · B.C. Bloom",
+    desc:"Two-bottle base. B.C. Grow in veg, B.C. Bloom in flower. Core of the Recipe for Success kit.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["tf_grow","tf_bloom"],
+  },
+  // ── REMO NUTRIENTS ──────────────────────────────────────────────────────
+  "remo_3part": {
+    id:"remo_3part", mfr:"remo", brand:"remo_3part", name:"Grow · Micro · Bloom", parts:"3", color:"#6A2C8E",
+    baseLabel:"REMO — GROW · MICRO · BLOOM",
+    tagline:"Remo Grow · Micro · Bloom",
+    desc:"Three-part base used together. Micro all cycle, Grow leads in veg, Bloom in flower. Forgiving and clean.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["remo_grow","remo_micro","remo_bloom"],
+  },
+  // ── HEAVY 16 ────────────────────────────────────────────────────────────
+  "h16_vegbud": {
+    id:"h16_vegbud", mfr:"heavy16", brand:"h16_vegbud", name:"Veg & Bud A+B", parts:"4", color:"#2C2C2C",
+    baseLabel:"HEAVY 16 — VEG A+B · BUD A+B",
+    tagline:"Veg A+B · Bud A+B",
+    desc:"Two-part veg base (Veg A+B) and two-part bloom base (Bud A+B). Cal/mag built in. Equal A and B, added separately.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["h16_veg_a","h16_veg_b","h16_bud_a","h16_bud_b"],
+  },
+  // ── MILLS ───────────────────────────────────────────────────────────────
+  "mills_basis": {
+    id:"mills_basis", mfr:"mills", brand:"mills_basis", name:"Basis A+B", parts:"2", color:"#0A7CC0",
+    baseLabel:"MILLS — BASIS A + B",
+    tagline:"Basis A · Basis B",
+    desc:"Two-part base run all cycle, equal A and B. Partly mineral, partly organic. Add C4 as an optional bloom booster.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["mills_basis_a","mills_basis_b"],
+  },
+  // ── ROOTS ORGANICS ──────────────────────────────────────────────────────
+  "ro_buddha": {
+    id:"ro_buddha", mfr:"roots", brand:"ro_buddha", name:"Buddha Grow & Bloom", parts:"2", color:"#7B5E3B",
+    baseLabel:"ROOTS ORGANICS — BUDDHA GROW · BLOOM",
+    tagline:"Buddha Grow · Buddha Bloom",
+    desc:"All-organic liquid base. Buddha Grow in veg, Buddha Bloom in flower. Shake well; organic rates run higher than mineral.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["ro_grow","ro_bloom"],
+  },
+  // ── NECTAR FOR THE GODS ─────────────────────────────────────────────────
+  "nftg_greek": {
+    id:"nftg_greek", mfr:"nectar", brand:"nftg_greek", name:"Greek Goddess", parts:"4", color:"#B08D2E",
+    baseLabel:"NECTAR — MEDUSA'S · GAIA · DEMETER'S · ZEUS",
+    tagline:"Calcium-based organic regimen",
+    desc:"Calcium-forward organic line. Gaia Mania + Medusa's Magic in veg, Demeter's Destiny + Zeus Juice in flower, with Herculean Harvest calcium throughout. Simplified from the full Greek lineup.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["nftg_gaia","nftg_medusa","nftg_demeter","nftg_zeus","nftg_hercules"],
+  },
 };
 
 const SYSTEM_EXCLUDED_SUPPS = {
@@ -289,6 +506,21 @@ const SYSTEM_EXCLUDED_SUPPS = {
   "canna_coco": [],
   "canna_terra": [],
   "hs_starter": [],
+  "bc_pbp": [],
+  "bc_cns17": [],
+  "bc_kind": [],
+  "eh_calipro": [],
+  "hg_aqua": [],
+  "hg_cocos": [],
+  "hg_soil": [],
+  "dg_grobloom": [],
+  "dg_foliagepro": [],
+  "tf_bc": [],
+  "remo_3part": [],
+  "h16_vegbud": [],
+  "mills_basis": [],
+  "ro_buddha": [],
+  "nftg_greek": [],
 };
 
 const SCHEDULES = {
@@ -509,6 +741,156 @@ const SCHEDULES = {
     late_flower:  { light:{micro:0,gro:0,bloom:0,hs_base_a:9.0,hs_base_b:9.0,hs_golden_tree:2.0}, medium:{micro:0,gro:0,bloom:0,hs_base_a:11.0,hs_base_b:11.0,hs_golden_tree:3.0}, aggressive:{micro:0,gro:0,bloom:0,hs_base_a:12.5,hs_base_b:12.5,hs_golden_tree:4.0} },
     flush:        { light:{micro:0,gro:0,bloom:0,hs_base_a:0,hs_base_b:0,hs_golden_tree:0}, medium:{micro:0,gro:0,bloom:0,hs_base_a:0,hs_base_b:0,hs_golden_tree:0}, aggressive:{micro:0,gro:0,bloom:0,hs_base_a:0,hs_base_b:0,hs_golden_tree:0}, isFlush:true },
   },
+  // ── Botanicare Pure Blend Pro (ml/gal — Grow veg, Bloom flower; label-leaning tempered) ──
+  "bc_pbp": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,bc_pbp_grow:3.0,bc_pbp_bloom:0}, medium:{micro:0,gro:0,bloom:0,bc_pbp_grow:5.0,bc_pbp_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,bc_pbp_grow:7.5,bc_pbp_bloom:0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,bc_pbp_grow:6.0,bc_pbp_bloom:0}, medium:{micro:0,gro:0,bloom:0,bc_pbp_grow:7.5,bc_pbp_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,bc_pbp_grow:10.0,bc_pbp_bloom:0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,bc_pbp_grow:7.5,bc_pbp_bloom:0}, medium:{micro:0,gro:0,bloom:0,bc_pbp_grow:10.0,bc_pbp_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,bc_pbp_grow:12.5,bc_pbp_bloom:0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,bc_pbp_grow:0,bc_pbp_bloom:7.5}, medium:{micro:0,gro:0,bloom:0,bc_pbp_grow:0,bc_pbp_bloom:10.0}, aggressive:{micro:0,gro:0,bloom:0,bc_pbp_grow:0,bc_pbp_bloom:12.5} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,bc_pbp_grow:0,bc_pbp_bloom:10.0}, medium:{micro:0,gro:0,bloom:0,bc_pbp_grow:0,bc_pbp_bloom:12.5}, aggressive:{micro:0,gro:0,bloom:0,bc_pbp_grow:0,bc_pbp_bloom:15.0} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,bc_pbp_grow:0,bc_pbp_bloom:7.5}, medium:{micro:0,gro:0,bloom:0,bc_pbp_grow:0,bc_pbp_bloom:10.0}, aggressive:{micro:0,gro:0,bloom:0,bc_pbp_grow:0,bc_pbp_bloom:12.5} },
+    flush:        { light:{micro:0,gro:0,bloom:0,bc_pbp_grow:0,bc_pbp_bloom:0}, medium:{micro:0,gro:0,bloom:0,bc_pbp_grow:0,bc_pbp_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,bc_pbp_grow:0,bc_pbp_bloom:0}, isFlush:true },
+  },
+  // ── Botanicare CNS17 (ml/gal — one bottle per stage; Grow→Bloom→Ripe, tempered from hot label) ──
+  "bc_cns17": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,bc_cns_grow:5.0,bc_cns_bloom:0,bc_cns_ripe:0}, medium:{micro:0,gro:0,bloom:0,bc_cns_grow:7.5,bc_cns_bloom:0,bc_cns_ripe:0}, aggressive:{micro:0,gro:0,bloom:0,bc_cns_grow:10.0,bc_cns_bloom:0,bc_cns_ripe:0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,bc_cns_grow:8.0,bc_cns_bloom:0,bc_cns_ripe:0}, medium:{micro:0,gro:0,bloom:0,bc_cns_grow:10.0,bc_cns_bloom:0,bc_cns_ripe:0}, aggressive:{micro:0,gro:0,bloom:0,bc_cns_grow:13.0,bc_cns_bloom:0,bc_cns_ripe:0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,bc_cns_grow:10.0,bc_cns_bloom:0,bc_cns_ripe:0}, medium:{micro:0,gro:0,bloom:0,bc_cns_grow:13.0,bc_cns_bloom:0,bc_cns_ripe:0}, aggressive:{micro:0,gro:0,bloom:0,bc_cns_grow:15.0,bc_cns_bloom:0,bc_cns_ripe:0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,bc_cns_grow:0,bc_cns_bloom:10.0,bc_cns_ripe:0}, medium:{micro:0,gro:0,bloom:0,bc_cns_grow:0,bc_cns_bloom:13.0,bc_cns_ripe:0}, aggressive:{micro:0,gro:0,bloom:0,bc_cns_grow:0,bc_cns_bloom:16.0,bc_cns_ripe:0} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,bc_cns_grow:0,bc_cns_bloom:13.0,bc_cns_ripe:0}, medium:{micro:0,gro:0,bloom:0,bc_cns_grow:0,bc_cns_bloom:16.0,bc_cns_ripe:0}, aggressive:{micro:0,gro:0,bloom:0,bc_cns_grow:0,bc_cns_bloom:20.0,bc_cns_ripe:0} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,bc_cns_grow:0,bc_cns_bloom:0,bc_cns_ripe:13.0}, medium:{micro:0,gro:0,bloom:0,bc_cns_grow:0,bc_cns_bloom:0,bc_cns_ripe:16.0}, aggressive:{micro:0,gro:0,bloom:0,bc_cns_grow:0,bc_cns_bloom:0,bc_cns_ripe:20.0} },
+    flush:        { light:{micro:0,gro:0,bloom:0,bc_cns_grow:0,bc_cns_bloom:0,bc_cns_ripe:0}, medium:{micro:0,gro:0,bloom:0,bc_cns_grow:0,bc_cns_bloom:0,bc_cns_ripe:0}, aggressive:{micro:0,gro:0,bloom:0,bc_cns_grow:0,bc_cns_bloom:0,bc_cns_ripe:0}, isFlush:true },
+  },
+  // ── Botanicare KIND (ml/gal — Base all cycle, Grow veg, Bloom flower) ──
+  "bc_kind": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,bc_kind_base:2.5,bc_kind_grow:2.5,bc_kind_bloom:0}, medium:{micro:0,gro:0,bloom:0,bc_kind_base:5.0,bc_kind_grow:5.0,bc_kind_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,bc_kind_base:5.0,bc_kind_grow:7.5,bc_kind_bloom:0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,bc_kind_base:5.0,bc_kind_grow:7.5,bc_kind_bloom:0}, medium:{micro:0,gro:0,bloom:0,bc_kind_base:5.0,bc_kind_grow:10.0,bc_kind_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,bc_kind_base:7.5,bc_kind_grow:12.5,bc_kind_bloom:0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,bc_kind_base:5.0,bc_kind_grow:10.0,bc_kind_bloom:0}, medium:{micro:0,gro:0,bloom:0,bc_kind_base:7.5,bc_kind_grow:12.5,bc_kind_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,bc_kind_base:7.5,bc_kind_grow:15.0,bc_kind_bloom:0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,bc_kind_base:5.0,bc_kind_grow:0,bc_kind_bloom:7.5}, medium:{micro:0,gro:0,bloom:0,bc_kind_base:7.5,bc_kind_grow:0,bc_kind_bloom:10.0}, aggressive:{micro:0,gro:0,bloom:0,bc_kind_base:7.5,bc_kind_grow:0,bc_kind_bloom:12.5} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,bc_kind_base:5.0,bc_kind_grow:0,bc_kind_bloom:10.0}, medium:{micro:0,gro:0,bloom:0,bc_kind_base:7.5,bc_kind_grow:0,bc_kind_bloom:12.5}, aggressive:{micro:0,gro:0,bloom:0,bc_kind_base:7.5,bc_kind_grow:0,bc_kind_bloom:15.0} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,bc_kind_base:5.0,bc_kind_grow:0,bc_kind_bloom:7.5}, medium:{micro:0,gro:0,bloom:0,bc_kind_base:7.5,bc_kind_grow:0,bc_kind_bloom:10.0}, aggressive:{micro:0,gro:0,bloom:0,bc_kind_base:7.5,bc_kind_grow:0,bc_kind_bloom:12.5} },
+    flush:        { light:{micro:0,gro:0,bloom:0,bc_kind_base:0,bc_kind_grow:0,bc_kind_bloom:0}, medium:{micro:0,gro:0,bloom:0,bc_kind_base:0,bc_kind_grow:0,bc_kind_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,bc_kind_base:0,bc_kind_grow:0,bc_kind_bloom:0}, isFlush:true },
+  },
+  // ── Emerald Harvest Cali Pro (ml/gal — Micro constant, Grow veg, Bloom flower) ──
+  "eh_calipro": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,eh_micro:2.5,eh_grow:2.5,eh_bloom:0}, medium:{micro:0,gro:0,bloom:0,eh_micro:3.8,eh_grow:3.8,eh_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,eh_micro:5.0,eh_grow:5.0,eh_bloom:0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,eh_micro:5.0,eh_grow:6.0,eh_bloom:0}, medium:{micro:0,gro:0,bloom:0,eh_micro:7.5,eh_grow:9.0,eh_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,eh_micro:9.0,eh_grow:11.0,eh_bloom:0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,eh_micro:7.5,eh_grow:9.0,eh_bloom:0}, medium:{micro:0,gro:0,bloom:0,eh_micro:9.0,eh_grow:11.0,eh_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,eh_micro:10.0,eh_grow:13.0,eh_bloom:0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,eh_micro:7.5,eh_grow:4.0,eh_bloom:9.0}, medium:{micro:0,gro:0,bloom:0,eh_micro:9.0,eh_grow:5.0,eh_bloom:11.0}, aggressive:{micro:0,gro:0,bloom:0,eh_micro:10.0,eh_grow:6.0,eh_bloom:13.0} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,eh_micro:7.5,eh_grow:0,eh_bloom:11.0}, medium:{micro:0,gro:0,bloom:0,eh_micro:9.0,eh_grow:0,eh_bloom:13.0}, aggressive:{micro:0,gro:0,bloom:0,eh_micro:10.0,eh_grow:0,eh_bloom:15.0} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,eh_micro:6.0,eh_grow:0,eh_bloom:9.0}, medium:{micro:0,gro:0,bloom:0,eh_micro:7.5,eh_grow:0,eh_bloom:11.0}, aggressive:{micro:0,gro:0,bloom:0,eh_micro:9.0,eh_grow:0,eh_bloom:13.0} },
+    flush:        { light:{micro:0,gro:0,bloom:0,eh_micro:0,eh_grow:0,eh_bloom:0}, medium:{micro:0,gro:0,bloom:0,eh_micro:0,eh_grow:0,eh_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,eh_micro:0,eh_grow:0,eh_bloom:0}, isFlush:true },
+  },
+  // ── House & Garden Aqua Flakes (ml/gal — equal A+B, 2.5→10.5 per chart) ──
+  "hg_aqua": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,hg_aqua_a:2.5,hg_aqua_b:2.5}, medium:{micro:0,gro:0,bloom:0,hg_aqua_a:3.0,hg_aqua_b:3.0}, aggressive:{micro:0,gro:0,bloom:0,hg_aqua_a:4.0,hg_aqua_b:4.0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,hg_aqua_a:4.0,hg_aqua_b:4.0}, medium:{micro:0,gro:0,bloom:0,hg_aqua_a:5.0,hg_aqua_b:5.0}, aggressive:{micro:0,gro:0,bloom:0,hg_aqua_a:6.0,hg_aqua_b:6.0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,hg_aqua_a:5.5,hg_aqua_b:5.5}, medium:{micro:0,gro:0,bloom:0,hg_aqua_a:6.5,hg_aqua_b:6.5}, aggressive:{micro:0,gro:0,bloom:0,hg_aqua_a:7.5,hg_aqua_b:7.5} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,hg_aqua_a:6.5,hg_aqua_b:6.5}, medium:{micro:0,gro:0,bloom:0,hg_aqua_a:7.5,hg_aqua_b:7.5}, aggressive:{micro:0,gro:0,bloom:0,hg_aqua_a:8.5,hg_aqua_b:8.5} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,hg_aqua_a:8.5,hg_aqua_b:8.5}, medium:{micro:0,gro:0,bloom:0,hg_aqua_a:9.5,hg_aqua_b:9.5}, aggressive:{micro:0,gro:0,bloom:0,hg_aqua_a:10.5,hg_aqua_b:10.5} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,hg_aqua_a:7.5,hg_aqua_b:7.5}, medium:{micro:0,gro:0,bloom:0,hg_aqua_a:8.5,hg_aqua_b:8.5}, aggressive:{micro:0,gro:0,bloom:0,hg_aqua_a:9.5,hg_aqua_b:9.5} },
+    flush:        { light:{micro:0,gro:0,bloom:0,hg_aqua_a:0,hg_aqua_b:0}, medium:{micro:0,gro:0,bloom:0,hg_aqua_a:0,hg_aqua_b:0}, aggressive:{micro:0,gro:0,bloom:0,hg_aqua_a:0,hg_aqua_b:0}, isFlush:true },
+  },
+  // ── House & Garden Cocos (ml/gal — equal A+B) ──
+  "hg_cocos": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,hg_cocos_a:2.5,hg_cocos_b:2.5}, medium:{micro:0,gro:0,bloom:0,hg_cocos_a:3.0,hg_cocos_b:3.0}, aggressive:{micro:0,gro:0,bloom:0,hg_cocos_a:4.0,hg_cocos_b:4.0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,hg_cocos_a:4.0,hg_cocos_b:4.0}, medium:{micro:0,gro:0,bloom:0,hg_cocos_a:5.0,hg_cocos_b:5.0}, aggressive:{micro:0,gro:0,bloom:0,hg_cocos_a:6.0,hg_cocos_b:6.0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,hg_cocos_a:5.5,hg_cocos_b:5.5}, medium:{micro:0,gro:0,bloom:0,hg_cocos_a:6.5,hg_cocos_b:6.5}, aggressive:{micro:0,gro:0,bloom:0,hg_cocos_a:7.5,hg_cocos_b:7.5} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,hg_cocos_a:6.5,hg_cocos_b:6.5}, medium:{micro:0,gro:0,bloom:0,hg_cocos_a:7.5,hg_cocos_b:7.5}, aggressive:{micro:0,gro:0,bloom:0,hg_cocos_a:8.5,hg_cocos_b:8.5} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,hg_cocos_a:8.5,hg_cocos_b:8.5}, medium:{micro:0,gro:0,bloom:0,hg_cocos_a:9.5,hg_cocos_b:9.5}, aggressive:{micro:0,gro:0,bloom:0,hg_cocos_a:10.5,hg_cocos_b:10.5} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,hg_cocos_a:7.5,hg_cocos_b:7.5}, medium:{micro:0,gro:0,bloom:0,hg_cocos_a:8.5,hg_cocos_b:8.5}, aggressive:{micro:0,gro:0,bloom:0,hg_cocos_a:9.5,hg_cocos_b:9.5} },
+    flush:        { light:{micro:0,gro:0,bloom:0,hg_cocos_a:0,hg_cocos_b:0}, medium:{micro:0,gro:0,bloom:0,hg_cocos_a:0,hg_cocos_b:0}, aggressive:{micro:0,gro:0,bloom:0,hg_cocos_a:0,hg_cocos_b:0}, isFlush:true },
+  },
+  // ── House & Garden Soil (ml/gal — equal A+B) ──
+  "hg_soil": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,hg_soil_a:2.5,hg_soil_b:2.5}, medium:{micro:0,gro:0,bloom:0,hg_soil_a:3.0,hg_soil_b:3.0}, aggressive:{micro:0,gro:0,bloom:0,hg_soil_a:4.0,hg_soil_b:4.0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,hg_soil_a:4.0,hg_soil_b:4.0}, medium:{micro:0,gro:0,bloom:0,hg_soil_a:5.0,hg_soil_b:5.0}, aggressive:{micro:0,gro:0,bloom:0,hg_soil_a:6.0,hg_soil_b:6.0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,hg_soil_a:5.5,hg_soil_b:5.5}, medium:{micro:0,gro:0,bloom:0,hg_soil_a:6.5,hg_soil_b:6.5}, aggressive:{micro:0,gro:0,bloom:0,hg_soil_a:7.5,hg_soil_b:7.5} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,hg_soil_a:6.5,hg_soil_b:6.5}, medium:{micro:0,gro:0,bloom:0,hg_soil_a:7.5,hg_soil_b:7.5}, aggressive:{micro:0,gro:0,bloom:0,hg_soil_a:8.5,hg_soil_b:8.5} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,hg_soil_a:8.5,hg_soil_b:8.5}, medium:{micro:0,gro:0,bloom:0,hg_soil_a:9.5,hg_soil_b:9.5}, aggressive:{micro:0,gro:0,bloom:0,hg_soil_a:10.5,hg_soil_b:10.5} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,hg_soil_a:7.5,hg_soil_b:7.5}, medium:{micro:0,gro:0,bloom:0,hg_soil_a:8.5,hg_soil_b:8.5}, aggressive:{micro:0,gro:0,bloom:0,hg_soil_a:9.5,hg_soil_b:9.5} },
+    flush:        { light:{micro:0,gro:0,bloom:0,hg_soil_a:0,hg_soil_b:0}, medium:{micro:0,gro:0,bloom:0,hg_soil_a:0,hg_soil_b:0}, aggressive:{micro:0,gro:0,bloom:0,hg_soil_a:0,hg_soil_b:0}, isFlush:true },
+  },
+  // ── Dyna-Gro Grow & Bloom (ml/gal — concentrated, ~1 tsp/gal=5ml; Grow veg, Bloom flower) ──
+  "dg_grobloom": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,dg_grow:1.5,dg_bloom:0}, medium:{micro:0,gro:0,bloom:0,dg_grow:2.5,dg_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,dg_grow:3.5,dg_bloom:0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,dg_grow:3.5,dg_bloom:0}, medium:{micro:0,gro:0,bloom:0,dg_grow:5.0,dg_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,dg_grow:6.0,dg_bloom:0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,dg_grow:5.0,dg_bloom:0}, medium:{micro:0,gro:0,bloom:0,dg_grow:5.0,dg_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,dg_grow:6.5,dg_bloom:0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,dg_grow:2.5,dg_bloom:3.5}, medium:{micro:0,gro:0,bloom:0,dg_grow:2.5,dg_bloom:5.0}, aggressive:{micro:0,gro:0,bloom:0,dg_grow:2.5,dg_bloom:6.0} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,dg_grow:0,dg_bloom:5.0}, medium:{micro:0,gro:0,bloom:0,dg_grow:0,dg_bloom:6.0}, aggressive:{micro:0,gro:0,bloom:0,dg_grow:0,dg_bloom:7.0} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,dg_grow:0,dg_bloom:4.0}, medium:{micro:0,gro:0,bloom:0,dg_grow:0,dg_bloom:5.0}, aggressive:{micro:0,gro:0,bloom:0,dg_grow:0,dg_bloom:6.0} },
+    flush:        { light:{micro:0,gro:0,bloom:0,dg_grow:0,dg_bloom:0}, medium:{micro:0,gro:0,bloom:0,dg_grow:0,dg_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,dg_grow:0,dg_bloom:0}, isFlush:true },
+  },
+  // ── Dyna-Gro Foliage Pro (ml/gal — single one-part, all cycle, ~1 tsp/gal) ──
+  "dg_foliagepro": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,dg_foliage:1.5}, medium:{micro:0,gro:0,bloom:0,dg_foliage:2.5}, aggressive:{micro:0,gro:0,bloom:0,dg_foliage:3.5} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,dg_foliage:3.5}, medium:{micro:0,gro:0,bloom:0,dg_foliage:5.0}, aggressive:{micro:0,gro:0,bloom:0,dg_foliage:6.0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,dg_foliage:5.0}, medium:{micro:0,gro:0,bloom:0,dg_foliage:5.0}, aggressive:{micro:0,gro:0,bloom:0,dg_foliage:6.5} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,dg_foliage:5.0}, medium:{micro:0,gro:0,bloom:0,dg_foliage:5.0}, aggressive:{micro:0,gro:0,bloom:0,dg_foliage:6.0} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,dg_foliage:5.0}, medium:{micro:0,gro:0,bloom:0,dg_foliage:5.0}, aggressive:{micro:0,gro:0,bloom:0,dg_foliage:6.0} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,dg_foliage:4.0}, medium:{micro:0,gro:0,bloom:0,dg_foliage:5.0}, aggressive:{micro:0,gro:0,bloom:0,dg_foliage:5.0} },
+    flush:        { light:{micro:0,gro:0,bloom:0,dg_foliage:0}, medium:{micro:0,gro:0,bloom:0,dg_foliage:0}, aggressive:{micro:0,gro:0,bloom:0,dg_foliage:0}, isFlush:true },
+  },
+  // ── Technaflora B.C. (ml/gal — Grow veg, Bloom flower) ──
+  "tf_bc": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,tf_grow:2.5,tf_bloom:0}, medium:{micro:0,gro:0,bloom:0,tf_grow:4.0,tf_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,tf_grow:5.5,tf_bloom:0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,tf_grow:5.0,tf_bloom:0}, medium:{micro:0,gro:0,bloom:0,tf_grow:7.5,tf_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,tf_grow:10.0,tf_bloom:0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,tf_grow:7.5,tf_bloom:0}, medium:{micro:0,gro:0,bloom:0,tf_grow:10.0,tf_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,tf_grow:12.0,tf_bloom:0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,tf_grow:0,tf_bloom:7.5}, medium:{micro:0,gro:0,bloom:0,tf_grow:0,tf_bloom:10.0}, aggressive:{micro:0,gro:0,bloom:0,tf_grow:0,tf_bloom:12.0} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,tf_grow:0,tf_bloom:10.0}, medium:{micro:0,gro:0,bloom:0,tf_grow:0,tf_bloom:12.0}, aggressive:{micro:0,gro:0,bloom:0,tf_grow:0,tf_bloom:15.0} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,tf_grow:0,tf_bloom:7.5}, medium:{micro:0,gro:0,bloom:0,tf_grow:0,tf_bloom:10.0}, aggressive:{micro:0,gro:0,bloom:0,tf_grow:0,tf_bloom:12.0} },
+    flush:        { light:{micro:0,gro:0,bloom:0,tf_grow:0,tf_bloom:0}, medium:{micro:0,gro:0,bloom:0,tf_grow:0,tf_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,tf_grow:0,tf_bloom:0}, isFlush:true },
+  },
+  // ── Remo (ml/gal — Micro constant, Grow veg, Bloom flower; ~4ml/L=15ml/gal full) ──
+  "remo_3part": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,remo_micro:3.8,remo_grow:3.8,remo_bloom:0}, medium:{micro:0,gro:0,bloom:0,remo_micro:5.0,remo_grow:5.0,remo_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,remo_micro:5.7,remo_grow:5.7,remo_bloom:0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,remo_micro:7.6,remo_grow:7.6,remo_bloom:0}, medium:{micro:0,gro:0,bloom:0,remo_micro:9.5,remo_grow:9.5,remo_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,remo_micro:11.4,remo_grow:11.4,remo_bloom:0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,remo_micro:9.5,remo_grow:11.4,remo_bloom:0}, medium:{micro:0,gro:0,bloom:0,remo_micro:11.4,remo_grow:13.2,remo_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,remo_micro:11.4,remo_grow:15.1,remo_bloom:0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,remo_micro:9.5,remo_grow:5.7,remo_bloom:9.5}, medium:{micro:0,gro:0,bloom:0,remo_micro:11.4,remo_grow:7.6,remo_bloom:11.4}, aggressive:{micro:0,gro:0,bloom:0,remo_micro:11.4,remo_grow:7.6,remo_bloom:15.1} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,remo_micro:9.5,remo_grow:0,remo_bloom:11.4}, medium:{micro:0,gro:0,bloom:0,remo_micro:11.4,remo_grow:0,remo_bloom:15.1}, aggressive:{micro:0,gro:0,bloom:0,remo_micro:11.4,remo_grow:0,remo_bloom:17.0} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,remo_micro:7.6,remo_grow:0,remo_bloom:9.5}, medium:{micro:0,gro:0,bloom:0,remo_micro:9.5,remo_grow:0,remo_bloom:11.4}, aggressive:{micro:0,gro:0,bloom:0,remo_micro:9.5,remo_grow:0,remo_bloom:15.1} },
+    flush:        { light:{micro:0,gro:0,bloom:0,remo_micro:0,remo_grow:0,remo_bloom:0}, medium:{micro:0,gro:0,bloom:0,remo_micro:0,remo_grow:0,remo_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,remo_micro:0,remo_grow:0,remo_bloom:0}, isFlush:true },
+  },
+  // ── Heavy 16 (ml/gal — Veg A+B veg, Bud A+B flower, equal parts) ──
+  "h16_vegbud": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,h16_veg_a:2.5,h16_veg_b:2.5,h16_bud_a:0,h16_bud_b:0}, medium:{micro:0,gro:0,bloom:0,h16_veg_a:3.5,h16_veg_b:3.5,h16_bud_a:0,h16_bud_b:0}, aggressive:{micro:0,gro:0,bloom:0,h16_veg_a:5.0,h16_veg_b:5.0,h16_bud_a:0,h16_bud_b:0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,h16_veg_a:5.0,h16_veg_b:5.0,h16_bud_a:0,h16_bud_b:0}, medium:{micro:0,gro:0,bloom:0,h16_veg_a:6.5,h16_veg_b:6.5,h16_bud_a:0,h16_bud_b:0}, aggressive:{micro:0,gro:0,bloom:0,h16_veg_a:8.0,h16_veg_b:8.0,h16_bud_a:0,h16_bud_b:0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,h16_veg_a:6.5,h16_veg_b:6.5,h16_bud_a:0,h16_bud_b:0}, medium:{micro:0,gro:0,bloom:0,h16_veg_a:8.0,h16_veg_b:8.0,h16_bud_a:0,h16_bud_b:0}, aggressive:{micro:0,gro:0,bloom:0,h16_veg_a:9.5,h16_veg_b:9.5,h16_bud_a:0,h16_bud_b:0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,h16_veg_a:0,h16_veg_b:0,h16_bud_a:6.5,h16_bud_b:6.5}, medium:{micro:0,gro:0,bloom:0,h16_veg_a:0,h16_veg_b:0,h16_bud_a:8.0,h16_bud_b:8.0}, aggressive:{micro:0,gro:0,bloom:0,h16_veg_a:0,h16_veg_b:0,h16_bud_a:9.5,h16_bud_b:9.5} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,h16_veg_a:0,h16_veg_b:0,h16_bud_a:8.0,h16_bud_b:8.0}, medium:{micro:0,gro:0,bloom:0,h16_veg_a:0,h16_veg_b:0,h16_bud_a:9.5,h16_bud_b:9.5}, aggressive:{micro:0,gro:0,bloom:0,h16_veg_a:0,h16_veg_b:0,h16_bud_a:11.0,h16_bud_b:11.0} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,h16_veg_a:0,h16_veg_b:0,h16_bud_a:6.5,h16_bud_b:6.5}, medium:{micro:0,gro:0,bloom:0,h16_veg_a:0,h16_veg_b:0,h16_bud_a:8.0,h16_bud_b:8.0}, aggressive:{micro:0,gro:0,bloom:0,h16_veg_a:0,h16_veg_b:0,h16_bud_a:9.5,h16_bud_b:9.5} },
+    flush:        { light:{micro:0,gro:0,bloom:0,h16_veg_a:0,h16_veg_b:0,h16_bud_a:0,h16_bud_b:0}, medium:{micro:0,gro:0,bloom:0,h16_veg_a:0,h16_veg_b:0,h16_bud_a:0,h16_bud_b:0}, aggressive:{micro:0,gro:0,bloom:0,h16_veg_a:0,h16_veg_b:0,h16_bud_a:0,h16_bud_b:0}, isFlush:true },
+  },
+  // ── Mills Basis A+B (ml/gal — equal A+B all cycle) ──
+  "mills_basis": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,mills_basis_a:3.0,mills_basis_b:3.0}, medium:{micro:0,gro:0,bloom:0,mills_basis_a:3.8,mills_basis_b:3.8}, aggressive:{micro:0,gro:0,bloom:0,mills_basis_a:5.0,mills_basis_b:5.0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,mills_basis_a:5.0,mills_basis_b:5.0}, medium:{micro:0,gro:0,bloom:0,mills_basis_a:6.5,mills_basis_b:6.5}, aggressive:{micro:0,gro:0,bloom:0,mills_basis_a:8.0,mills_basis_b:8.0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,mills_basis_a:6.5,mills_basis_b:6.5}, medium:{micro:0,gro:0,bloom:0,mills_basis_a:8.0,mills_basis_b:8.0}, aggressive:{micro:0,gro:0,bloom:0,mills_basis_a:9.5,mills_basis_b:9.5} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,mills_basis_a:7.5,mills_basis_b:7.5}, medium:{micro:0,gro:0,bloom:0,mills_basis_a:9.0,mills_basis_b:9.0}, aggressive:{micro:0,gro:0,bloom:0,mills_basis_a:11.0,mills_basis_b:11.0} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,mills_basis_a:9.0,mills_basis_b:9.0}, medium:{micro:0,gro:0,bloom:0,mills_basis_a:11.0,mills_basis_b:11.0}, aggressive:{micro:0,gro:0,bloom:0,mills_basis_a:13.0,mills_basis_b:13.0} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,mills_basis_a:7.5,mills_basis_b:7.5}, medium:{micro:0,gro:0,bloom:0,mills_basis_a:9.0,mills_basis_b:9.0}, aggressive:{micro:0,gro:0,bloom:0,mills_basis_a:11.0,mills_basis_b:11.0} },
+    flush:        { light:{micro:0,gro:0,bloom:0,mills_basis_a:0,mills_basis_b:0}, medium:{micro:0,gro:0,bloom:0,mills_basis_a:0,mills_basis_b:0}, aggressive:{micro:0,gro:0,bloom:0,mills_basis_a:0,mills_basis_b:0}, isFlush:true },
+  },
+  // ── Roots Organics Buddha (ml/gal — organic, Grow veg, Bloom flower; runs higher) ──
+  "ro_buddha": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,ro_grow:2.5,ro_bloom:0}, medium:{micro:0,gro:0,bloom:0,ro_grow:5.0,ro_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,ro_grow:7.5,ro_bloom:0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,ro_grow:7.5,ro_bloom:0}, medium:{micro:0,gro:0,bloom:0,ro_grow:10.0,ro_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,ro_grow:12.5,ro_bloom:0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,ro_grow:10.0,ro_bloom:0}, medium:{micro:0,gro:0,bloom:0,ro_grow:12.5,ro_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,ro_grow:15.0,ro_bloom:0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,ro_grow:5.0,ro_bloom:7.5}, medium:{micro:0,gro:0,bloom:0,ro_grow:5.0,ro_bloom:10.0}, aggressive:{micro:0,gro:0,bloom:0,ro_grow:5.0,ro_bloom:12.5} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,ro_grow:0,ro_bloom:10.0}, medium:{micro:0,gro:0,bloom:0,ro_grow:0,ro_bloom:12.5}, aggressive:{micro:0,gro:0,bloom:0,ro_grow:0,ro_bloom:15.0} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,ro_grow:0,ro_bloom:7.5}, medium:{micro:0,gro:0,bloom:0,ro_grow:0,ro_bloom:10.0}, aggressive:{micro:0,gro:0,bloom:0,ro_grow:0,ro_bloom:12.5} },
+    flush:        { light:{micro:0,gro:0,bloom:0,ro_grow:0,ro_bloom:0}, medium:{micro:0,gro:0,bloom:0,ro_grow:0,ro_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,ro_grow:0,ro_bloom:0}, isFlush:true },
+  },
+  // ── Nectar for the Gods Greek (ml/gal — calcium-forward organic; ~1-2 tsp/gal each) ──
+  "nftg_greek": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,nftg_hercules:2.5,nftg_gaia:2.5,nftg_medusa:2.5,nftg_demeter:0,nftg_zeus:0}, medium:{micro:0,gro:0,bloom:0,nftg_hercules:5.0,nftg_gaia:5.0,nftg_medusa:5.0,nftg_demeter:0,nftg_zeus:0}, aggressive:{micro:0,gro:0,bloom:0,nftg_hercules:5.0,nftg_gaia:7.5,nftg_medusa:5.0,nftg_demeter:0,nftg_zeus:0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,nftg_hercules:5.0,nftg_gaia:5.0,nftg_medusa:5.0,nftg_demeter:0,nftg_zeus:0}, medium:{micro:0,gro:0,bloom:0,nftg_hercules:5.0,nftg_gaia:7.5,nftg_medusa:5.0,nftg_demeter:0,nftg_zeus:0}, aggressive:{micro:0,gro:0,bloom:0,nftg_hercules:7.5,nftg_gaia:10.0,nftg_medusa:7.5,nftg_demeter:0,nftg_zeus:0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,nftg_hercules:5.0,nftg_gaia:7.5,nftg_medusa:5.0,nftg_demeter:0,nftg_zeus:0}, medium:{micro:0,gro:0,bloom:0,nftg_hercules:7.5,nftg_gaia:10.0,nftg_medusa:7.5,nftg_demeter:0,nftg_zeus:0}, aggressive:{micro:0,gro:0,bloom:0,nftg_hercules:7.5,nftg_gaia:12.5,nftg_medusa:7.5,nftg_demeter:0,nftg_zeus:0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,nftg_hercules:5.0,nftg_gaia:0,nftg_medusa:5.0,nftg_demeter:5.0,nftg_zeus:5.0}, medium:{micro:0,gro:0,bloom:0,nftg_hercules:7.5,nftg_gaia:0,nftg_medusa:5.0,nftg_demeter:7.5,nftg_zeus:5.0}, aggressive:{micro:0,gro:0,bloom:0,nftg_hercules:7.5,nftg_gaia:0,nftg_medusa:7.5,nftg_demeter:10.0,nftg_zeus:7.5} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,nftg_hercules:5.0,nftg_gaia:0,nftg_medusa:5.0,nftg_demeter:7.5,nftg_zeus:5.0}, medium:{micro:0,gro:0,bloom:0,nftg_hercules:7.5,nftg_gaia:0,nftg_medusa:5.0,nftg_demeter:10.0,nftg_zeus:7.5}, aggressive:{micro:0,gro:0,bloom:0,nftg_hercules:7.5,nftg_gaia:0,nftg_medusa:7.5,nftg_demeter:12.5,nftg_zeus:7.5} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,nftg_hercules:5.0,nftg_gaia:0,nftg_medusa:2.5,nftg_demeter:5.0,nftg_zeus:5.0}, medium:{micro:0,gro:0,bloom:0,nftg_hercules:5.0,nftg_gaia:0,nftg_medusa:2.5,nftg_demeter:7.5,nftg_zeus:5.0}, aggressive:{micro:0,gro:0,bloom:0,nftg_hercules:7.5,nftg_gaia:0,nftg_medusa:5.0,nftg_demeter:10.0,nftg_zeus:7.5} },
+    flush:        { light:{micro:0,gro:0,bloom:0,nftg_hercules:0,nftg_gaia:0,nftg_medusa:0,nftg_demeter:0,nftg_zeus:0}, medium:{micro:0,gro:0,bloom:0,nftg_hercules:0,nftg_gaia:0,nftg_medusa:0,nftg_demeter:0,nftg_zeus:0}, aggressive:{micro:0,gro:0,bloom:0,nftg_hercules:0,nftg_gaia:0,nftg_medusa:0,nftg_demeter:0,nftg_zeus:0}, isFlush:true },
+  },
 };
 
 const EC_RANGES = {
@@ -710,6 +1092,141 @@ const EC_RANGES = {
     late_flower:  { light:[1.6,2.0],  medium:[2.0,2.3],  aggressive:[2.2,2.5]  },
     flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
   },
+  "bc_pbp": {
+    seedling:     { light:[0.6,0.9],  medium:[0.8,1.1],  aggressive:[1.0,1.3]  },
+    early_growth: { light:[1.0,1.4],  medium:[1.3,1.7],  aggressive:[1.6,2.0]  },
+    late_growth:  { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    early_flower: { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    peak_flower:  { light:[1.7,2.1],  medium:[2.0,2.4],  aggressive:[2.3,2.7]  },
+    late_flower:  { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "bc_cns17": {
+    seedling:     { light:[0.6,0.9],  medium:[0.8,1.1],  aggressive:[1.0,1.3]  },
+    early_growth: { light:[1.1,1.5],  medium:[1.4,1.8],  aggressive:[1.7,2.1]  },
+    late_growth:  { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    early_flower: { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    peak_flower:  { light:[1.8,2.2],  medium:[2.1,2.5],  aggressive:[2.4,2.8]  },
+    late_flower:  { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "bc_kind": {
+    seedling:     { light:[0.6,0.9],  medium:[0.8,1.1],  aggressive:[1.0,1.3]  },
+    early_growth: { light:[1.1,1.5],  medium:[1.4,1.8],  aggressive:[1.7,2.1]  },
+    late_growth:  { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    early_flower: { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    peak_flower:  { light:[1.8,2.2],  medium:[2.1,2.5],  aggressive:[2.4,2.8]  },
+    late_flower:  { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "eh_calipro": {
+    seedling:     { light:[0.6,0.9],  medium:[0.8,1.1],  aggressive:[1.0,1.3]  },
+    early_growth: { light:[1.1,1.5],  medium:[1.4,1.8],  aggressive:[1.7,2.1]  },
+    late_growth:  { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    early_flower: { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    peak_flower:  { light:[1.8,2.2],  medium:[2.1,2.5],  aggressive:[2.4,2.8]  },
+    late_flower:  { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "hg_aqua": {
+    seedling:     { light:[0.6,0.9],  medium:[0.8,1.1],  aggressive:[1.0,1.3]  },
+    early_growth: { light:[1.0,1.4],  medium:[1.3,1.7],  aggressive:[1.6,2.0]  },
+    late_growth:  { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    early_flower: { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    peak_flower:  { light:[1.9,2.3],  medium:[2.2,2.6],  aggressive:[2.5,2.9]  },
+    late_flower:  { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "hg_cocos": {
+    seedling:     { light:[0.6,0.9],  medium:[0.8,1.1],  aggressive:[1.0,1.3]  },
+    early_growth: { light:[1.0,1.4],  medium:[1.3,1.7],  aggressive:[1.6,2.0]  },
+    late_growth:  { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    early_flower: { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    peak_flower:  { light:[1.9,2.3],  medium:[2.2,2.6],  aggressive:[2.5,2.9]  },
+    late_flower:  { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "hg_soil": {
+    seedling:     { light:[0.6,0.9],  medium:[0.8,1.1],  aggressive:[1.0,1.3]  },
+    early_growth: { light:[1.0,1.4],  medium:[1.3,1.7],  aggressive:[1.6,2.0]  },
+    late_growth:  { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    early_flower: { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    peak_flower:  { light:[1.7,2.1],  medium:[2.0,2.4],  aggressive:[2.3,2.7]  },
+    late_flower:  { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "dg_grobloom": {
+    seedling:     { light:[0.5,0.8],  medium:[0.7,1.0],  aggressive:[0.9,1.2]  },
+    early_growth: { light:[1.0,1.4],  medium:[1.3,1.7],  aggressive:[1.6,2.0]  },
+    late_growth:  { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    early_flower: { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    peak_flower:  { light:[1.7,2.1],  medium:[2.0,2.4],  aggressive:[2.3,2.7]  },
+    late_flower:  { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "dg_foliagepro": {
+    seedling:     { light:[0.5,0.8],  medium:[0.7,1.0],  aggressive:[0.9,1.2]  },
+    early_growth: { light:[1.0,1.4],  medium:[1.3,1.7],  aggressive:[1.6,2.0]  },
+    late_growth:  { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    early_flower: { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    peak_flower:  { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    late_flower:  { light:[1.3,1.7],  medium:[1.6,2.0],  aggressive:[1.9,2.3]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "tf_bc": {
+    seedling:     { light:[0.6,0.9],  medium:[0.8,1.1],  aggressive:[1.0,1.3]  },
+    early_growth: { light:[1.1,1.5],  medium:[1.4,1.8],  aggressive:[1.7,2.1]  },
+    late_growth:  { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    early_flower: { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    peak_flower:  { light:[1.8,2.2],  medium:[2.1,2.5],  aggressive:[2.4,2.8]  },
+    late_flower:  { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "remo_3part": {
+    seedling:     { light:[0.6,0.9],  medium:[0.8,1.1],  aggressive:[1.0,1.3]  },
+    early_growth: { light:[1.1,1.5],  medium:[1.4,1.8],  aggressive:[1.7,2.1]  },
+    late_growth:  { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    early_flower: { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    peak_flower:  { light:[1.8,2.2],  medium:[2.1,2.5],  aggressive:[2.4,2.8]  },
+    late_flower:  { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "h16_vegbud": {
+    seedling:     { light:[0.6,0.9],  medium:[0.8,1.1],  aggressive:[1.0,1.3]  },
+    early_growth: { light:[1.1,1.5],  medium:[1.4,1.8],  aggressive:[1.7,2.1]  },
+    late_growth:  { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    early_flower: { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    peak_flower:  { light:[1.8,2.2],  medium:[2.1,2.5],  aggressive:[2.4,2.8]  },
+    late_flower:  { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "mills_basis": {
+    seedling:     { light:[0.6,0.9],  medium:[0.8,1.1],  aggressive:[1.0,1.3]  },
+    early_growth: { light:[1.0,1.4],  medium:[1.3,1.7],  aggressive:[1.6,2.0]  },
+    late_growth:  { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    early_flower: { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    peak_flower:  { light:[1.8,2.2],  medium:[2.1,2.5],  aggressive:[2.4,2.8]  },
+    late_flower:  { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "ro_buddha": {
+    seedling:     { light:[0.5,0.8],  medium:[0.7,1.0],  aggressive:[0.9,1.2]  },
+    early_growth: { light:[1.0,1.4],  medium:[1.3,1.7],  aggressive:[1.6,2.0]  },
+    late_growth:  { light:[1.3,1.7],  medium:[1.6,2.0],  aggressive:[1.9,2.3]  },
+    early_flower: { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    peak_flower:  { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    late_flower:  { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "nftg_greek": {
+    seedling:     { light:[0.5,0.8],  medium:[0.7,1.0],  aggressive:[0.9,1.2]  },
+    early_growth: { light:[1.0,1.4],  medium:[1.3,1.7],  aggressive:[1.6,2.0]  },
+    late_growth:  { light:[1.3,1.7],  medium:[1.6,2.0],  aggressive:[1.9,2.3]  },
+    early_flower: { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    peak_flower:  { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
+    late_flower:  { light:[1.4,1.8],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
 };
 
 const INCL_META = {
@@ -788,8 +1305,58 @@ const INCL_META = {
   hs_base_a:      { name:"Base A",      brand:"Humboldts Secret", color:"#2E7D32", icon:"🅰️", mixOrder:2, powderNote:"Equal parts with Base B — add A first, never combine concentrates" },
   hs_base_b:      { name:"Base B",      brand:"Humboldts Secret", color:"#1B5E20", icon:"🅱️", mixOrder:3, powderNote:"Equal amount to Base A — add after A is mixed in" },
   hs_golden_tree: { name:"Golden Tree", brand:"Humboldts Secret", color:"#C9A227", icon:"🌳", mixOrder:1, powderNote:"All-cycle catalyst — add first to the reservoir" },
+  // Botanicare Pure Blend Pro
+  bc_pbp_grow:  { name:"Pure Blend Pro Grow",  brand:"Botanicare", color:"#6BA539", icon:"🌿", mixOrder:2, powderNote:"3-2-4 veg base — shake well, add first" },
+  bc_pbp_bloom: { name:"Pure Blend Pro Bloom", brand:"Botanicare", color:"#C2185B", icon:"🌸", mixOrder:2, powderNote:"2-3-5 flower base — shake well, add first" },
+  // Botanicare CNS17 (one-part per stage)
+  bc_cns_grow:  { name:"CNS17 Grow",  brand:"Botanicare", color:"#4A7A2A", icon:"🌿", mixOrder:2, powderNote:"Complete one-part veg base — no other base needed" },
+  bc_cns_bloom: { name:"CNS17 Bloom", brand:"Botanicare", color:"#C2185B", icon:"🌸", mixOrder:2, powderNote:"Complete one-part flower base" },
+  bc_cns_ripe:  { name:"CNS17 Ripe",  brand:"Botanicare", color:"#E0912A", icon:"🍂", mixOrder:2, powderNote:"Finisher for last weeks of bloom" },
+  // Botanicare KIND (3-part)
+  bc_kind_base: { name:"KIND Base",  brand:"Botanicare", color:"#558B2F", icon:"💧", mixOrder:2, powderNote:"Runs all cycle — add first" },
+  bc_kind_grow: { name:"KIND Grow",  brand:"Botanicare", color:"#8BC34A", icon:"🌿", mixOrder:3, powderNote:"Veg driver" },
+  bc_kind_bloom:{ name:"KIND Bloom", brand:"Botanicare", color:"#C2185B", icon:"🌸", mixOrder:4, powderNote:"Flower driver" },
+  // Emerald Harvest Cali Pro
+  eh_micro: { name:"Cali Pro Micro", brand:"Emerald Harvest", color:"#1565C0", icon:"💧", mixOrder:2, powderNote:"Add Micro first, all cycle" },
+  eh_grow:  { name:"Cali Pro Grow",  brand:"Emerald Harvest", color:"#1FA055", icon:"🌿", mixOrder:3, powderNote:"Veg driver — add after Micro" },
+  eh_bloom: { name:"Cali Pro Bloom", brand:"Emerald Harvest", color:"#C2185B", icon:"🌸", mixOrder:4, powderNote:"Flower driver — add last" },
+  // House & Garden (equal A+B per line)
+  hg_aqua_a:  { name:"Aqua Flakes A", brand:"House & Garden", color:"#0E5B3A", icon:"🅰️", mixOrder:2, powderNote:"Add A first, mix, then B. Always equal A and B" },
+  hg_aqua_b:  { name:"Aqua Flakes B", brand:"House & Garden", color:"#0A4A2E", icon:"🅱️", mixOrder:3, powderNote:"Add after A — never combine concentrates" },
+  hg_cocos_a: { name:"Cocos A",       brand:"House & Garden", color:"#1E7B4A", icon:"🅰️", mixOrder:2, powderNote:"Add A first, mix, then B. Always equal A and B" },
+  hg_cocos_b: { name:"Cocos B",       brand:"House & Garden", color:"#176038", icon:"🅱️", mixOrder:3, powderNote:"Add after A — never combine concentrates" },
+  hg_soil_a:  { name:"Soil A",        brand:"House & Garden", color:"#2E6B3A", icon:"🅰️", mixOrder:2, powderNote:"Add A first, mix, then B. Always equal A and B" },
+  hg_soil_b:  { name:"Soil B",        brand:"House & Garden", color:"#245530", icon:"🅱️", mixOrder:3, powderNote:"Add after A — never combine concentrates" },
+  // Dyna-Gro (concentrated one-parts)
+  dg_grow:    { name:"Dyna-Gro Grow 7-9-5",  brand:"Dyna-Gro", color:"#1565C0", icon:"🌿", mixOrder:2, powderNote:"Very concentrated — ~1 tsp/gal. Add after Pro-TeKt if used" },
+  dg_bloom:   { name:"Dyna-Gro Bloom 3-12-6",brand:"Dyna-Gro", color:"#C2185B", icon:"🌸", mixOrder:2, powderNote:"Very concentrated — ~1 tsp/gal" },
+  dg_foliage: { name:"Foliage Pro 9-3-6",    brand:"Dyna-Gro", color:"#1976D2", icon:"🍃", mixOrder:2, powderNote:"Complete one-part, all cycle — ~1 tsp/gal" },
+  // Technaflora B.C.
+  tf_grow:  { name:"B.C. Grow",  brand:"Technaflora", color:"#2E7D32", icon:"🌿", mixOrder:2, powderNote:"Veg base" },
+  tf_bloom: { name:"B.C. Bloom", brand:"Technaflora", color:"#C2185B", icon:"🌸", mixOrder:2, powderNote:"Flower base" },
+  // Remo (3-part)
+  remo_micro: { name:"Remo Micro", brand:"Remo Nutrients", color:"#1565C0", icon:"💧", mixOrder:2, powderNote:"Add Micro first, all cycle" },
+  remo_grow:  { name:"Remo Grow",  brand:"Remo Nutrients", color:"#6A2C8E", icon:"🌿", mixOrder:3, powderNote:"Veg driver — add after Micro" },
+  remo_bloom: { name:"Remo Bloom", brand:"Remo Nutrients", color:"#C2185B", icon:"🌸", mixOrder:4, powderNote:"Flower driver — add last" },
+  // Heavy 16 (Veg A+B / Bud A+B)
+  h16_veg_a: { name:"Veg A", brand:"Heavy 16", color:"#2E7D32", icon:"🅰️", mixOrder:2, powderNote:"Add Veg A first, then Veg B. Equal amounts" },
+  h16_veg_b: { name:"Veg B", brand:"Heavy 16", color:"#1B5E20", icon:"🅱️", mixOrder:3, powderNote:"Add after Veg A" },
+  h16_bud_a: { name:"Bud A", brand:"Heavy 16", color:"#C2185B", icon:"🅰️", mixOrder:2, powderNote:"Add Bud A first, then Bud B. Equal amounts" },
+  h16_bud_b: { name:"Bud B", brand:"Heavy 16", color:"#AD1457", icon:"🅱️", mixOrder:3, powderNote:"Add after Bud A" },
+  // Mills
+  mills_basis_a: { name:"Basis A", brand:"Mills", color:"#0A7CC0", icon:"🅰️", mixOrder:2, powderNote:"Add A first, then B. Equal amounts, all cycle" },
+  mills_basis_b: { name:"Basis B", brand:"Mills", color:"#075A8C", icon:"🅱️", mixOrder:3, powderNote:"Add after A — never combine concentrates" },
+  // Roots Organics
+  ro_grow:  { name:"Buddha Grow",  brand:"Roots Organics", color:"#558B2F", icon:"🌿", mixOrder:2, powderNote:"Organic veg base — shake well" },
+  ro_bloom: { name:"Buddha Bloom", brand:"Roots Organics", color:"#C2185B", icon:"🌸", mixOrder:2, powderNote:"Organic flower base — shake well" },
+  // Nectar for the Gods
+  nftg_hercules:{ name:"Herculean Harvest", brand:"Nectar for the Gods", color:"#9E9E9E", icon:"🦴", mixOrder:1, powderNote:"Calcium (bone meal) — add first, runs all cycle" },
+  nftg_gaia:    { name:"Gaia Mania",        brand:"Nectar for the Gods", color:"#7B9A2E", icon:"🌿", mixOrder:2, powderNote:"Veg blend" },
+  nftg_medusa:  { name:"Medusa's Magic",    brand:"Nectar for the Gods", color:"#5A8A3A", icon:"🐍", mixOrder:3, powderNote:"All-cycle growth blend" },
+  nftg_demeter: { name:"Demeter's Destiny", brand:"Nectar for the Gods", color:"#C2185B", icon:"🌸", mixOrder:4, powderNote:"Bloom blend" },
+  nftg_zeus:    { name:"Zeus Juice",        brand:"Nectar for the Gods", color:"#B08D2E", icon:"⚡", mixOrder:5, powderNote:"Humic/vitality — bloom support" },
 };
-const INCL_EC = { calimagic:0.07, floralicious:0.03, koolbloom:0.08, rapidstart:0.02, ripen_p:0.05, armorsi:0.04, fp_ca_micros:0.0, fp_grow:0.0, fp_bloom:0.0, fp_late_bloom:0.0, bt_grow:0.0, bt_bloom_p:0.0, bt_camg:0.07, bt_bioroot:0.01, bt_bioweed:0.01, bt_biobud:0.02, bt_biomarine:0.02, bt_diamond:0.01, mx_gro:0.0, mx_bloom_p:0.0, mx_calmag:0.07, fn_grow:0.04, fn_bloom:0.04, florakleen:0.0, ath_core:0.0, ath_grow:0.0, ath_bloom:0.0, ath_grow_a:0.0, ath_grow_b:0.0, ath_bloom_a:0.0, ath_bloom_b:0.0, jacks_a:0.0, jacks_epsom:0.0, jacks_b:0.0, an_micro:0.0, an_grow:0.0, an_bloom:0.0, an_sensi_grow_a:0.0, an_sensi_grow_b:0.0, an_sensi_bloom_a:0.0, an_sensi_bloom_b:0.0, an_conn_grow_a:0.0, an_conn_grow_b:0.0, an_conn_bloom_a:0.0, an_conn_bloom_b:0.0, an_jj_grow:0.0, an_jj_micro:0.0, an_jj_bloom:0.0, an_iguana_grow:0.0, an_iguana_bloom:0.0, ff_big_bloom:0.0, ff_grow_big:0.0, ff_tiger_bloom:0.0, canna_coco_a:0.0, canna_coco_b:0.0, canna_vega:0.0, canna_flores:0.0, hs_base_a:0.0, hs_base_b:0.0, hs_golden_tree:0.0 };
+const INCL_EC = { calimagic:0.07, floralicious:0.03, koolbloom:0.08, rapidstart:0.02, ripen_p:0.05, armorsi:0.04, fp_ca_micros:0.0, fp_grow:0.0, fp_bloom:0.0, fp_late_bloom:0.0, bt_grow:0.0, bt_bloom_p:0.0, bt_camg:0.07, bt_bioroot:0.01, bt_bioweed:0.01, bt_biobud:0.02, bt_biomarine:0.02, bt_diamond:0.01, mx_gro:0.0, mx_bloom_p:0.0, mx_calmag:0.07, fn_grow:0.04, fn_bloom:0.04, florakleen:0.0, ath_core:0.0, ath_grow:0.0, ath_bloom:0.0, ath_grow_a:0.0, ath_grow_b:0.0, ath_bloom_a:0.0, ath_bloom_b:0.0, jacks_a:0.0, jacks_epsom:0.0, jacks_b:0.0, an_micro:0.0, an_grow:0.0, an_bloom:0.0, an_sensi_grow_a:0.0, an_sensi_grow_b:0.0, an_sensi_bloom_a:0.0, an_sensi_bloom_b:0.0, an_conn_grow_a:0.0, an_conn_grow_b:0.0, an_conn_bloom_a:0.0, an_conn_bloom_b:0.0, an_jj_grow:0.0, an_jj_micro:0.0, an_jj_bloom:0.0, an_iguana_grow:0.0, an_iguana_bloom:0.0, ff_big_bloom:0.0, ff_grow_big:0.0, ff_tiger_bloom:0.0, canna_coco_a:0.0, canna_coco_b:0.0, canna_vega:0.0, canna_flores:0.0, hs_base_a:0.0, hs_base_b:0.0, hs_golden_tree:0.0, bc_pbp_grow:0.0, bc_pbp_bloom:0.0, bc_cns_grow:0.0, bc_cns_bloom:0.0, bc_cns_ripe:0.0, bc_kind_base:0.0, bc_kind_grow:0.0, bc_kind_bloom:0.0, eh_micro:0.0, eh_grow:0.0, eh_bloom:0.0, hg_aqua_a:0.0, hg_aqua_b:0.0, hg_cocos_a:0.0, hg_cocos_b:0.0, hg_soil_a:0.0, hg_soil_b:0.0, dg_grow:0.0, dg_bloom:0.0, dg_foliage:0.0, tf_grow:0.0, tf_bloom:0.0, remo_micro:0.0, remo_grow:0.0, remo_bloom:0.0, h16_veg_a:0.0, h16_veg_b:0.0, h16_bud_a:0.0, h16_bud_b:0.0, mills_basis_a:0.0, mills_basis_b:0.0, ro_grow:0.0, ro_bloom:0.0, nftg_hercules:0.0, nftg_gaia:0.0, nftg_medusa:0.0, nftg_demeter:0.0, nftg_zeus:0.0 };
 const WATER_BOOST_INCL = { calimagic:{ ro:1.25, soft:1.0, tap:0.5 } };
 
 const DWC_EC_CEILING = 2.5;
@@ -916,7 +1483,43 @@ const BASE_CALMAG_ADEQUACY = {
   "canna_terra":"full",      // complete soil base
   // Humboldts Secret
   "hs_starter":"lean",       // Base A+B run lean — kit ships a CalMag & Iron for this
+  // Botanicare — feed charts explicitly call for Cal-Mag Plus in RO/coco
+  "bc_pbp":"lean",
+  "bc_cns17":"lean",
+  "bc_kind":"lean",
+  // Emerald Harvest — Cali Pro 3-part, sells Cali-Mag; lean
+  "eh_calipro":"lean",
+  // House & Garden — Aqua/Cocos formulated with Ca/Mg for the medium; Soil leaner
+  "hg_aqua":"full",          // manufacturer balances Ca/Mg for RO
+  "hg_cocos":"full",         // Cocos has Mg balanced for coco
+  "hg_soil":"lean",
+  // Dyna-Gro — Grow/Bloom/Foliage Pro lean on Ca/Mg, pair with Mag-Pro
+  "dg_grobloom":"lean",
+  "dg_foliagepro":"lean",
+  // Technaflora — B.C. base, lean
+  "tf_bc":"lean",
+  // Remo — 3-part, sells MagNifiCal; lean
+  "remo_3part":"lean",
+  // Heavy 16 — cal/mag built into Veg/Bud A+B
+  "h16_vegbud":"full",
+  // Mills — Basis A+B partly organic; growers add cal-mag in coco/RO
+  "mills_basis":"lean",
+  // Roots Organics — organic Buddha line, lean on Ca/Mg
+  "ro_buddha":"lean",
+  // Nectar for the Gods — calcium-forward (Herculean Harvest bone meal)
+  "nftg_greek":"full",
 };
+
+// Bases that already contain humic/fulvic acids, so added fulvic is redundant.
+// (Organic and humic-rich lines; most mineral lines do not include it.)
+const BASE_HAS_HUMIC = new Set([
+  "biothrive_basic","biothrive_custom",  // General Organics — humic-rich
+  "bc_pbp","bc_cns17",                   // Botanicare Pure Blend / CNS17 carry humic acid
+  "ro_buddha",                           // Roots Organics — organic, humic content
+  "nftg_greek",                          // Nectar — organic, humic/fulvic present
+  "hs_starter",                          // Humboldts Golden Tree includes humic/fulvic
+  "10part",                              // GH 10-part includes Diamond Nectar (fulvic)
+]);
 
 function resolveSupplementDose(supp,stageId,gallons,waterType,feedStrength,substrate){
   const rule=supp.stageRules[stageId];if(!rule)return null;
@@ -1261,13 +1864,35 @@ function getSuppRec(supp, plantId, stageId, systemId, water, substrate) {
   if(catKey==="silica"){
     const structural = plantId==="cannabis"||plantId==="tomatoes"||plantId==="peppers"||plantId==="roses";
     const stretch = stageId==="late_growth"||stageId==="early_flower";
-    if(structural&&stretch) return { level:"recommended", reason:"Base nutrients contain no silica — recommended for tall/heavy crops during the stretch to strengthen stems and reduce stress" };
+    if(structural&&stretch) return { level:"recommended", reason:"No base nutrient contains silica — recommended for tall/heavy crops during the stretch to strengthen stems and reduce stress" };
+    return { level:"optional", reason:"No base contains silica; a low-risk extra for stronger stems and stress tolerance, but not essential" };
+  }
+
+  const cfg = systemId?SYSTEM_CONFIGS[systemId]:null;
+  const baseName = cfg?.name || "Your base";
+
+  // ── Fulvic/Humic: redundant when the base already carries humic acids ─────
+  if(catKey==="fulvic"){
+    if(systemId&&BASE_HAS_HUMIC.has(systemId)) return { level:"skip", reason:`${baseName} already contains humic/fulvic acids — adding more is redundant` };
+    return { level:"optional", reason:`${baseName} carries little humic/fulvic; an optional uptake aid, but not a nutrient gap` };
+  }
+
+  // ── PK boosters: complete bases already supply bloom P-K; never a true gap ──
+  if(catKey==="pk"){
+    if(stageId==="seedling"||stageId==="early_growth"||stageId==="late_growth") return { level:"skip", reason:"Not for veg — phosphorus and potassium aren't needed yet" };
+    return { level:"optional", reason:`${baseName} already supplies P and K for bloom — a booster is optional and easy to overdo` };
+  }
+
+  // ── Sulfur: bases supply sulfur via their sulfate salts; covered ──────────
+  if(catKey==="sulfur"){
+    if(stageId==="seedling") return { level:"skip", reason:"Too sensitive at seedling — skip" };
+    return { level:"optional", reason:`${baseName} already contains sulfur; only an optional terpene play, not a gap` };
   }
 
   const plantLevel  = profile[catKey] || "optional";
   const plantReason = REC_REASONS[plantId]?.[catKey] || "";
 
-  // Stage override (e.g. PK skipped in veg, root tapers in late flower)
+  // Stage override (e.g. root tapers in late flower)
   const stageOv = STAGE_OVERRIDES[catKey]?.[stageId];
   if(stageOv) return { level: stageOv.level, reason: stageOv.reason };
 
@@ -1300,6 +1925,7 @@ export default function FloraApp() {
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const [storageReady,  setStorageReady]   = useState(false);
   const [showCompare,   setShowCompare]    = useState(false);
+  const [mfrSearch,     setMfrSearch]      = useState("");
 
   // Storage layer. A supplement run is ALWAYS saved to an in-memory mirror so
   // the tent works within the session no matter what; localStorage is layered
@@ -1483,7 +2109,7 @@ export default function FloraApp() {
         </div>
         {storageReady&&savedRuns.length>0&&(
           <button onClick={()=>setShowCompare(true)}
-            style={{display:"flex",alignItems:"center",gap:12,width:"100%",marginBottom:20,padding:"14px 18px",background:"rgba(120,190,32,0.08)",border:"1px solid rgba(120,190,32,0.4)",borderRadius:14,cursor:"pointer",textAlign:"left"}}>
+            style={{display:"flex",alignItems:"center",gap:12,width:"100%",marginBottom:16,padding:"14px 18px",background:"rgba(120,190,32,0.08)",border:"1px solid rgba(120,190,32,0.4)",borderRadius:14,cursor:"pointer",textAlign:"left"}}>
             <span style={{fontSize:24,flexShrink:0}}>🌿</span>
             <div style={{flex:1}}>
               <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:16,fontWeight:700,color:"#5a9a10"}}>My Tent</div>
@@ -1492,20 +2118,46 @@ export default function FloraApp() {
             <span style={{color:"#78BE20",fontSize:20,fontWeight:700}}>→</span>
           </button>
         )}
-        {MANUFACTURERS.map(m=>{
-          const sel=manufacturer===m.id;
-          return (
-            <button key={m.id} onClick={()=>{setManufacturer(m.id);setBrand(null);setSystem(null);setPlant(null);setStage(null);setSupps(new Set());setStep(1);}}
-              style={{display:"flex",alignItems:"center",gap:16,width:"100%",marginBottom:10,padding:"20px",background:sel?`${m.color}14`:"#FFFFFF",border:`1px solid ${sel?m.color:"#e0e0e0"}`,borderRadius:14,cursor:"pointer",textAlign:"left",transition:"all 0.15s",position:"relative"}}>
-              {sel&&<div style={{position:"absolute",left:0,top:0,bottom:0,width:4,background:m.color,borderRadius:"14px 0 0 14px"}}/>}
-              <span style={{fontSize:34,flexShrink:0}}>{m.icon}</span>
-              <div style={{flex:1,paddingLeft:sel?4:0}}>
-                <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:22,fontWeight:800,color:sel?m.color:"#111",letterSpacing:"0.01em"}}>{m.name}</div>
-                <div style={{fontSize:11,color:"#777",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",marginTop:3,lineHeight:1.4}}>{m.desc}</div>
+        {/* Search */}
+        <div style={{position:"relative",marginBottom:18}}>
+          <span style={{position:"absolute",left:14,top:"50%",transform:"translateY(-50%)",fontSize:15,color:"#999",pointerEvents:"none"}}>🔍</span>
+          <input value={mfrSearch} onChange={e=>setMfrSearch(e.target.value)} placeholder="Search brands"
+            style={{width:"100%",padding:"12px 14px 12px 40px",fontSize:15,borderRadius:12,border:"1px solid #e0e0e0",outline:"none",background:"#fff",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif"}}/>
+          {mfrSearch&&<button onClick={()=>setMfrSearch("")} style={{position:"absolute",right:10,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",fontSize:16,color:"#bbb",cursor:"pointer"}}>✕</button>}
+        </div>
+        {(()=>{
+          const q=mfrSearch.trim().toLowerCase();
+          const match=m=>!q||m.name.toLowerCase().includes(q)||m.desc.toLowerCase().includes(q)||(m.short||"").toLowerCase().includes(q);
+          const visible=MANUFACTURERS.filter(match);
+          if(visible.length===0) return <div style={{textAlign:"center",padding:"30px 20px",color:"#999",fontSize:14,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif"}}>No brands match "{mfrSearch}".</div>;
+          const row=(m)=>{
+            const sel=manufacturer===m.id;
+            return (
+              <button key={m.id} onClick={()=>{setManufacturer(m.id);setBrand(null);setSystem(null);setPlant(null);setStage(null);setSupps(new Set());setStep(1);}}
+                style={{display:"flex",alignItems:"center",gap:13,width:"100%",marginBottom:7,padding:"13px 15px",background:sel?`${m.color}14`:"#FFFFFF",border:`1px solid ${sel?m.color:"#e8e8e8"}`,borderRadius:12,cursor:"pointer",textAlign:"left",transition:"all 0.15s",position:"relative"}}>
+                {sel&&<div style={{position:"absolute",left:0,top:0,bottom:0,width:4,background:m.color,borderRadius:"12px 0 0 12px"}}/>}
+                <span style={{fontSize:26,flexShrink:0,width:30,textAlign:"center",paddingLeft:sel?4:0}}>{m.icon}</span>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:17,fontWeight:700,color:sel?m.color:"#111",letterSpacing:"0.01em"}}>{m.name}</div>
+                  <div style={{fontSize:11,color:"#888",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",marginTop:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{m.desc}</div>
+                </div>
+                <span style={{color:sel?m.color:"#ccc",fontSize:18,flexShrink:0}}>›</span>
+              </button>
+            );
+          };
+          // When searching, show a flat list; otherwise group by category
+          if(q) return <div>{visible.map(row)}</div>;
+          return MFR_CATEGORIES.map(cat=>{
+            const inCat=visible.filter(m=>m.cat===cat.id);
+            if(inCat.length===0) return null;
+            return (
+              <div key={cat.id} style={{marginBottom:18}}>
+                <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",fontSize:11,fontWeight:700,letterSpacing:"0.08em",color:"#999",textTransform:"uppercase",marginBottom:8,paddingLeft:2}}>{cat.label}</div>
+                {inCat.map(row)}
               </div>
-            </button>
-          );
-        })}
+            );
+          });
+        })()}
         <div style={{marginTop:24,paddingTop:20,borderTop:"1px solid #e0e0e0",textAlign:"center"}}>
           <button onClick={()=>setShowDisclaimer(true)}
             style={{background:"none",border:"1px solid #e0e0e0",color:"#777",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",fontSize:12,padding:"10px 20px",cursor:"pointer",letterSpacing:"0.03em"}}>
@@ -2018,6 +2670,34 @@ export default function FloraApp() {
             </div>
           )}
         </div>
+
+        {/* Official feeding chart link — line-specific where available */}
+        {sysCfg&&(()=>{
+          const mfr=MANUFACTURERS.find(m=>m.id===sysCfg.mfr);
+          const url=chartUrlFor(sysCfg);
+          if(!url) return null;
+          const col=mfr?.color||GH.green;
+          const isPdf=/\.pdf($|\?)/i.test(url);
+          const isLineSpecific=!!LINE_CHART_URLS[sysCfg.brand];
+          const sub = isPdf
+            ? `Download ${mfr?.name||"the"} ${sysCfg.name} feeding chart (PDF)`
+            : isLineSpecific
+              ? `Open ${mfr?.name||"the"} ${sysCfg.name} feeding schedule`
+              : `Open ${mfr?.name||"the manufacturer"}'s feed charts, then pick ${sysCfg.name}`;
+          return (
+            <div style={{marginTop:14}}>
+              <a href={url} target="_blank" rel="noopener noreferrer"
+                style={{display:"flex",alignItems:"center",gap:12,width:"100%",padding:"16px",background:`${col}0D`,border:`1px solid ${col}55`,borderRadius:14,textDecoration:"none",boxSizing:"border-box"}}>
+                <span style={{fontSize:22,flexShrink:0}}>{isPdf?"⬇️":"📄"}</span>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontSize:15,fontWeight:700,color:col}}>Official {sysCfg.name} Feeding Chart</div>
+                  <div style={{fontSize:11,color:GH.dim,marginTop:2,lineHeight:1.4}}>{sub} — opens in a new tab</div>
+                </div>
+                <span style={{fontSize:18,color:col,flexShrink:0}}>{isPdf?"⬇":"↗"}</span>
+              </a>
+            </div>
+          );
+        })()}
 
       </div>
     );
