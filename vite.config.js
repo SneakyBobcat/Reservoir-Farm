@@ -9,9 +9,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'icons/*.png'],
       manifest: {
-        name: 'Nutrient Calculator',
-        short_name: 'Nutrients',
-        description: 'Multi-brand hydroponic nutrient calculator — General Hydroponics, Athena, and Jack\'s.',
+        name: 'Reservoir — Nutrient Calculator',
+        short_name: 'Reservoir',
+        description: 'Mobile-first, multi-brand hydroponic nutrient calculator covering 17 fertilizer brands with stage-based dosing.',
         theme_color: '#78BE20',
         background_color: '#F2F2F7',
         display: 'standalone',

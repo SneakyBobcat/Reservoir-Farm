@@ -1,4 +1,4 @@
-# robots.txt for floraseriescalc.com
+# robots.txt for reservoir.farm
 # Allow normal search engines; discourage AI training crawlers.
 # Note: robots.txt is advisory. Well-behaved crawlers honor it; others ignore
 # it, which is why Cloudflare's edge rules (Block AI bots / AI Labyrinth) are
@@ -47,4 +47,4 @@ Disallow: /
 User-agent: ImagesiftBot
 Disallow: /
 
-Sitemap: https://floraseriescalc.com/sitemap.xml
+Sitemap: https://reservoir.farm/sitemap.xml

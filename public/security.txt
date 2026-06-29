@@ -1,7 +1,7 @@
-# Security policy for floraseriescalc.com
+# Security policy for reservoir.farm
 # https://www.rfc-editor.org/rfc/rfc9116
 
 Contact: mailto:REPLACE_WITH_YOUR_EMAIL@example.com
 Expires: 2027-06-28T00:00:00.000Z
 Preferred-Languages: en
-Canonical: https://floraseriescalc.com/.well-known/security.txt
+Canonical: https://reservoir.farm/.well-known/security.txt
