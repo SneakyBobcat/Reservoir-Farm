@@ -31,6 +31,35 @@ const PLANTS = [
   { id:"houseplants",  name:"Houseplants",     icon:"🪴", maxStages:[...VEG_ONLY] },
 ];
 
+// Optimal pH window per plant, in [soilless_lo, soilless_hi, soil_lo, soil_hi].
+// Soilless covers hydro + coco/inert; soil covers potting + ground soil. These
+// are established horticultural ranges; the medium is the primary driver and the
+// plant nudges the window within it.
+const PLANT_PH = {
+  tomatoes:     [5.5, 6.3, 6.0, 6.8],
+  cannabis:     [5.5, 6.3, 6.2, 7.0],
+  peppers:      [5.5, 6.2, 6.0, 6.8],
+  cucumbers:    [5.5, 6.0, 6.0, 6.8],
+  lettuce:      [5.5, 6.2, 6.0, 7.0],
+  herbs:        [5.5, 6.3, 6.0, 7.0],
+  strawberries: [5.4, 6.0, 5.5, 6.5],
+  roses:        [5.8, 6.3, 6.0, 6.8],
+  orchids:      [5.5, 6.2, 5.5, 6.5],
+  houseplants:  [5.8, 6.3, 6.0, 6.8],
+};
+
+// Resolve a pH target range from the plant + growing medium.
+function phTarget(plantId, substrate){
+  const p = PLANT_PH[plantId] || [5.5, 6.5, 6.0, 7.0];
+  const [slo, shi, gLo, gHi] = p;
+  const fmt = (lo, hi) => `${lo.toFixed(1)}–${hi.toFixed(1)}`;
+  if(substrate==="hydro")   return { range:fmt(slo,shi), mediumLabel:"hydroponics" };
+  if(substrate==="inert")   return { range:fmt(slo,shi), mediumLabel:"coco / inert" };
+  if(substrate==="potting") return { range:fmt(gLo,gHi), mediumLabel:"potting mix" };
+  if(substrate==="soil")    return { range:fmt(gLo,gHi), mediumLabel:"soil" };
+  return { range:`${fmt(slo,shi)} soilless · ${fmt(gLo,gHi)} soil`, mediumLabel:null };
+}
+
 const MANUFACTURERS = [
   { id:"gh",       name:"General Hydroponics", short:"GH",     icon:"🌊", color:"#78BE20", cat:"mineral", desc:"Flora Series, FloraNova, MaxiSeries, BioThrive, FloraPro" },
   { id:"advanced", name:"Advanced Nutrients",  short:"AN",     icon:"🧬", color:"#0072CE", cat:"mineral", desc:"pH Perfect, Sensi, Connoisseur, Jungle Juice, Iguana Juice" },
@@ -2641,14 +2670,31 @@ export default function FloraApp() {
               </div>
             </div>
           ))}
-          <div style={{marginTop:10,padding:"12px 16px",background:GH.card,borderRadius:14,border:`1px solid ${GH.border}`,fontSize:11,color:GH.dim,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif",lineHeight:1.8}}>
-            CHECK pH AFTER MIXING: &nbsp;
-            {substrate==="hydro"&&<><span style={{color:GH.green,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontWeight:700,fontSize:13}}>5.5–6.5</span> <span style={{color:GH.dim}}>— Hydroponics</span></>}
-            {substrate==="inert"&&<><span style={{color:GH.green,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontWeight:700,fontSize:13}}>5.8–6.2</span> <span style={{color:GH.dim}}>— Coco / Inert medium</span></>}
-            {substrate==="potting"&&<><span style={{color:GH.green,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontWeight:700,fontSize:13}}>6.0–6.8</span> <span style={{color:GH.dim}}>— Potting soil</span></>}
-            {substrate==="soil"&&<><span style={{color:GH.green,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontWeight:700,fontSize:13}}>6.0–7.0</span> <span style={{color:GH.dim}}>— Ground soil</span></>}
-            {!substrate&&<><span style={{color:GH.green,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontWeight:700,fontSize:13}}>5.5–6.5</span> hydro &nbsp;·&nbsp; <span style={{color:GH.green,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",fontWeight:700,fontSize:13}}>6.0–7.0</span> soil</>}
-          </div>
+          {(()=>{
+            const pt=phTarget(plant,substrate);
+            const plantName=(PLANTS.find(p=>p.id===plant)?.name)||"your crop";
+            const isPhPerfect=sysCfg&&(sysCfg.id==="an_phperfect"||sysCfg.id==="an_sensi"||sysCfg.id==="an_connoisseur");
+            return (
+              <div style={{marginTop:10,padding:"16px",background:`${GH.green}0D`,borderRadius:14,border:`1px solid ${GH.green}55`}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontSize:10,fontWeight:700,letterSpacing:"0.08em",color:GH.dim,textTransform:"uppercase",fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif"}}>Target pH after mixing</div>
+                    <div style={{fontSize:11,color:GH.dim,marginTop:3,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif"}}>
+                      for {plantName}{pt.mediumLabel?<> in {pt.mediumLabel}</>:null}
+                    </div>
+                  </div>
+                  <div style={{flexShrink:0,textAlign:"right"}}>
+                    <span style={{fontSize:26,fontWeight:900,color:GH.green,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif",letterSpacing:"-0.01em"}}>{pt.range}</span>
+                  </div>
+                </div>
+                <div style={{fontSize:11,color:GH.dim,marginTop:10,paddingTop:10,borderTop:`1px solid ${GH.border}`,lineHeight:1.5,fontFamily:"-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif"}}>
+                  {isPhPerfect
+                    ? <>Adjust the mixed solution into this window with pH Up/Down. Your pH Perfect base self-buffers, so it'll pull toward this range on its own — but verify with a meter, especially in soilless.</>
+                    : <>Mix all nutrients first, then measure and adjust with pH Up/Down to land in this range. Drifting slightly through the window over time is normal and healthy.</>}
+                </div>
+              </div>
+            );
+          })()}
         </div>
 
         {/* Save + Compare actions */}
