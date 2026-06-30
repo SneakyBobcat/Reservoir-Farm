@@ -2174,10 +2174,11 @@ export default function FloraApp() {
               </button>
             );
           };
-          // When searching, show a flat list; otherwise group by category
-          if(q) return <div>{visible.map(row)}</div>;
+          // When searching, show a flat alphabetical list; otherwise group by category
+          const byName=(a,b)=>a.name.localeCompare(b.name);
+          if(q) return <div>{[...visible].sort(byName).map(row)}</div>;
           return MFR_CATEGORIES.map(cat=>{
-            const inCat=visible.filter(m=>m.cat===cat.id);
+            const inCat=visible.filter(m=>m.cat===cat.id).sort(byName);
             if(inCat.length===0) return null;
             return (
               <div key={cat.id} style={{marginBottom:18}}>
