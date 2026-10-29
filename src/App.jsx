@@ -172,6 +172,7 @@ const CHART_URLS = {
 const LINE_CHART_URLS = {
   // CANNA — direct downloadable PDF schedules per medium
   canna_coco:  "https://www.cannagardening.com/sites/united_states/files/2024-02/downloads-grow-schedule-coco.pdf",
+  canna_aqua:  "https://www.cannagardening.com/sites/united_states/files/2026-06/downloads-grow-schedule-us-aqua.pdf",
 };
 
 // Resolve the best chart link for a system: line-specific first, then manufacturer.
@@ -208,6 +209,8 @@ const BRAND_LINES = {
   canna: [
     { id:"canna_coco",  name:"Coco A+B",  color:"#E2001A", tagline:"Coco A · Coco B", systems:["canna_coco"] },
     { id:"canna_terra", name:"Terra",     color:"#B8001A", tagline:"Terra Vega · Terra Flores", systems:["canna_terra"] },
+    { id:"canna_aqua",  name:"Aqua",      color:"#0097C8", tagline:"Recirculating hydro · Vega & Flores A+B", systems:["canna_aqua"] },
+    { id:"canna_hydro", name:"Hydro",     color:"#00A0AF", tagline:"Run-to-waste hydro · Vega & Flores A+B", systems:["canna_hydro"] },
   ],
   humboldts: [
     { id:"hs_starter", name:"Starter Kit", color:"#C9A227", tagline:"Base A+B · Golden Tree", systems:["hs_starter"] },
@@ -433,6 +436,22 @@ const SYSTEM_CONFIGS = {
     stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
     includedKeys:["canna_vega","canna_flores"],
   },
+  "canna_aqua": {
+    id:"canna_aqua", mfr:"canna", brand:"canna_aqua", name:"Aqua", parts:"4", color:"#0097C8",
+    baseLabel:"CANNA AQUA — VEGA A+B · FLORES A+B",
+    tagline:"Recirculating hydro (RTW returned to tank)",
+    desc:"Hydro base for recirculating systems where drain water returns to the tank (ebb/flow, NFT, DWC). Aqua Vega A+B in veg, Aqua Flores A+B in flower. pH 5.5–6.2.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["canna_aqua_vega_a","canna_aqua_vega_b","canna_aqua_flores_a","canna_aqua_flores_b"],
+  },
+  "canna_hydro": {
+    id:"canna_hydro", mfr:"canna", brand:"canna_hydro", name:"Hydro", parts:"4", color:"#00A0AF",
+    baseLabel:"CANNA HYDRO — VEGA A+B · FLORES A+B",
+    tagline:"Run-to-waste hydro (drain-to-waste)",
+    desc:"Hydro base for run-to-waste / open systems on inert media (rockwool, clay). Hydro Vega A+B in veg, Hydro Flores A+B in flower. Runs leaner than recirculating. pH 5.5–6.2.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["canna_hydro_vega_a","canna_hydro_vega_b","canna_hydro_flores_a","canna_hydro_flores_b"],
+  },
   // ── HUMBOLDTS SECRET ────────────────────────────────────────────────────
   "hs_starter": {
     id:"hs_starter", mfr:"humboldts", brand:"hs_starter", name:"Starter Kit", parts:"2", color:"#C9A227",
@@ -598,6 +617,8 @@ const SYSTEM_EXCLUDED_SUPPS = {
   "ff_trio": [],
   "canna_coco": [],
   "canna_terra": [],
+  "canna_aqua": [],
+  "canna_hydro": [],
   "hs_starter": [],
   "bc_pbp": [],
   "bc_cns17": [],
@@ -821,6 +842,26 @@ const SCHEDULES = {
     peak_flower:  { light:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:11.4}, medium:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:15.1}, aggressive:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:17.0} },
     late_flower:  { light:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:9.5}, medium:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:13.2}, aggressive:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:15.1} },
     flush:        { light:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:0}, medium:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:0}, aggressive:{micro:0,gro:0,bloom:0,canna_vega:0,canna_flores:0}, isFlush:true },
+  },
+  // ── CANNA Aqua (ml/gal — recirculating; Vega A+B veg, Flores A+B flower) ──
+  "canna_aqua": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:4.5,canna_aqua_vega_b:4.5,canna_aqua_flores_a:0,canna_aqua_flores_b:0}, medium:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:5.7,canna_aqua_vega_b:5.7,canna_aqua_flores_a:0,canna_aqua_flores_b:0}, aggressive:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:7.5,canna_aqua_vega_b:7.5,canna_aqua_flores_a:0,canna_aqua_flores_b:0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:7.5,canna_aqua_vega_b:7.5,canna_aqua_flores_a:0,canna_aqua_flores_b:0}, medium:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:9.3,canna_aqua_vega_b:9.3,canna_aqua_flores_a:0,canna_aqua_flores_b:0}, aggressive:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:10.7,canna_aqua_vega_b:10.7,canna_aqua_flores_a:0,canna_aqua_flores_b:0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:9.3,canna_aqua_vega_b:9.3,canna_aqua_flores_a:0,canna_aqua_flores_b:0}, medium:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:10.7,canna_aqua_vega_b:10.7,canna_aqua_flores_a:0,canna_aqua_flores_b:0}, aggressive:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:12.2,canna_aqua_vega_b:12.2,canna_aqua_flores_a:0,canna_aqua_flores_b:0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:0,canna_aqua_vega_b:0,canna_aqua_flores_a:7.5,canna_aqua_flores_b:7.5}, medium:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:0,canna_aqua_vega_b:0,canna_aqua_flores_a:9.5,canna_aqua_flores_b:9.5}, aggressive:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:0,canna_aqua_vega_b:0,canna_aqua_flores_a:12.2,canna_aqua_flores_b:12.2} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:0,canna_aqua_vega_b:0,canna_aqua_flores_a:9.5,canna_aqua_flores_b:9.5}, medium:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:0,canna_aqua_vega_b:0,canna_aqua_flores_a:12.2,canna_aqua_flores_b:12.2}, aggressive:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:0,canna_aqua_vega_b:0,canna_aqua_flores_a:15.0,canna_aqua_flores_b:15.0} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:0,canna_aqua_vega_b:0,canna_aqua_flores_a:7.5,canna_aqua_flores_b:7.5}, medium:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:0,canna_aqua_vega_b:0,canna_aqua_flores_a:9.5,canna_aqua_flores_b:9.5}, aggressive:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:0,canna_aqua_vega_b:0,canna_aqua_flores_a:12.2,canna_aqua_flores_b:12.2} },
+    flush:        { light:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:0,canna_aqua_vega_b:0,canna_aqua_flores_a:0,canna_aqua_flores_b:0}, medium:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:0,canna_aqua_vega_b:0,canna_aqua_flores_a:0,canna_aqua_flores_b:0}, aggressive:{micro:0,gro:0,bloom:0,canna_aqua_vega_a:0,canna_aqua_vega_b:0,canna_aqua_flores_a:0,canna_aqua_flores_b:0}, isFlush:true },
+  },
+  // ── CANNA Hydro (ml/gal — run-to-waste; leaner than recirculating) ──
+  "canna_hydro": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:3.0,canna_hydro_vega_b:3.0,canna_hydro_flores_a:0,canna_hydro_flores_b:0}, medium:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:3.8,canna_hydro_vega_b:3.8,canna_hydro_flores_a:0,canna_hydro_flores_b:0}, aggressive:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:5.7,canna_hydro_vega_b:5.7,canna_hydro_flores_a:0,canna_hydro_flores_b:0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:5.7,canna_hydro_vega_b:5.7,canna_hydro_flores_a:0,canna_hydro_flores_b:0}, medium:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:7.6,canna_hydro_vega_b:7.6,canna_hydro_flores_a:0,canna_hydro_flores_b:0}, aggressive:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:9.5,canna_hydro_vega_b:9.5,canna_hydro_flores_a:0,canna_hydro_flores_b:0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:7.6,canna_hydro_vega_b:7.6,canna_hydro_flores_a:0,canna_hydro_flores_b:0}, medium:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:9.5,canna_hydro_vega_b:9.5,canna_hydro_flores_a:0,canna_hydro_flores_b:0}, aggressive:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:11.4,canna_hydro_vega_b:11.4,canna_hydro_flores_a:0,canna_hydro_flores_b:0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:0,canna_hydro_vega_b:0,canna_hydro_flores_a:7.6,canna_hydro_flores_b:7.6}, medium:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:0,canna_hydro_vega_b:0,canna_hydro_flores_a:9.5,canna_hydro_flores_b:9.5}, aggressive:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:0,canna_hydro_vega_b:0,canna_hydro_flores_a:11.4,canna_hydro_flores_b:11.4} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:0,canna_hydro_vega_b:0,canna_hydro_flores_a:9.5,canna_hydro_flores_b:9.5}, medium:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:0,canna_hydro_vega_b:0,canna_hydro_flores_a:11.4,canna_hydro_flores_b:11.4}, aggressive:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:0,canna_hydro_vega_b:0,canna_hydro_flores_a:13.2,canna_hydro_flores_b:13.2} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:0,canna_hydro_vega_b:0,canna_hydro_flores_a:7.6,canna_hydro_flores_b:7.6}, medium:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:0,canna_hydro_vega_b:0,canna_hydro_flores_a:9.5,canna_hydro_flores_b:9.5}, aggressive:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:0,canna_hydro_vega_b:0,canna_hydro_flores_a:11.4,canna_hydro_flores_b:11.4} },
+    flush:        { light:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:0,canna_hydro_vega_b:0,canna_hydro_flores_a:0,canna_hydro_flores_b:0}, medium:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:0,canna_hydro_vega_b:0,canna_hydro_flores_a:0,canna_hydro_flores_b:0}, aggressive:{micro:0,gro:0,bloom:0,canna_hydro_vega_a:0,canna_hydro_vega_b:0,canna_hydro_flores_a:0,canna_hydro_flores_b:0}, isFlush:true },
   },
   // ── Humboldts Secret Starter Kit (ml/gal — Base A&B equal parts 5-14, Golden Tree all cycle) ──
   // Base A&B interpolated across 5-14 ml/gal to land inside published PPM windows
@@ -1176,6 +1217,24 @@ const EC_RANGES = {
     late_flower:  { light:[1.6,2.0],  medium:[1.9,2.3],  aggressive:[2.2,2.6]  },
     flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
   },
+  "canna_aqua": {
+    seedling:     { light:[0.7,1.0],  medium:[0.9,1.2],  aggressive:[1.1,1.4]  },
+    early_growth: { light:[1.1,1.5],  medium:[1.4,1.8],  aggressive:[1.7,2.1]  },
+    late_growth:  { light:[1.5,1.9],  medium:[1.8,2.2],  aggressive:[2.0,2.4]  },
+    early_flower: { light:[1.6,2.0],  medium:[1.8,2.2],  aggressive:[2.1,2.5]  },
+    peak_flower:  { light:[1.8,2.2],  medium:[2.0,2.4],  aggressive:[2.2,2.6]  },
+    late_flower:  { light:[1.5,1.9],  medium:[1.7,2.1],  aggressive:[2.0,2.4]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
+  "canna_hydro": {
+    seedling:     { light:[0.6,0.9],  medium:[0.7,1.0],  aggressive:[0.9,1.2]  },
+    early_growth: { light:[0.9,1.2],  medium:[1.1,1.4],  aggressive:[1.3,1.6]  },
+    late_growth:  { light:[1.2,1.5],  medium:[1.3,1.6],  aggressive:[1.5,1.8]  },
+    early_flower: { light:[1.3,1.6],  medium:[1.4,1.7],  aggressive:[1.6,1.9]  },
+    peak_flower:  { light:[1.4,1.7],  medium:[1.5,1.8],  aggressive:[1.7,2.0]  },
+    late_flower:  { light:[1.2,1.5],  medium:[1.3,1.6],  aggressive:[1.5,1.8]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
   "hs_starter": {
     seedling:     { light:[0.8,1.2],  medium:[1.0,1.4],  aggressive:[1.2,1.6]  },
     early_growth: { light:[1.4,1.7],  medium:[1.6,2.0],  aggressive:[1.9,2.2]  },
@@ -1394,6 +1453,14 @@ const INCL_META = {
   canna_coco_b: { name:"Coco B", brand:"CANNA", color:"#B8001A", icon:"🅱️", mixOrder:3, powderNote:"Add B after A, never mix concentrates" },
   canna_vega:   { name:"Terra Vega",   brand:"CANNA", color:"#2E7D32", icon:"🌿", mixOrder:2, powderNote:"Veg base for soil" },
   canna_flores: { name:"Terra Flores", brand:"CANNA", color:"#C2185B", icon:"🌸", mixOrder:3, powderNote:"Flower base for soil" },
+  canna_aqua_vega_a:   { name:"Aqua Vega A",   brand:"CANNA", color:"#0097C8", icon:"🅰️", mixOrder:2, powderNote:"Add A first, equal amount to B" },
+  canna_aqua_vega_b:   { name:"Aqua Vega B",   brand:"CANNA", color:"#0077A8", icon:"🅱️", mixOrder:3, powderNote:"Add B after A, never mix concentrates" },
+  canna_aqua_flores_a: { name:"Aqua Flores A", brand:"CANNA", color:"#0097C8", icon:"🅰️", mixOrder:2, powderNote:"Flower; add A first, equal to B" },
+  canna_aqua_flores_b: { name:"Aqua Flores B", brand:"CANNA", color:"#0077A8", icon:"🅱️", mixOrder:3, powderNote:"Add B after A, never mix concentrates" },
+  canna_hydro_vega_a:   { name:"Hydro Vega A",   brand:"CANNA", color:"#00A0AF", icon:"🅰️", mixOrder:2, powderNote:"Add A first, equal amount to B" },
+  canna_hydro_vega_b:   { name:"Hydro Vega B",   brand:"CANNA", color:"#008290", icon:"🅱️", mixOrder:3, powderNote:"Add B after A, never mix concentrates" },
+  canna_hydro_flores_a: { name:"Hydro Flores A", brand:"CANNA", color:"#00A0AF", icon:"🅰️", mixOrder:2, powderNote:"Flower; add A first, equal to B" },
+  canna_hydro_flores_b: { name:"Hydro Flores B", brand:"CANNA", color:"#008290", icon:"🅱️", mixOrder:3, powderNote:"Add B after A, never mix concentrates" },
   // Humboldts Secret base
   hs_base_a:      { name:"Base A",      brand:"Humboldts Secret", color:"#2E7D32", icon:"🅰️", mixOrder:2, powderNote:"Equal parts with Base B — add A first, never combine concentrates" },
   hs_base_b:      { name:"Base B",      brand:"Humboldts Secret", color:"#1B5E20", icon:"🅱️", mixOrder:3, powderNote:"Equal amount to Base A — add after A is mixed in" },
@@ -1494,6 +1561,17 @@ const SUPPLEMENTS = [
     stageRules:{early_flower:{dose:2.0,note:"start at flip"},peak_flower:{dose:5.0},late_flower:{dose:2.0,note:"taper"}} },
   { id:"hs_plant_enzymes",name:"Plant Enzymes",brand:"Humboldts Secret",category:"enzyme",waterBoost:{ro:1.0,soft:1.0,tap:1.0},mixOrder:9,conflicts:[],
     stageRules:{seedling:{dose:2.5},early_growth:{dose:2.5},late_growth:{dose:2.5},early_flower:{dose:2.5},peak_flower:{dose:2.5},late_flower:{dose:2.5},flush:{dose:5.0,note:"boost during flush"}} },
+  // ── CANNA brand supplements (shown only when a CANNA line is selected) ──
+  { id:"canna_calmag",name:"CANNA CalMag Agent",brand:"CANNA",category:"cal-mag",tapWaterWarning:true,waterBoost:{ro:1.3,soft:1.1,tap:0.5},mixOrder:1,conflicts:["calimagic","botanicare_calmag","hs_calmag_iron"],
+    stageRules:{seedling:{dose:2.0,note:"bring source water to EC 0.2–0.4"},early_growth:{dose:3.0},late_growth:{dose:3.0},early_flower:{dose:3.0},peak_flower:{dose:3.0},late_flower:{dose:2.0,note:"taper"}} },
+  { id:"canna_rhizotonic",name:"RHIZOTONIC",brand:"CANNA",category:"root",waterBoost:{ro:1.0,soft:1.0,tap:1.0},mixOrder:1,conflicts:[],
+    stageRules:{seedling:{dose:15.0,note:"root stimulant — heaviest early"},early_growth:{dose:9.5},late_growth:{dose:7.5,note:"taper as plant establishes"}} },
+  { id:"canna_cannazym",name:"CANNAZYM",brand:"CANNA",category:"enzyme",waterBoost:{ro:1.0,soft:1.0,tap:1.0},mixOrder:5,conflicts:[],
+    stageRules:{early_growth:{dose:9.5},late_growth:{dose:9.5},early_flower:{dose:9.5},peak_flower:{dose:9.5},late_flower:{dose:9.5,note:"double dose if reusing substrate"}} },
+  { id:"canna_cannaboost",name:"CANNABOOST Accelerator",brand:"CANNA",category:"beneficial",waterBoost:{ro:1.0,soft:1.0,tap:1.0},mixOrder:6,conflicts:[],
+    stageRules:{early_flower:{dose:7.5},peak_flower:{dose:10.0,note:"flowering accelerator"},late_flower:{dose:10.0}} },
+  { id:"canna_pk1314",name:"CANNA PK 13/14",brand:"CANNA",category:"pk-booster",waterBoost:{ro:1.0,soft:1.0,tap:1.0},mixOrder:6,conflicts:[],
+    stageRules:{peak_flower:{dose:5.7,note:"run ~1 week at peak"},late_flower:{dose:5.7,note:"use 3–4 weeks before harvest only"}} },
   { id:"calimagic",name:"CALiMAGiC",brand:"Gen. Hydroponics",category:"cal-mag",tapWaterWarning:true,waterBoost:{ro:1.25,soft:1.0,tap:0.5},mixOrder:1,conflicts:["botanicare_calmag"],
     stageRules:{seedling:{dose:{light:1.0,medium:1.0,aggressive:1.0},note:"conservative"},early_growth:{dose:{light:1.8,medium:1.9,aggressive:2.0}},late_growth:{dose:{light:1.8,medium:1.9,aggressive:2.0}},early_flower:{dose:{light:1.8,medium:1.9,aggressive:2.0}},peak_flower:{dose:{light:1.5,medium:1.6,aggressive:1.8}},late_flower:{dose:{light:1.0,medium:1.0,aggressive:1.0},note:"taper"}} },
   { id:"botanicare_calmag",name:"Cal-Mag Plus",brand:"Botanicare",category:"cal-mag",tapWaterWarning:true,waterBoost:{ro:1.25,soft:1.0,tap:0.5},mixOrder:1,conflicts:["calimagic"],
@@ -1574,6 +1652,8 @@ const BASE_CALMAG_ADEQUACY = {
   // CANNA
   "canna_coco":"full",       // formulated + pH-buffered for coco, Ca/Mg included
   "canna_terra":"full",      // complete soil base
+  "canna_aqua":"lean",       // recirculating hydro; schedule uses CalMag Agent
+  "canna_hydro":"lean",      // run-to-waste inert; needs CalMag in soft/RO water
   // Humboldts Secret
   "hs_starter":"lean",       // Base A+B run lean — kit ships a CalMag & Iron for this
   // Botanicare — feed charts explicitly call for Cal-Mag Plus in RO/coco
@@ -2232,9 +2312,13 @@ export default function FloraApp() {
   const core=computed?.core??null,included=computed?.included??{},isFlush=computed?.isFlush??false;
 
   // Brand-specific supplements only appear for their own system
-  const BRAND_ONLY_SUPPS = { hs_calmag_iron:"hs_starter", hs_flower_stacker:"hs_starter", hs_plant_enzymes:"hs_starter" };
+  const CANNA_SYSTEMS = ["canna_coco","canna_terra","canna_aqua","canna_hydro"];
+  const BRAND_ONLY_SUPPS = {
+    hs_calmag_iron:["hs_starter"], hs_flower_stacker:["hs_starter"], hs_plant_enzymes:["hs_starter"],
+    canna_calmag:CANNA_SYSTEMS, canna_rhizotonic:CANNA_SYSTEMS, canna_cannazym:CANNA_SYSTEMS, canna_cannaboost:CANNA_SYSTEMS, canna_pk1314:CANNA_SYSTEMS,
+  };
   const excludedSupps = system ? new Set(SYSTEM_EXCLUDED_SUPPS[system]||[]) : new Set();
-  Object.entries(BRAND_ONLY_SUPPS).forEach(([suppId,onlySystem])=>{ if(system!==onlySystem)excludedSupps.add(suppId); });
+  Object.entries(BRAND_ONLY_SUPPS).forEach(([suppId,onlySystems])=>{ if(!onlySystems.includes(system))excludedSupps.add(suppId); });
   const suppData = useMemo(()=>{
     if(!stage)return[];
     return SUPPLEMENTS.filter(s=>!excludedSupps.has(s.id)).map(s=>({...s,dose:resolveSupplementDose(s,stage,gallons,water,strength,substrate),active:supps.has(s.id)}));
