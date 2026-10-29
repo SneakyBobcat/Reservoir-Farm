@@ -173,6 +173,8 @@ const LINE_CHART_URLS = {
   // CANNA — direct downloadable PDF schedules per medium
   canna_coco:  "https://www.cannagardening.com/sites/united_states/files/2024-02/downloads-grow-schedule-coco.pdf",
   canna_aqua:  "https://www.cannagardening.com/sites/united_states/files/2026-06/downloads-grow-schedule-us-aqua.pdf",
+  // Lucas Formula — community method; points to the reference write-up
+  lucas:       "https://hackingthegrow.com/best-hydro-nutrients/",
 };
 
 // Resolve the best chart link for a system: line-specific first, then manufacturer.
@@ -195,6 +197,7 @@ const BRAND_LINES = {
     { id:"biothrive", name:"BioThrive",   color:"#E8910A", tagline:"Basic · Custom", systems:["biothrive_basic","biothrive_custom"] },
     { id:"maxi",      name:"MaxiSeries",  color:"#1565C0", tagline:"Indoor · Outdoor", systems:["maxi_indoor","maxi_outdoor"] },
     { id:"floranvoa", name:"FloraNova",   color:"#00838F", tagline:"1 · 4 · 8-Part", systems:["floranvoa_1part","floranvoa_4part","floranvoa_8part"] },
+    { id:"lucas",     name:"Lucas Formula", color:"#7E57C2", tagline:"FloraMicro + FloraBloom only (1:2)", systems:["lucas"] },
   ],
   advanced: [
     { id:"an_phperfect",   name:"pH Perfect Trio",        color:"#0072CE", tagline:"Grow · Micro · Bloom (3-part)", systems:["an_phperfect"] },
@@ -350,6 +353,14 @@ const SYSTEM_CONFIGS = {
     desc:"Full custom performance system with root stimulation, ripening agents, and silica for maximum yield.",
     stages:["early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
     includedKeys:["fn_grow","fn_bloom","calimagic","floralicious","koolbloom","rapidstart","ripen_p","armorsi","florakleen"],
+  },
+  "lucas": {
+    id:"lucas", mfr:"gh", brand:"lucas", name:"Lucas Formula", parts:"2", color:"#7E57C2",
+    baseLabel:"LUCAS FORMULA — FLORAMICRO + FLORABLOOM",
+    tagline:"Two-bottle GH method, fixed 1:2 ratio",
+    desc:"Simplified GH Flora method using only FloraMicro and FloraBloom, no FloraGro (too much nitrogen). Micro to Bloom stays at a 1:2 ratio the whole grow; you just raise the total. pH 5.5–6.2. Designed for hydro/DWC on tap water, cal-mag added if needed.",
+    stages:["seedling","early_growth","late_growth","early_flower","peak_flower","late_flower","flush"],
+    includedKeys:["lucas_micro","lucas_bloom"],
   },
   // ── ATHENA ────────────────────────────────────────────────────────────────
   "athena_pro": {
@@ -595,6 +606,7 @@ const SYSTEM_CONFIGS = {
 
 const SYSTEM_EXCLUDED_SUPPS = {
   "3part": [],
+  "lucas": [],
   "6part": ["calimagic","botanicare_calmag","koolbloom_liquid"],
   "10part": ["calimagic","botanicare_calmag","koolbloom_liquid","armor_si"],
   "florapro_std":    [],
@@ -740,6 +752,16 @@ const SCHEDULES = {
     peak_flower:  { light:{micro:0,gro:0,bloom:0,fn_grow:0,fn_bloom:4.0,calimagic:1.8,floralicious:1.0,koolbloom:1.4,rapidstart:0,ripen_p:0,armorsi:2.5,florakleen:0}, medium:{micro:0,gro:0,bloom:0,fn_grow:0,fn_bloom:4.5,calimagic:2.0,floralicious:1.5,koolbloom:1.5,rapidstart:0,ripen_p:0,armorsi:2.5,florakleen:0}, aggressive:{micro:0,gro:0,bloom:0,fn_grow:0,fn_bloom:5.5,calimagic:2.5,floralicious:2.0,koolbloom:2.0,rapidstart:0,ripen_p:0,armorsi:2.5,florakleen:0} },
     late_flower:  { light:{micro:0,gro:0,bloom:0,fn_grow:0,fn_bloom:3.4,calimagic:1.8,floralicious:1.0,koolbloom:1.4,rapidstart:0,ripen_p:0,armorsi:2.5,florakleen:0}, medium:{micro:0,gro:0,bloom:0,fn_grow:0,fn_bloom:3.8,calimagic:2.0,floralicious:1.5,koolbloom:1.5,rapidstart:0,ripen_p:0,armorsi:2.5,florakleen:0}, aggressive:{micro:0,gro:0,bloom:0,fn_grow:0,fn_bloom:4.8,calimagic:2.5,floralicious:2.0,koolbloom:2.0,rapidstart:0,ripen_p:0,armorsi:2.5,florakleen:0} },
     flush:        { light:{micro:0,gro:0,bloom:0,fn_grow:0,fn_bloom:0,calimagic:0,floralicious:0,koolbloom:0,rapidstart:0,ripen_p:0,armorsi:0,florakleen:10.0}, medium:{micro:0,gro:0,bloom:0,fn_grow:0,fn_bloom:0,calimagic:0,floralicious:0,koolbloom:0,rapidstart:0,ripen_p:0,armorsi:0,florakleen:10.0}, aggressive:{micro:0,gro:0,bloom:0,fn_grow:0,fn_bloom:0,calimagic:0,floralicious:0,koolbloom:0,rapidstart:0,ripen_p:0,armorsi:0,florakleen:10.0}, isFlush:true },
+  },
+  // ── Lucas Formula (ml/gal — FloraMicro + FloraBloom held at a strict 1:2 ratio) ──
+  "lucas": {
+    seedling:     { light:{micro:0,gro:0,bloom:0,lucas_micro:1.5,lucas_bloom:3.0}, medium:{micro:0,gro:0,bloom:0,lucas_micro:2.0,lucas_bloom:4.0}, aggressive:{micro:0,gro:0,bloom:0,lucas_micro:2.5,lucas_bloom:5.0} },
+    early_growth: { light:{micro:0,gro:0,bloom:0,lucas_micro:2.0,lucas_bloom:4.0}, medium:{micro:0,gro:0,bloom:0,lucas_micro:3.0,lucas_bloom:6.0}, aggressive:{micro:0,gro:0,bloom:0,lucas_micro:4.0,lucas_bloom:8.0} },
+    late_growth:  { light:{micro:0,gro:0,bloom:0,lucas_micro:4.0,lucas_bloom:8.0}, medium:{micro:0,gro:0,bloom:0,lucas_micro:5.0,lucas_bloom:10.0}, aggressive:{micro:0,gro:0,bloom:0,lucas_micro:6.0,lucas_bloom:12.0} },
+    early_flower: { light:{micro:0,gro:0,bloom:0,lucas_micro:5.0,lucas_bloom:10.0}, medium:{micro:0,gro:0,bloom:0,lucas_micro:6.0,lucas_bloom:12.0}, aggressive:{micro:0,gro:0,bloom:0,lucas_micro:7.0,lucas_bloom:14.0} },
+    peak_flower:  { light:{micro:0,gro:0,bloom:0,lucas_micro:6.0,lucas_bloom:12.0}, medium:{micro:0,gro:0,bloom:0,lucas_micro:8.0,lucas_bloom:16.0}, aggressive:{micro:0,gro:0,bloom:0,lucas_micro:9.0,lucas_bloom:18.0} },
+    late_flower:  { light:{micro:0,gro:0,bloom:0,lucas_micro:6.0,lucas_bloom:12.0}, medium:{micro:0,gro:0,bloom:0,lucas_micro:7.0,lucas_bloom:14.0}, aggressive:{micro:0,gro:0,bloom:0,lucas_micro:8.0,lucas_bloom:16.0} },
+    flush:        { light:{micro:0,gro:0,bloom:0,lucas_micro:0,lucas_bloom:0}, medium:{micro:0,gro:0,bloom:0,lucas_micro:0,lucas_bloom:0}, aggressive:{micro:0,gro:0,bloom:0,lucas_micro:0,lucas_bloom:0}, isFlush:true },
   },
   // ── Athena Pro Line (grams/gal — Core all cycle, Grow veg, Bloom flower) ──
   "athena_pro": {
@@ -1118,6 +1140,15 @@ const EC_RANGES = {
     late_flower:  { light:[1.3,1.6],  medium:[1.5,1.8],  aggressive:[1.9,2.2]  },
     flush:        { light:[0.0,0.3],  medium:[0.0,0.3],  aggressive:[0.0,0.3]  },
   },
+  "lucas": {
+    seedling:     { light:[0.4,0.7],  medium:[0.6,0.9],  aggressive:[0.8,1.1]  },
+    early_growth: { light:[0.7,1.0],  medium:[0.9,1.2],  aggressive:[1.1,1.4]  },
+    late_growth:  { light:[1.0,1.3],  medium:[1.1,1.4],  aggressive:[1.3,1.6]  },
+    early_flower: { light:[1.2,1.5],  medium:[1.4,1.7],  aggressive:[1.6,1.9]  },
+    peak_flower:  { light:[1.5,1.8],  medium:[1.7,2.0],  aggressive:[1.9,2.2]  },
+    late_flower:  { light:[1.4,1.7],  medium:[1.6,1.9],  aggressive:[1.8,2.1]  },
+    flush:        { light:[0.0,0.4],  medium:[0.0,0.4],  aggressive:[0.0,0.4]  },
+  },
   "athena_pro": {
     seedling:     { light:[0.8,1.2],  medium:[1.0,1.4],  aggressive:[1.2,1.6]  },
     early_growth: { light:[1.4,1.8],  medium:[1.8,2.2],  aggressive:[2.2,2.6]  },
@@ -1451,6 +1482,8 @@ const INCL_META = {
   // CANNA Coco + Terra (liquid, ml)
   canna_coco_a: { name:"Coco A", brand:"CANNA", color:"#E2001A", icon:"🅰️", mixOrder:2, powderNote:"Add A first, equal amount to B" },
   canna_coco_b: { name:"Coco B", brand:"CANNA", color:"#B8001A", icon:"🅱️", mixOrder:3, powderNote:"Add B after A, never mix concentrates" },
+  lucas_micro:  { name:"FloraMicro", brand:"Gen. Hydroponics", color:"#8E1B4A", icon:"🧪", mixOrder:2, powderNote:"Add Micro first, always" },
+  lucas_bloom:  { name:"FloraBloom", brand:"Gen. Hydroponics", color:"#C2185B", icon:"🌸", mixOrder:4, powderNote:"Add Bloom after Micro — twice the Micro amount" },
   canna_vega:   { name:"Terra Vega",   brand:"CANNA", color:"#2E7D32", icon:"🌿", mixOrder:2, powderNote:"Veg base for soil" },
   canna_flores: { name:"Terra Flores", brand:"CANNA", color:"#C2185B", icon:"🌸", mixOrder:3, powderNote:"Flower base for soil" },
   canna_aqua_vega_a:   { name:"Aqua Vega A",   brand:"CANNA", color:"#0097C8", icon:"🅰️", mixOrder:2, powderNote:"Add A first, equal amount to B" },
@@ -1636,6 +1669,7 @@ const BASE_CALMAG_ADEQUACY = {
   "floranvoa_1part":"lean",  // FloraNova 1-part carries some Ca/Mg but lean for heavy feeders
   "floranvoa_4part":"full",  // includes CALiMAGiC
   "floranvoa_8part":"full",  // includes CALiMAGiC
+  "lucas":"lean",            // FloraMicro has some Ca; tap water + cal-mag as needed
   // Athena
   "athena_pro":"full",       // Pro Core supplies calcium
   "athena_blended":"full",
